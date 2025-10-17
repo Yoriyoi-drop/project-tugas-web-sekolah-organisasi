@@ -37,6 +37,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link py-2 px-3 {{ request()->routeIs('fasilitas*') ? 'active fw-bold text-primary' : '' }}" href="{{ route('fasilitas') }}">
+                        <i class="bi bi-building me-2 d-lg-none"></i>Fasilitas
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link py-2 px-3 {{ request()->routeIs('kontak') ? 'active fw-bold text-primary' : '' }}" href="{{ route('kontak') }}">
                         <i class="bi bi-envelope-fill me-2 d-lg-none"></i>Kontak
                     </a>

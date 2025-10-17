@@ -15,6 +15,7 @@ class OrganizationSeeder extends Seeder
                 'tagline' => 'Memimpin dengan Akhlakul Karimah',
                 'description' => 'Organisasi Siswa Intra Sekolah yang menaungi seluruh kegiatan kesiswaan dengan semangat nilai-nilai Nahdlatul Ulama.',
                 'icon' => 'bi-building',
+                'image' => '/images/organizations/osis.svg',
                 'color' => 'primary',
                 'tags' => ['Kepemimpinan', 'Event Organizer', 'Dakwah'],
                 'programs' => [
@@ -44,6 +45,7 @@ class OrganizationSeeder extends Seeder
                 'tagline' => 'Santri Milenial Berakhlak Mulia',
                 'description' => 'Ikatan Pelajar Nahdlatul Ulama yang membina pelajar putra dengan nilai-nilai ahlussunnah wal jamaah.',
                 'icon' => 'bi-mortarboard',
+                'image' => '/images/organizations/ipnu.svg',
                 'color' => 'success',
                 'tags' => ['Kajian Islam', 'Leadership', 'Aswaja'],
                 'programs' => [
@@ -72,6 +74,7 @@ class OrganizationSeeder extends Seeder
                 'tagline' => 'Santriwati Berprestasi Berakhlak Mulia',
                 'description' => 'Ikatan Pelajar Putri Nahdlatul Ulama yang memberdayakan pelajar putri dalam bidang sosial, keagamaan, dan pengembangan keterampilan.',
                 'icon' => 'bi-person-hearts',
+                'image' => '/images/organizations/ippnu.svg',
                 'color' => 'info',
                 'tags' => ['Pemberdayaan', 'Keagamaan', 'Keterampilan'],
                 'programs' => [
@@ -100,6 +103,7 @@ class OrganizationSeeder extends Seeder
                 'tagline' => 'Seni Bela Diri Berjiwa Spiritual',
                 'description' => 'Seni bela diri tradisional yang memadukan kekuatan fisik dengan nilai spiritual Islam.',
                 'icon' => 'bi-shield-fill-check',
+                'image' => '/images/organizations/pagar-nusa.svg',
                 'color' => 'warning',
                 'tags' => ['Bela Diri', 'Spiritual', 'Tradisional'],
                 'programs' => [
@@ -128,6 +132,7 @@ class OrganizationSeeder extends Seeder
                 'tagline' => 'Disiplin, Berani, Mengabdi',
                 'description' => 'Melatih kedisiplinan, keberanian, dan semangat pengabdian kepada agama dan bangsa.',
                 'icon' => 'bi-shield-shaded',
+                'image' => '/images/organizations/banser.svg',
                 'color' => 'danger',
                 'tags' => ['Kedisiplinan', 'Pengabdian', 'Nasionalisme'],
                 'programs' => [
@@ -156,6 +161,7 @@ class OrganizationSeeder extends Seeder
                 'tagline' => 'Menyuarakan Keindahan Al-Qur\'an',
                 'description' => 'Mengembangkan kemampuan membaca, menghafal, dan memahami Al-Qur\'an dengan baik.',
                 'icon' => 'bi-book',
+                'image' => '/images/organizations/qurra.svg',
                 'color' => 'secondary',
                 'tags' => ['Tilawah', 'Tahfidz', 'Tafsir'],
                 'programs' => [

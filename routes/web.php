@@ -11,6 +11,8 @@ Route::get('/beranda', [HomeController::class, 'index'])->name('beranda');
 Route::get('/organisasi', [OrganizationController::class, 'index'])->name('organisasi');
 Route::get('/blog', [BlogController::class, 'index'])->name('blog');
 Route::get('/kegiatan', [ActivityController::class, 'index'])->name('kegiatan');
+Route::get('/fasilitas', [\App\Http\Controllers\FacilityController::class, 'index'])->name('fasilitas');
+Route::get('/fasilitas/{facility}', [\App\Http\Controllers\FacilityController::class, 'show'])->name('fasilitas.show');
 Route::get('/tentang', [AboutController::class, 'index'])->name('tentang');
 Route::get('/kontak', [ContactController::class, 'index'])->name('kontak');
 Route::post('/kontak', [ContactController::class, 'send'])->name('kontak.send');
@@ -52,6 +54,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('statistics', \App\Http\Controllers\Admin\StatisticController::class);
     Route::resource('students', \App\Http\Controllers\Admin\StudentController::class);
     Route::resource('teachers', \App\Http\Controllers\Admin\TeacherController::class);
+    Route::resource('facilities', \App\Http\Controllers\Admin\FacilityController::class);
     Route::resource('messages', \App\Http\Controllers\Admin\MessageController::class)->only(['index', 'show', 'destroy']);
     Route::get('settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
     Route::put('settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');

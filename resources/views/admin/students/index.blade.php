@@ -63,7 +63,7 @@
                     @empty
                         <tr>
                             <td colspan="6" class="text-center py-4">
-                                <i class="bi bi-mortarboard text-gray-300" style="font-size: 3rem;"></i>
+                                <img src="/images/students/default.svg" alt="Students" style="width: 48px; height: 48px; object-fit: contain; opacity: 0.5;">
                                 <p class="text-muted mt-2">No students found</p>
                                 <a href="{{ route('admin.students.create') }}" class="btn btn-primary btn-sm">Add First Student</a>
                             </td>

@@ -9,7 +9,7 @@
             <div class="row justify-content-center text-center">
                 <div class="col-lg-8">
                     <div class="mb-4">
-                        <i class="bi bi-journal-text" style="font-size: 4rem;"></i>
+                        <img src="/images/blog/default.svg" alt="Blog" style="width: 64px; height: 64px; object-fit: contain;">
                     </div>
                     <h1 class="display-3 fw-bold mb-4">Blog {{ site_name() }}</h1>
                     @if($category || $search)
@@ -43,7 +43,11 @@
                         <div class="row g-0">
                             <div class="col-md-4">
                                 <div class="d-flex align-items-center justify-content-center h-100 bg-{{ $featuredPost->color }} text-white rounded-start" style="min-height: 200px;">
-                                    <i class="bi {{ $featuredPost->icon }}" style="font-size: 4rem;"></i>
+                                    @if($featuredPost->image ?? false)
+                                        <img src="{{ $featuredPost->image }}" alt="{{ $featuredPost->title }}" style="width: 64px; height: 64px; object-fit: contain; filter: brightness(0) invert(1);">
+                                    @else
+                                        <img src="/images/blog/default.svg" alt="Blog" style="width: 64px; height: 64px; object-fit: contain; filter: brightness(0) invert(1);">
+                                    @endif
                                 </div>
                             </div>
                             <div class="col-md-8">
@@ -71,7 +75,11 @@
                             <x-card class="h-100 border-0 shadow-sm">
                                 <div class="d-flex align-items-start gap-3">
                                     <div class="flex-shrink-0">
-                                        <i class="bi {{ $post->icon }} text-{{ $post->color }}" style="font-size: 2rem;"></i>
+                                        @if($post->image ?? false)
+                                            <img src="{{ $post->image }}" alt="{{ $post->title }}" style="width: 32px; height: 32px; object-fit: contain;">
+                                        @else
+                                            <img src="/images/blog/default.svg" alt="Blog" style="width: 32px; height: 32px; object-fit: contain;">
+                                        @endif
                                     </div>
                                     <div class="flex-grow-1">
                                         <div class="d-flex gap-2 mb-2">
@@ -167,7 +175,11 @@
                         </h5>
                         @foreach($recentPosts as $recent)
                         <div class="d-flex align-items-start gap-3 mb-3">
-                            <i class="bi {{ $recent->icon }} text-primary" style="font-size: 1.5rem;"></i>
+                            @if($recent->image ?? false)
+                                <img src="{{ $recent->image }}" alt="{{ $recent->title }}" style="width: 24px; height: 24px; object-fit: contain;">
+                            @else
+                                <img src="/images/blog/default.svg" alt="Blog" style="width: 24px; height: 24px; object-fit: contain;">
+                            @endif
                             <div>
                                 <h6 class="mb-1">{{ $recent->title }}</h6>
                                 <small class="text-muted">{{ $recent->published_at ? $recent->published_at->format('d F Y') : $recent->created_at->format('d F Y') }}</small>

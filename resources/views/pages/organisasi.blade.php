@@ -37,7 +37,11 @@
                     <div class="org-detail-card h-100">
                         <div class="org-header-section">
                             <div class="org-logo">
-                                <i class="bi {{ $org->icon }}"></i>
+                                @if($org->image)
+                                    <img src="{{ $org->image }}" alt="{{ $org->name }}" style="width: 64px; height: 64px; object-fit: contain;">
+                                @else
+                                    <i class="bi {{ $org->icon }}"></i>
+                                @endif
                             </div>
                             <h3 class="org-name">{{ $org->name }}</h3>
                             <p class="org-tagline">"{{ $org->tagline }}"</p>

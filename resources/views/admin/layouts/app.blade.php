@@ -92,6 +92,11 @@
                                 <i class="bi bi-bar-chart me-2"></i>Statistics
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('admin.facilities.*') ? 'active bg-primary text-white' : 'text-dark' }}" href="{{ route('admin.facilities.index') }}">
+                                <i class="bi bi-building me-2"></i>Facilities
+                            </a>
+                        </li>
                     </ul>
                     
                     <div class="mt-4 mb-3 px-3">

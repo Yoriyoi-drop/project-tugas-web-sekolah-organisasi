@@ -9,7 +9,7 @@ class Organization extends Model
     use HasFactory;
     
     protected $fillable = [
-        'name', 'type', 'tagline', 'description', 'icon', 'color',
+        'name', 'type', 'tagline', 'description', 'icon', 'color', 'image',
         'tags', 'programs', 'leadership', 'email', 'phone', 'location',
         'is_active', 'order'
     ];

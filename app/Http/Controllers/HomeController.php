@@ -15,8 +15,7 @@ class HomeController extends Controller
                                                      ->where('is_active', true)
                                                      ->orderBy('order')
                                                      ->get(),
-                'organizations' => Organization::select('id', 'name', 'type', 'icon', 'color', 'description', 'tags')
-                                               ->where('is_active', true)
+                'organizations' => Organization::where('is_active', true)
                                                ->orderBy('order')
                                                ->get()
             ];
