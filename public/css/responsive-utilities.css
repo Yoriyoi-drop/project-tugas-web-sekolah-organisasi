@@ -1,0 +1,302 @@
+/* Bootstrap 5 Responsive Utilities & Custom Classes */
+
+/* ==========================================================================
+   RESPONSIVE TYPOGRAPHY
+   ========================================================================== */
+
+/* Fluid typography using clamp() */
+.fs-fluid-1 { font-size: clamp(2.5rem, 8vw, 5rem); }
+.fs-fluid-2 { font-size: clamp(2rem, 6vw, 4.5rem); }
+.fs-fluid-3 { font-size: clamp(1.75rem, 5vw, 4rem); }
+.fs-fluid-4 { font-size: clamp(1.5rem, 4vw, 3.5rem); }
+.fs-fluid-5 { font-size: clamp(1.25rem, 3vw, 3rem); }
+.fs-fluid-6 { font-size: clamp(1.1rem, 2.5vw, 2.5rem); }
+
+/* Responsive line heights */
+.lh-responsive { line-height: clamp(1.2, 2vw, 1.6); }
+
+/* ==========================================================================
+   RESPONSIVE SPACING
+   ========================================================================== */
+
+/* Fluid padding */
+.p-fluid { padding: clamp(1rem, 4vw, 3rem); }
+.py-fluid { padding-top: clamp(1rem, 4vw, 3rem); padding-bottom: clamp(1rem, 4vw, 3rem); }
+.px-fluid { padding-left: clamp(1rem, 4vw, 3rem); padding-right: clamp(1rem, 4vw, 3rem); }
+
+/* Fluid margins */
+.m-fluid { margin: clamp(1rem, 4vw, 3rem); }
+.my-fluid { margin-top: clamp(1rem, 4vw, 3rem); margin-bottom: clamp(1rem, 4vw, 3rem); }
+.mx-fluid { margin-left: clamp(1rem, 4vw, 3rem); margin-right: clamp(1rem, 4vw, 3rem); }
+
+/* ==========================================================================
+   RESPONSIVE COMPONENTS
+   ========================================================================== */
+
+/* Touch-friendly buttons */
+.btn-touch {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.75rem 1.5rem;
+}
+
+/* Responsive cards */
+.card-responsive {
+    margin-bottom: clamp(1rem, 3vw, 2rem);
+}
+
+.card-responsive .card-body {
+    padding: clamp(1rem, 3vw, 2rem);
+}
+
+/* Responsive images with aspect ratios */
+.img-responsive {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+/* ==========================================================================
+   RESPONSIVE GRID UTILITIES
+   ========================================================================== */
+
+/* Container with fluid max-width */
+.container-fluid-responsive {
+    max-width: 100%;
+    padding-left: clamp(15px, 3vw, 30px);
+    padding-right: clamp(15px, 3vw, 30px);
+}
+
+/* Responsive gap utilities */
+.gap-responsive { gap: clamp(1rem, 3vw, 2rem); }
+.row-gap-responsive { row-gap: clamp(1rem, 3vw, 2rem); }
+.column-gap-responsive { column-gap: clamp(1rem, 3vw, 2rem); }
+
+/* ==========================================================================
+   RESPONSIVE NAVIGATION
+   ========================================================================== */
+
+/* Mobile-first navbar */
+.navbar-responsive {
+    padding: 0.5rem clamp(15px, 3vw, 30px);
+}
+
+.navbar-responsive .navbar-brand {
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+}
+
+.navbar-responsive .nav-link {
+    padding: 0.75rem 1rem;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+}
+
+/* ==========================================================================
+   RESPONSIVE FORMS
+   ========================================================================== */
+
+/* Touch-friendly form controls */
+.form-control-responsive,
+.form-select-responsive {
+    min-height: 44px;
+    font-size: 16px; /* Prevents zoom on iOS */
+    padding: 0.75rem 1rem;
+}
+
+/* Responsive form layout */
+.form-responsive .row {
+    margin-bottom: 1rem;
+}
+
+.form-responsive .form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+/* ==========================================================================
+   RESPONSIVE TABLES
+   ========================================================================== */
+
+/* Enhanced table responsiveness */
+.table-responsive-enhanced {
+    border-radius: 0.375rem;
+    overflow-x: auto;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.table-responsive-enhanced table {
+    margin-bottom: 0;
+}
+
+/* Mobile table styling */
+@media (max-width: 767.98px) {
+    .table-responsive-enhanced table {
+        font-size: 0.875rem;
+    }
+    
+    .table-responsive-enhanced .btn-group .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+}
+
+/* ==========================================================================
+   RESPONSIVE UTILITIES
+   ========================================================================== */
+
+/* Aspect ratio utilities */
+.ratio-responsive-1x1 { aspect-ratio: 1 / 1; }
+.ratio-responsive-4x3 { aspect-ratio: 4 / 3; }
+.ratio-responsive-16x9 { aspect-ratio: 16 / 9; }
+.ratio-responsive-21x9 { aspect-ratio: 21 / 9; }
+
+/* Responsive visibility */
+.visible-xs { display: none !important; }
+.visible-sm { display: none !important; }
+.visible-md { display: none !important; }
+.visible-lg { display: none !important; }
+.visible-xl { display: none !important; }
+
+@media (max-width: 575.98px) {
+    .visible-xs { display: block !important; }
+    .hidden-xs { display: none !important; }
+}
+
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .visible-sm { display: block !important; }
+    .hidden-sm { display: none !important; }
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .visible-md { display: block !important; }
+    .hidden-md { display: none !important; }
+}
+
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    .visible-lg { display: block !important; }
+    .hidden-lg { display: none !important; }
+}
+
+@media (min-width: 1200px) {
+    .visible-xl { display: block !important; }
+    .hidden-xl { display: none !important; }
+}
+
+/* ==========================================================================
+   RESPONSIVE ANIMATIONS
+   ========================================================================== */
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Hover effects for non-touch devices */
+@media (hover: hover) {
+    .hover-lift:hover {
+        transform: translateY(-2px);
+        transition: transform 0.2s ease;
+    }
+    
+    .hover-shadow:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        transition: box-shadow 0.2s ease;
+    }
+}
+
+/* ==========================================================================
+   DARK MODE SUPPORT
+   ========================================================================== */
+
+[data-bs-theme="dark"] {
+    --bs-body-bg: #212529;
+    --bs-body-color: #dee2e6;
+}
+
+[data-bs-theme="dark"] .card {
+    background-color: #343a40;
+    border-color: #495057;
+}
+
+[data-bs-theme="dark"] .table {
+    --bs-table-bg: transparent;
+    --bs-table-color: #dee2e6;
+}
+
+/* ==========================================================================
+   PRINT STYLES
+   ========================================================================== */
+
+@media print {
+    /* Hide interactive elements */
+    .navbar,
+    .btn,
+    .modal,
+    .offcanvas,
+    .dropdown-menu {
+        display: none !important;
+    }
+    
+    /* Optimize layout for print */
+    .container,
+    .container-fluid {
+        max-width: none !important;
+        padding: 0 !important;
+    }
+    
+    /* Ensure readable text */
+    body {
+        font-size: 12pt !important;
+        line-height: 1.4 !important;
+        color: #000 !important;
+        background: #fff !important;
+    }
+    
+    /* Page breaks */
+    .page-break-before { page-break-before: always; }
+    .page-break-after { page-break-after: always; }
+    .page-break-inside { page-break-inside: avoid; }
+}
+
+/* ==========================================================================
+   ACCESSIBILITY ENHANCEMENTS
+   ========================================================================== */
+
+/* Focus indicators */
+.btn:focus,
+.form-control:focus,
+.form-select:focus {
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    outline: 2px solid transparent;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .btn {
+        border-width: 2px;
+    }
+    
+    .card {
+        border-width: 2px;
+    }
+}
+
+/* Screen reader only content */
+.sr-only {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
