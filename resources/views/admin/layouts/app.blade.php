@@ -114,6 +114,11 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('admin.users.*') ? 'active bg-primary text-white' : 'text-dark' }}" href="{{ route('admin.users.index') }}">
+                                <i class="bi bi-people-fill me-2"></i>Users
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('admin.messages.*') ? 'active bg-primary text-white' : 'text-dark' }}" href="{{ route('admin.messages.index') }}">
                                 <i class="bi bi-envelope me-2"></i>Messages
                             </a>

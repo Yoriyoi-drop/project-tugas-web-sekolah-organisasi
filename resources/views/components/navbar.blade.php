@@ -80,9 +80,12 @@
                         </ul>
                     </li>
                 @else
-                    <li class="nav-item mt-2 mt-lg-0">
-                        <a class="btn btn-primary w-100 w-lg-auto ms-lg-3" href="{{ route('login') }}">
-                            <i class="bi bi-pencil-square me-1"></i>Daftar Sekarang
+                    <li class="nav-item d-lg-flex align-items-center mt-2 mt-lg-0">
+                        <a class="btn btn-outline-primary w-100 w-lg-auto" href="{{ route('login') }}">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>Masuk
+                        </a>
+                        <a class="btn btn-primary w-100 w-lg-auto ms-lg-2 mt-2 mt-lg-0" href="{{ route('register') }}">
+                            <i class="bi bi-person-plus me-1"></i>Daftar
                         </a>
                     </li>
                 @endauth

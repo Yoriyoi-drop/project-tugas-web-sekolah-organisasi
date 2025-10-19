@@ -79,6 +79,14 @@
                     <i class="bi bi-building me-3"></i>Fasilitas
                 </a>
             </li>
+
+            <!-- Users Management -->
+            <li class="nav-item">
+                <a class="nav-link text-white d-flex align-items-center py-3 px-3 {{ request()->routeIs('admin.users.*') ? 'bg-primary' : '' }}" 
+                   href="{{ route('admin.users.index') }}">
+                    <i class="bi bi-people-fill me-3"></i>Users
+                </a>
+            </li>
             
             <!-- Communication -->
             <li class="nav-item">

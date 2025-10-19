@@ -41,6 +41,8 @@ class User extends Authenticatable
         'recovery_codes',
         'failed_login_attempts',
         'locked_until',
+        'nik',
+        'nis',
     ];
 
     /**
