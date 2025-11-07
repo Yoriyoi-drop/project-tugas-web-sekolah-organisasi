@@ -29,6 +29,9 @@ class TeacherController extends Controller
             'qualification' => 'required|string',
         ]);
 
+        // Ensure a unique NIP is provided for the teacher (migration requires it)
+        $validated['nip'] = Teacher::generateNip();
+
         Teacher::create($validated);
         return redirect()->route('admin.teachers.index')->with('success', 'Teacher created successfully');
     }

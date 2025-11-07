@@ -37,7 +37,15 @@ class RegisterController extends Controller
             'nis' => $data['nis'],
         ]);
 
-        // Optional: fire registered event if other listeners depend on it (no email verification)
+        // Generate OTP and save in session
+        $otp = $user->generateEmailOtp();
+        session(['otp_user_id' => $user->id]);
+
+        event(new Registered($user));
+
+        Auth::login($user);
+
+        return redirect()->route('otp.show');
         event(new Registered($user));
 
         // Redirect to login (verification disabled)

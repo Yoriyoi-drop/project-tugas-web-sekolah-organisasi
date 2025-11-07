@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\ResponseCache\Facades\ResponseCache;
 
 class Facility extends Model
 {
@@ -37,5 +38,20 @@ class Facility extends Model
     public function scopeOrdered($query)
     {
         return $query->orderBy('order');
+    }
+
+    /**
+     * Boot the model.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saved(function () {
+            // Clear the response cache when a facility is updated
+            ResponseCache::forget('/');
+            ResponseCache::forget('/beranda');
+            ResponseCache::forget('/fasilitas');
+        });
     }
 }

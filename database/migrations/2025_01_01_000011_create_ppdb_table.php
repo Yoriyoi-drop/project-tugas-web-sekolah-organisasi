@@ -9,7 +9,19 @@ class CreatePpdbTable extends Migration
     {
         Schema::create('ppdb', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->nullable();
+            $table->string('name');
+            $table->string('nik')->unique();
+            $table->string('email')->unique();
+            $table->date('birth_date');
+            $table->string('birth_place');
+            $table->enum('gender', ['male', 'female']);
+            $table->text('address');
+            $table->string('phone');
+            $table->string('parent_name');
+            $table->string('parent_phone');
+            $table->string('previous_school');
+            $table->string('desired_major')->nullable();
+            $table->string('status')->default('pending');
             $table->timestamps();
         });
     }

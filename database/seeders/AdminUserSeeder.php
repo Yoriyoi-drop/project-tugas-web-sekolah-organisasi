@@ -19,13 +19,6 @@ class AdminUserSeeder extends Seeder
             ]
         );
 
-        User::firstOrCreate(
-            ['email' => 'm.fajarramadhani00@gmail.com'],
-            [
-                'name' => 'administrator',
-                'password' => Hash::make('admin321'),
-                'is_admin' => true,
-            ]
-        );
+      
     }
 }

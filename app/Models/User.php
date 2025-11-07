@@ -1,16 +1,43 @@
 <?php
 
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 use App\Services\SecurityService;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+
+    public function generateEmailOtp($ip = null, $userAgent = null)
+    {
+        // Delete any existing OTP for this user
+        EmailOtp::where('user_id', $this->id)->delete();
+
+        // Generate new OTP
+        $code = strtoupper(Str::random(6));
+        $otp = EmailOtp::create([
+            'user_id' => $this->id,
+            'code_hash' => Hash::make($code),
+            'expires_at' => now()->addMinutes(10),
+            'sent_count' => 1,
+            'last_sent_at' => now(),
+            'ip_address' => $ip ?? request()->ip(),
+            'user_agent' => $userAgent ?? request()->userAgent()
+        ]);
+
+        // Log OTP generation
+        SecurityService::logOtpGenerate($this->id);
+
+        return $code;
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -42,7 +69,80 @@ class User extends Authenticatable
         'locked_until',
         'nik',
         'nis',
+        'nik_hash',
+        'nis_hash'
     ];
+
+    // Role & permission handling is provided by Spatie\Permission via HasRoles trait.
+    // The package exposes methods such as assignRole, hasRole, givePermissionTo, can, etc.
+
+    /**
+     * Backwards-compatibility: check role using legacy `role_user` pivot or Spatie model_has_roles.
+     */
+    public function hasRole(string $role): bool
+    {
+        // Check legacy role_user -> roles.slug
+        $legacy = \Illuminate\Support\Facades\DB::table('role_user')
+            ->join('roles', 'role_user.role_id', '=', 'roles.id')
+            ->where('role_user.user_id', $this->id)
+            ->where('roles.slug', $role)
+            ->exists();
+
+        if ($legacy) return true;
+
+        // Check Spatie model_has_roles -> roles.name (or slug if present)
+        $roleRow = \Illuminate\Support\Facades\DB::table('roles')->where('slug', $role)->orWhere('name', $role)->first();
+        if ($roleRow) {
+            return \Illuminate\Support\Facades\DB::table('model_has_roles')
+                ->where('model_type', self::class)
+                ->where('model_id', $this->id)
+                ->where('role_id', $roleRow->id)
+                ->exists();
+        }
+
+        return false;
+    }
+
+    /**
+     * Backwards-compatibility: check ability via legacy ability_role -> role_user or Spatie role/permission pivots.
+     */
+    public function hasAbility(string $ability): bool
+    {
+        // Legacy path: abilities.slug -> ability_role -> role_user
+        $abilityRow = \Illuminate\Support\Facades\DB::table('abilities')->where('slug', $ability)->first();
+        if ($abilityRow) {
+            $roleIdsLegacy = \Illuminate\Support\Facades\DB::table('role_user')->where('user_id', $this->id)->pluck('role_id')->toArray();
+            $roleIdsSpatie = \Illuminate\Support\Facades\DB::table('model_has_roles')
+                ->where('model_type', self::class)
+                ->where('model_id', $this->id)
+                ->pluck('role_id')
+                ->toArray();
+            $roleIds = array_values(array_unique(array_merge($roleIdsLegacy, $roleIdsSpatie)));
+            // debug info (tests):
+            \Illuminate\Support\Facades\Log::debug('hasAbility check', ['user_id' => $this->id, 'ability' => $ability, 'ability_id' => $abilityRow->id, 'role_ids' => $roleIds]);
+            if (!empty($roleIds)) {
+                $has = \Illuminate\Support\Facades\DB::table('ability_role')
+                    ->where('ability_role.ability_id', $abilityRow->id)
+                    ->whereIn('ability_role.role_id', $roleIds)
+                    ->exists();
+                \Illuminate\Support\Facades\Log::debug('ability_role match', ['has' => $has]);
+                if ($has) return true;
+            }
+        }
+
+        // Spatie path: permissions.name -> role_has_permissions -> model_has_roles
+        $perm = \Illuminate\Support\Facades\DB::table('permissions')->where('name', $ability)->first();
+        if ($perm) {
+            return \Illuminate\Support\Facades\DB::table('role_has_permissions')
+                ->join('model_has_roles', 'role_has_permissions.role_id', '=', 'model_has_roles.role_id')
+                ->where('model_has_roles.model_type', self::class)
+                ->where('model_has_roles.model_id', $this->id)
+                ->where('role_has_permissions.permission_id', $perm->id)
+                ->exists();
+        }
+
+        return false;
+    }
 
     /**
      * The attributes that should be hidden for serialization.

@@ -27,6 +27,7 @@
                 <thead class="table-light">
                     <tr>
                         <th>Name</th>
+                        <th>NIS</th>
                         <th>Email</th>
                         <th>Phone</th>
                         <th>Class</th>
@@ -38,6 +39,7 @@
                     @forelse($students as $student)
                         <tr>
                             <td class="font-weight-bold">{{ $student->name }}</td>
+                            <td>{{ $student->nis }}</td>
                             <td>{{ $student->email }}</td>
                             <td>{{ $student->phone }}</td>
                             <td><span class="badge bg-primary">{{ $student->class }}</span></td>

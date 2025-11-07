@@ -20,7 +20,7 @@
         .text-xs { font-size: 0.7rem; }
         .btn-block { width: 100%; }
         .shadow { box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15) !important; }
-        
+
         /* Mobile responsive */
         @media (max-width: 767.98px) {
             .sidebar { display: none; }
@@ -29,7 +29,7 @@
             .btn-group .btn { padding: 0.25rem 0.4rem; font-size: 0.75rem; }
             .card-body { padding: 1rem; }
         }
-        
+
         @media (min-width: 768px) and (max-width: 991.98px) {
             .col-md-2 { flex: 0 0 25%; max-width: 25%; }
             .col-md-10 { flex: 0 0 75%; max-width: 75%; }
@@ -98,7 +98,7 @@
                             </a>
                         </li>
                     </ul>
-                    
+
                     <div class="mt-4 mb-3 px-3">
                         <h6 class="text-muted text-uppercase font-weight-bold">Management</h6>
                     </div>

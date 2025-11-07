@@ -9,7 +9,12 @@ class CreateStudentsTable extends Migration
     {
         Schema::create('students', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->nullable();
+            $table->string('name');
+            $table->string('nis')->unique();
+            $table->string('email')->unique();
+            $table->text('address')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('class');
             $table->timestamps();
         });
     }

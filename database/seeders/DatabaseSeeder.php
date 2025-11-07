@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             AdminUserSeeder::class,
+            RoleAndAbilitySeeder::class,
             CategorySeeder::class,
             PostSeeder::class,
             OrganizationSeeder::class,
@@ -25,6 +26,11 @@ class DatabaseSeeder extends Seeder
             TeacherSeeder::class,
             UserSeeder::class,
             ValueSeeder::class,
+            // newly added seeders
+            PPDBSeeder::class,
+            RegistrationSeeder::class,
+            ContactSeeder::class,
+            GallerySeeder::class,
         ]);
     }
 }

@@ -18,11 +18,20 @@ Route::get('/tentang', [AboutController::class, 'index'])->name('tentang');
 Route::get('/kontak', [ContactController::class, 'index'])->name('kontak');
 Route::post('/kontak', [ContactController::class, 'send'])->name('kontak.send');
 
+// Simple demo page for the data API
+Route::get('/data-demo', function () {
+    return view('data-demo');
+})->name('data.demo');
+
 // Registration routes
 Route::get('/daftar/{organization}', [\App\Http\Controllers\RegistrationController::class, 'show'])->name('registration.show');
 Route::post('/daftar/{organization}', [\App\Http\Controllers\RegistrationController::class, 'store'])->name('registration.store');
 
 // Authentication routes
+
+// OTP routes
+Route::get('/otp/verify', [\App\Http\Controllers\OtpController::class, 'show'])->name('otp.show');
+Route::post('/otp/verify', [\App\Http\Controllers\OtpController::class, 'verify'])->name('otp.verify');
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->middleware('throttle:10,1');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
@@ -56,16 +65,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile/verify-password', [\App\Http\Controllers\ProfileController::class, 'showVerifyPassword'])->name('profile.verify-password');
     Route::post('/profile/verify-password', [\App\Http\Controllers\ProfileController::class, 'verifyPasswordChange']);
 
-    // Profile password routes 
+    // Profile password routes
     Route::get('/profile/password', [\App\Http\Controllers\ProfileController::class, 'editPassword'])->name('profile.password.edit');
     Route::put('/profile/password', [\App\Http\Controllers\ProfileController::class, 'updatePassword'])->name('profile.password.update');
     Route::post('/profile/password/code', [\App\Http\Controllers\ProfileController::class, 'sendPasswordCode'])->name('profile.password.code');
-    
+
     // 2FA routes
     Route::get('/2fa', [\App\Http\Controllers\TwoFactorController::class, 'show'])->name('2fa.show');
     Route::post('/2fa/enable', [\App\Http\Controllers\TwoFactorController::class, 'enable'])->name('2fa.enable');
     Route::post('/2fa/disable', [\App\Http\Controllers\TwoFactorController::class, 'disable'])->name('2fa.disable');
-    
+
     // Avatar routes
     Route::post('/avatar/upload', [\App\Http\Controllers\AvatarController::class, 'upload'])->name('avatar.upload');
     Route::get('/avatar/delete', [\App\Http\Controllers\AvatarController::class, 'delete'])->name('avatar.delete');
@@ -87,4 +96,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('registrations', \App\Http\Controllers\Admin\RegistrationController::class)->only(['index', 'show', 'destroy']);
     Route::patch('registrations/{registration}/status', [\App\Http\Controllers\Admin\RegistrationController::class, 'updateStatus'])->name('registrations.update-status');
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->only(['index', 'create', 'store']);
+
+    // Security audit routes
+    Route::get('security/audit', [\App\Http\Controllers\Admin\SecurityAuditController::class, 'index'])
+        ->name('security.audit');
+    Route::get('security/export', [\App\Http\Controllers\Admin\SecurityAuditController::class, 'export'])
+        ->name('security.export');
 });

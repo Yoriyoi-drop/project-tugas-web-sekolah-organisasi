@@ -9,7 +9,13 @@ class CreateActivitiesTable extends Migration
     {
         Schema::create('activities', function (Blueprint $table) {
             $table->id();
-            $table->string('title')->nullable();
+            $table->string('title');
+            $table->text('description');
+            $table->string('category');
+            $table->date('date');
+            $table->string('location')->nullable();
+            $table->string('status')->default('upcoming');
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }

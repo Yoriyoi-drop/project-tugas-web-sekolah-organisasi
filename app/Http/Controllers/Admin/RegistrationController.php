@@ -50,6 +50,7 @@ class RegistrationController extends Controller
                 if (!$student) {
                     $student = Student::create([
                         'name' => $registration->name,
+                        'nis' => Student::generateNis(),
                         'email' => $registration->email,
                         'phone' => $registration->phone,
                         'class' => $registration->class,

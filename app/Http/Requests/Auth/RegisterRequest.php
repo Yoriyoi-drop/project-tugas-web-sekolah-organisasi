@@ -19,7 +19,7 @@ class RegisterRequest extends FormRequest
     {
         $rules = [
             'name' => 'required|string|max:255',
-            'email' => ['required','string','email:rfc,dns','max:255','unique:users,email', new EmailDomainAllowed()],
+            'email' => ['required','string','email','max:255','unique:users,email'],
             'password' => 'required|string|min:6|confirmed',
         ];
 

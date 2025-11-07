@@ -3,6 +3,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\ResponseCache\Facades\ResponseCache;
 
 class Post extends Model
 {
@@ -49,5 +50,20 @@ class Post extends Model
     public function getExcerptAttribute($value)
     {
         return $value ?: substr(strip_tags($this->content), 0, 150) . '...';
+    }
+
+    /**
+     * Boot the model.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saved(function () {
+            // Clear the response cache when a post is updated
+            ResponseCache::forget('/');
+            ResponseCache::forget('/beranda');
+            ResponseCache::forget('/blog');
+        });
     }
 }

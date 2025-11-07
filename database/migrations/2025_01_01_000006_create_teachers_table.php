@@ -9,7 +9,13 @@ class CreateTeachersTable extends Migration
     {
         Schema::create('teachers', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->nullable();
+            $table->string('name');
+            $table->string('nip')->unique();
+            $table->string('email')->unique();
+            $table->text('address')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('subject');
+            $table->string('position')->nullable();
             $table->timestamps();
         });
     }
