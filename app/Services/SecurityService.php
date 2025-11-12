@@ -149,9 +149,9 @@ class SecurityService
 
         if ($lastLog && $lastLog->ip_address !== $currentIp) {
             self::logActivity('ip_change_detected', [
-                'old_ip' => $lastLog->ip_address,
-                'new_ip' => $currentIp
-            ], 'medium');
+                'message' => 'IP address changed during session',
+                'timestamp' => now()->toISOString()
+            ], 'medium', $user->id);
             return true;
         }
 

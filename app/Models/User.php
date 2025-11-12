@@ -77,71 +77,113 @@ class User extends Authenticatable
     // The package exposes methods such as assignRole, hasRole, givePermissionTo, can, etc.
 
     /**
-     * Backwards-compatibility: check role using legacy `role_user` pivot or Spatie model_has_roles.
+     * Check user role using primarily Spatie permissions, with legacy fallback.
      */
     public function hasRole(string $role): bool
     {
-        // Check legacy role_user -> roles.slug
-        $legacy = \Illuminate\Support\Facades\DB::table('role_user')
-            ->join('roles', 'role_user.role_id', '=', 'roles.id')
-            ->where('role_user.user_id', $this->id)
-            ->where('roles.slug', $role)
-            ->exists();
-
-        if ($legacy) return true;
-
-        // Check Spatie model_has_roles -> roles.name (or slug if present)
-        $roleRow = \Illuminate\Support\Facades\DB::table('roles')->where('slug', $role)->orWhere('name', $role)->first();
-        if ($roleRow) {
+        try {
+            // First check using Spatie's native method
+            if ($this->hasDirectRole($role)) {
+                return true;
+            }
+            
+            // Check using Spatie role name or slug
+            $spatieRole = \Spatie\Permission\Models\Role::where('name', $role)->orWhere('slug', $role)->first();
+            if ($spatieRole && $this->roleHasDirectPermission($spatieRole->id)) {
+                return true;
+            }
+            
+            // Legacy fallback: check legacy role_user -> roles.slug
+            $legacy = \Illuminate\Support\Facades\DB::table('role_user')
+                ->join('roles', 'role_user.role_id', '=', 'roles.id')
+                ->where('role_user.user_id', $this->id)
+                ->where('roles.slug', $role)
+                ->exists();
+            
+            return $legacy;
+        } catch (\Exception $e) {
+            \Log::error('Error in hasRole check: ' . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Check if user has a specific role ID using Spatie pivot table.
+     */
+    private function roleHasDirectPermission(int $roleId): bool
+    {
+        try {
             return \Illuminate\Support\Facades\DB::table('model_has_roles')
                 ->where('model_type', self::class)
                 ->where('model_id', $this->id)
-                ->where('role_id', $roleRow->id)
+                ->where('role_id', $roleId)
                 ->exists();
+        } catch (\Exception $e) {
+            \Log::error('Error in roleHasDirectPermission: ' . $e->getMessage());
+            return false;
         }
-
-        return false;
     }
 
     /**
-     * Backwards-compatibility: check ability via legacy ability_role -> role_user or Spatie role/permission pivots.
+     * Check user ability using primarily Spatie permissions, with legacy fallback.
      */
     public function hasAbility(string $ability): bool
     {
-        // Legacy path: abilities.slug -> ability_role -> role_user
-        $abilityRow = \Illuminate\Support\Facades\DB::table('abilities')->where('slug', $ability)->first();
-        if ($abilityRow) {
-            $roleIdsLegacy = \Illuminate\Support\Facades\DB::table('role_user')->where('user_id', $this->id)->pluck('role_id')->toArray();
-            $roleIdsSpatie = \Illuminate\Support\Facades\DB::table('model_has_roles')
-                ->where('model_type', self::class)
-                ->where('model_id', $this->id)
-                ->pluck('role_id')
-                ->toArray();
-            $roleIds = array_values(array_unique(array_merge($roleIdsLegacy, $roleIdsSpatie)));
-            // debug info (tests):
-            \Illuminate\Support\Facades\Log::debug('hasAbility check', ['user_id' => $this->id, 'ability' => $ability, 'ability_id' => $abilityRow->id, 'role_ids' => $roleIds]);
-            if (!empty($roleIds)) {
-                $has = \Illuminate\Support\Facades\DB::table('ability_role')
-                    ->where('ability_role.ability_id', $abilityRow->id)
-                    ->whereIn('ability_role.role_id', $roleIds)
-                    ->exists();
-                \Illuminate\Support\Facades\Log::debug('ability_role match', ['has' => $has]);
-                if ($has) return true;
+        try {
+            // First check using Spatie's native can method
+            if ($this->can($ability)) {
+                return true;
             }
-        }
+            
+            // Check using Spatie permissions table
+            $permission = \Spatie\Permission\Models\Permission::where('name', $ability)->first();
+            if ($permission && $this->permissionHasDirectPermission($permission->id)) {
+                return true;
+            }
+            
+            // Legacy fallback: abilities.slug -> ability_role -> role_user
+            $abilityRow = \Illuminate\Support\Facades\DB::table('abilities')->where('slug', $ability)->first();
+            if ($abilityRow) {
+                $roleIdsLegacy = \Illuminate\Support\Facades\DB::table('role_user')->where('user_id', $this->id)->pluck('role_id')->toArray();
+                $roleIdsSpatie = \Illuminate\Support\Facades\DB::table('model_has_roles')
+                    ->where('model_type', self::class)
+                    ->where('model_id', $this->id)
+                    ->pluck('role_id')
+                    ->toArray();
+                $roleIds = array_values(array_unique(array_merge($roleIdsLegacy, $roleIdsSpatie)));
+                
+                if (!empty($roleIds)) {
+                    $has = \Illuminate\Support\Facades\DB::table('ability_role')
+                        ->where('ability_role.ability_id', $abilityRow->id)
+                        ->whereIn('ability_role.role_id', $roleIds)
+                        ->exists();
+                    if ($has) return true;
+                }
+            }
 
-        // Spatie path: permissions.name -> role_has_permissions -> model_has_roles
-        $perm = \Illuminate\Support\Facades\DB::table('permissions')->where('name', $ability)->first();
-        if ($perm) {
+            return false;
+        } catch (\Exception $e) {
+            \Log::error('Error in hasAbility check: ' . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
+     * Check if user has a specific permission ID using Spatie pivot tables.
+     */
+    private function permissionHasDirectPermission(int $permissionId): bool
+    {
+        try {
             return \Illuminate\Support\Facades\DB::table('role_has_permissions')
                 ->join('model_has_roles', 'role_has_permissions.role_id', '=', 'model_has_roles.role_id')
                 ->where('model_has_roles.model_type', self::class)
                 ->where('model_has_roles.model_id', $this->id)
-                ->where('role_has_permissions.permission_id', $perm->id)
+                ->where('role_has_permissions.permission_id', $permissionId)
                 ->exists();
+        } catch (\Exception $e) {
+            \Log::error('Error in permissionHasDirectPermission: ' . $e->getMessage());
+            return false;
         }
-
-        return false;
     }
 
     /**
@@ -252,6 +294,49 @@ class User extends Authenticatable
     {
         return $this->locked_until && $this->locked_until->isFuture();
     }
+    
+    /**
+     * Check if user has any of the given roles.
+     */
+    public function hasAnyRole(string ...$roles): bool
+    {
+        foreach ($roles as $role) {
+            if ($this->hasRole($role)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Synchronize roles between legacy and Spatie systems.
+     */
+    public function syncLegacyRolesToSpatie(): void
+    {
+        // Get legacy roles
+        $legacyRoleIds = \Illuminate\Support\Facades\DB::table('role_user')
+            ->where('user_id', $this->id)
+            ->pluck('role_id')
+            ->toArray();
+        
+        if (empty($legacyRoleIds)) {
+            return;
+        }
+        
+        // Get role names from legacy IDs
+        $legacyRoleNames = \Illuminate\Support\Facades\DB::table('roles')
+            ->whereIn('id', $legacyRoleIds)
+            ->pluck('name')
+            ->toArray();
+        
+        // Assign roles via Spatie
+        try {
+            $this->syncRoles($legacyRoleNames);
+        } catch (\Exception $e) {
+            \Log::error('Failed to sync legacy roles to Spatie: ' . $e->getMessage());
+        }
+    }
 
     public function getTwoFactorEnabledAttribute($value)
     {
@@ -277,6 +362,23 @@ class User extends Authenticatable
             'locked_until' => null,
             'failed_login_attempts' => 0
         ]);
+    }
+
+    public function getAvatarUrlAttribute(): string
+    {
+        if ($this->avatar) {
+            // Check if the file exists in storage
+            if (\Storage::disk('public')->exists($this->avatar)) {
+                return \Storage::url($this->avatar);
+            } else {
+                // File doesn't exist in storage, might be a database inconsistency
+                // Update the database to remove the reference
+                $this->update(['avatar' => null]);
+            }
+        }
+        
+        // Fallback to a default avatar
+        return asset('images/default-avatar.svg');
     }
 
 }

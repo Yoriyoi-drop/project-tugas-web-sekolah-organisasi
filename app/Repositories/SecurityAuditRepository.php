@@ -35,7 +35,7 @@ class SecurityAuditRepository
             })
             ->when(isset($filters['status']), function (Builder $query) use ($filters) {
                 // status is stored inside the JSON 'data' column
-                $query->whereRaw("json_extract(data, '$.status') = ?", [$filters['status']]);
+                $query->whereJsonContains('data', ['status' => $filters['status']]);
             })
             ->when(isset($filters['action']), function (Builder $query) use ($filters) {
                 $query->where('action', $filters['action']);
@@ -65,7 +65,7 @@ class SecurityAuditRepository
             'total_otp_attempts' => SecurityLog::where('action', 'like', 'otp%')->count(),
             // Count failed otp verifications but exclude explicitly high risk events
             'failed_verifications' => SecurityLog::where('action', 'otp_verify')
-                ->whereRaw("json_extract(data, '$.status') = ?", ['error'])
+                ->whereJsonContains('data', ['status' => 'error'])
                 ->where('risk_level', '<>', 'high')
                 ->count(),
             'locked_accounts' => User::where('locked_until', '>', now())->count(),

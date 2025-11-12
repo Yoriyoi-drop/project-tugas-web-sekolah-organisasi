@@ -18,7 +18,7 @@
                 <div class="card-body text-center">
                     <div class="position-relative d-inline-block mb-3">
                         @if($user->avatar)
-                            <img src="{{ Storage::url($user->avatar) }}" alt="Avatar" class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
+                            <img src="{{ $user->avatar_url }}" alt="Avatar" class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
                         @else
                             <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 120px; height: 120px;">
                                 <i class="bi bi-person-fill text-white" style="font-size: 3rem;"></i>

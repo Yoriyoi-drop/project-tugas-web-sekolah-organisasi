@@ -28,13 +28,22 @@ class AvatarController extends Controller
         }
 
         // Store new avatar
-        $path = $request->file('avatar')->store('avatars', 'public');
-        
-        $user->update(['avatar' => $path]);
-        
-        SecurityService::logActivity('avatar_uploaded', ['path' => $path]);
-        
-        return redirect()->route('profile.show')->with('success', 'Avatar berhasil diupload.');
+        try {
+            $path = $request->file('avatar')->store('avatars', 'public');
+            
+            if (!$path) {
+                return redirect()->route('profile.show')->with('error', 'Gagal mengupload avatar. Silakan coba lagi.');
+            }
+
+            $user->update(['avatar' => $path]);
+            
+            SecurityService::logActivity('avatar_uploaded', ['path' => $path]);
+            
+            return redirect()->route('profile.show')->with('success', 'Avatar berhasil diupload.');
+        } catch (\Exception $e) {
+            \Log::error('Avatar upload failed: ' . $e->getMessage());
+            return redirect()->route('profile.show')->with('error', 'Gagal mengupload avatar. Silakan coba lagi.');
+        }
     }
 
     public function delete()
@@ -42,9 +51,14 @@ class AvatarController extends Controller
         $user = Auth::user();
         
         if ($user->avatar) {
-            Storage::disk('public')->delete($user->avatar);
-            $user->update(['avatar' => null]);
-            SecurityService::logActivity('avatar_deleted');
+            try {
+                Storage::disk('public')->delete($user->avatar);
+                $user->update(['avatar' => null]);
+                SecurityService::logActivity('avatar_deleted');
+            } catch (\Exception $e) {
+                \Log::error('Avatar delete failed: ' . $e->getMessage());
+                return redirect()->route('profile.show')->with('error', 'Gagal menghapus avatar. Silakan coba lagi.');
+            }
         }
         
         return redirect()->route('profile.show')->with('success', 'Avatar berhasil dihapus.');
