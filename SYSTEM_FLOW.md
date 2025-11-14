@@ -173,6 +173,13 @@ app/
 ├── Graphs/ [telah dihapus]
 └── Services/
     └── LangGraphService.php [telah dihapus]
+├── public/
+│   └── css/ [CSS assets offline-first approach]
+│       ├── bootstrap-icons-npm/ [Bootstrap Icons CSS dan font files (from npm)]
+│       ├── fontawesome/ [Font Awesome CSS file]
+│       ├── fonts/ [Google Fonts files]
+│       ├── webfonts/ [Font Awesome font files]
+│       └── bootstrap.min.css [Optimized Bootstrap CSS - unused files dihapus]
 ```
 
 File ini memberikan gambaran menyeluruh tentang bagaimana sistem bekerja dan bagaimana pengguna berinteraksi dengan aplikasi.

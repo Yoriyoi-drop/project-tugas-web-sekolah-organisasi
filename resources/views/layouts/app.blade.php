@@ -17,7 +17,7 @@
 
     <!-- Non-critical CSS -->
     <link href="{{ asset('css/fonts-google.css') }}" rel="stylesheet" media="print" onload="this.media='all'">
-    <link href="{{ asset('css/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet" media="print" onload="this.media='all'">
+    <link href="{{ asset('css/bootstrap-icons-npm/bootstrap-icons.css') }}" rel="stylesheet" media="print" onload="this.media='all'">
     <link href="{{ asset('css/fontawesome/all.min.css') }}" rel="stylesheet" media="print" onload="this.media='all'">
 
     @stack('styles')

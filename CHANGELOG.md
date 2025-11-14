@@ -2,6 +2,18 @@
 
 All notable changes to this project are documented in this file.
 
+## Unreleased — Offline CSS assets and performance optimization
+
+### Added
+- All CSS assets (Google Fonts, Bootstrap Icons from npm, Font Awesome) now stored locally for offline capability
+- Documentation updated to reflect offline-first CSS approach
+
+### Changed
+- Removed unused Bootstrap CSS files (grid, reboot, utilities, RTL versions, source maps) to optimize project size
+- Updated all layout files to reference local CSS assets instead of CDN
+- Updated to use Bootstrap Icons from npm package (public/css/bootstrap-icons-npm/)
+- Updated documentation files (README, INSTALLATION_GUIDE, ARCHITECTURE, API_DOCS, CONTACT_PAGE_README, LIBRARY_SETUP, SYSTEM_FLOW, DEMO_GUIDE, PROJECT_NOTES) with CSS asset information
+
 ## 2025-10-27 — Test fixes, security audit, OTP, and UI fixes
 
 ### Fixed

@@ -41,6 +41,9 @@ Kelebihan (Strengths)
 - Desain logging keamanan terpusat (SecurityLog + SecurityService) memudahkan audit dan analisis kejadian.
 - Struktur Laravel standar, menggunakan repositori, layanan, dan controller yang dipisah — memudahkan perubahan terlokalisasi.
 - Perbaikan yang dibuat mempertahankan backward-compatible behaviour kecuali perubahan tes kecil untuk mengakomodasi pengaruh lingkungan (charset header).
+- Optimisasi assets: Semua CSS assets (Google Fonts, Bootstrap Icons, Font Awesome) disimpan secara lokal untuk pendekatan offline-first, meningkatkan kinerja dan keandalan.
+- Pengurangan ukuran proyek: File-file Bootstrap yang tidak digunakan (grid, reboot, utilities, RTL, source maps) dihapus untuk mengoptimalkan ukuran proyek.
+- Peningkatan manajemen dependensi: Bootstrap Icons sekarang menggunakan versi dari npm package untuk manajemen dependensi yang lebih baik.
 
 Kekurangan dan risiko (Weaknesses & Risks)
 -----------------------------------------

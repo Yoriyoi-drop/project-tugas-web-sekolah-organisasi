@@ -38,6 +38,17 @@ composer install
 npm install
 ```
 
+### 2.2a CSS Assets Configuration
+All CSS assets (Google Fonts, Bootstrap Icons, Font Awesome) have been downloaded and stored locally in the public/css directory. No external dependencies are required for styling.
+
+The following CSS files are available locally:
+- `public/css/fonts-google.css` - Google Fonts with Inter, Playfair Display, and Poppins
+- `public/css/bootstrap-icons-npm/bootstrap-icons.css` - Bootstrap Icons (from npm)
+- `public/css/fontawesome/all.min.css` - Font Awesome
+- `public/css/bootstrap.min.css` - Only necessary Bootstrap CSS (optimized)
+
+Unused Bootstrap files (grid, reboot, utilities, rtl, source maps) have been removed to optimize project size.
+
 ### 2.3 Konfigurasi Environment
 ```bash
 # Copy file environment

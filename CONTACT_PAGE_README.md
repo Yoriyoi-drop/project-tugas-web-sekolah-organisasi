@@ -100,9 +100,11 @@ Modern, responsive contact page with teal gradient branding, accessible form val
 ## Usage Instructions
 
 ### 1. Dependencies
-- Google Fonts (Poppins) - Already included
-- Font Awesome 6.4.0 - Already included
-- Bootstrap 5 - Already available in project
+- Google Fonts (Poppins) - Already included locally in `public/css/fonts-google.css`
+- Font Awesome 6.4.0 - Already included locally in `public/css/fontawesome/all.min.css`
+- Bootstrap Icons (from npm) - Available via `public/css/bootstrap-icons-npm/bootstrap-icons.css`
+- Bootstrap 5 - Available via `public/css/bootstrap.min.css`
+- All CSS assets are stored locally for offline capability
 
 ### 2. Customization
 Update CSS variables in `:root` to change theme colors:

@@ -10,6 +10,13 @@ IMPORTANT
 - Do NOT remove or modify existing AI files (e.g. ContinueClient.php, AIController.php). We will only extend capabilities around them (caching, queueing, rate-limits).
 - Run these steps on a clean working tree and commit often.
 
+NOTE ON CSS ASSETS
+------------------
+- All CSS assets (Google Fonts, Bootstrap Icons from npm, Font Awesome) are stored locally in public/css directory
+- Only necessary Bootstrap files are kept (bootstrap.min.css), unused files (grid, reboot, utilities, RTL versions) have been removed
+- CSS assets are referenced via Laravel's asset() helper for proper URL generation
+- Bootstrap Icons are now loaded from npm package (public/css/bootstrap-icons-npm/)
+
 1) Composer packages (Laravel 12 compatible)
 ------------------------------------------
 Run these composer commands (single-line recommended):

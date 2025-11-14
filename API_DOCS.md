@@ -6,6 +6,7 @@
 - **Backend**: Laravel 12
 - **Database**: SQLite (default), MySQL/PostgreSQL (opsional)
 - **Frontend**: Bootstrap 5, JavaScript ES6
+- **CSS Assets**: Google Fonts, Bootstrap Icons, Font Awesome (offline-first approach)
 - **Framework Tambahan**: Spatie Laravel Permission, Laravel Sanctum, Livewire
 
 ### 1.2 Struktur Direktori Penting
@@ -24,6 +25,12 @@
 ├── config/                # Configuration files
 ├── database/              # Migrations, seeds, factories
 ├── public/                # Public assets
+│   ├── css/              # CSS assets (offline-first approach)
+│   │   ├── bootstrap-icons-npm/ # Bootstrap Icons CSS and fonts (from npm)
+│   │   ├── fontawesome/     # Font Awesome CSS
+│   │   ├── fonts/           # Google Fonts files
+│   │   ├── webfonts/        # Font Awesome font files
+│   │   └── bootstrap.min.css # Optimized Bootstrap CSS
 ├── resources/             # Views, assets
 └── storage/               # File storage
 ```

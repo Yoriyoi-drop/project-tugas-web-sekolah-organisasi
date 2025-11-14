@@ -8,6 +8,14 @@ Sistem ini menggunakan arsitektur Model-View-Controller (MVC) dengan pendekatan 
 - **View**: Blade templates dengan Bootstrap 5
 - **Controller**: RESTful controllers dengan middleware
 
+### 1.2 CSS Assets Arsitektur
+Sistem menggunakan pendekatan offline-first untuk aset CSS:
+- **Google Fonts**: Inter, Playfair Display, dan Poppins disimpan lokal di `public/css/fonts/`
+- **Bootstrap Icons**: CSS dan font files disimpan di `public/css/bootstrap-icons-npm/` (dari npm)
+- **Font Awesome**: CSS dan font files disimpan di `public/css/fontawesome/` dan `public/css/webfonts/`
+- **Optimasi**: Hanya file `bootstrap.min.css` yang digunakan, file tidak digunakan dihapus
+- **Referensi**: Semua file disertakan melalui helper `asset()` Laravel
+
 ### 1.2 Komponen Inti
 1. **Authentication System**: Login, registrasi, OTP, 2FA
 2. **Authorization System**: Role & permission (Spatie + legacy)
@@ -160,10 +168,12 @@ storage/
 ```
 public/
 ├── storage/ -> symlink ke storage/app/public
-└── assets/
-    ├── css/
-    ├── js/
-    └── images/
+└── css/ - CSS assets (Google Fonts, Bootstrap Icons, Font Awesome)
+    ├── bootstrap-icons-npm/ - Bootstrap Icons CSS dan font files (from npm)
+    ├── fontawesome/ - Font Awesome CSS file
+    ├── fonts/ - Google Fonts files
+    ├── webfonts/ - Font Awesome font files
+    └── bootstrap.min.css - Only necessary Bootstrap CSS file
 ```
 
 ## 6. Workflow Penting

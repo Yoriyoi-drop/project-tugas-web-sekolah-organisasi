@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daftar Akun - {{ site_name() }}</title>
     <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/bootstrap-icons-npm/bootstrap-icons.css') }}" rel="stylesheet">
     <style>
         body { background: linear-gradient(135deg, #20b2aa 0%, #17a2b8 100%); min-height: 100vh; }
         .card-reg { backdrop-filter: blur(10px); background: rgba(255,255,255,0.95); }

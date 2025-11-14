@@ -11,6 +11,7 @@ Modern responsive website built with Laravel & Bootstrap 5
 - ✅ **Admin Panel** - Organization & user management
 - ✅ **Avatar Upload** - Profile picture with fallback handling
 - ✅ **Role Management** - Multi-system role/permission support
+- ✅ **Offline CSS Assets** - All CSS resources (Google Fonts, Bootstrap Icons from npm, Font Awesome) available locally
 
 ## 🎨 Design Highlights
 
@@ -18,6 +19,7 @@ Modern responsive website built with Laravel & Bootstrap 5
 - **Accent Color**: `#00BFA5`
 - **Typography**: Poppins font with fluid scaling
 - **Icons**: Font Awesome 6.4.0
+- **Offline CSS Assets**: All CSS files including Google Fonts, Bootstrap Icons (from npm), and Font Awesome are stored locally for improved performance and offline capability
 
 ## 🚀 Installation
 
@@ -119,6 +121,7 @@ php artisan serve
 
 - **Backend**: Laravel 12
 - **Frontend**: Bootstrap 5, Font Awesome, Vite
+- **CSS Assets**: Google Fonts, Bootstrap Icons (from npm), Font Awesome (all stored locally for offline capability)
 - **Database**: SQLite/MySQL/PostgreSQL
 - **Role Management**: Spatie Laravel Permission
 - **Deployment**: Vercel/Netlify ready
@@ -150,6 +153,7 @@ php artisan serve
 - **Reduced SecurityLog cache clearing overhead**: Removed automatic cache clear on every log
 - **Optimized role checking**: More efficient database queries
 - **Better error handling**: Prevents crashes during permission checks
+- **Asset optimization**: Removed unused Bootstrap CSS files to reduce project size
 
 ### 🎨 UI/UX Improvements
 - **Better avatar display**: More reliable avatar loading with fallback

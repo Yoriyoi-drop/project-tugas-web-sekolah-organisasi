@@ -102,8 +102,10 @@
 - Bootstrap 5 framework
 - Mobile-first CSS
 - Progressive enhancement
-- Performance optimized
+- Performance optimized (offline CSS assets)
 - SEO friendly structure
+- Offline-first approach for CSS resources
+- Bootstrap Icons from npm package
 
 ---
 
