@@ -35,20 +35,18 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
             'nik' => $data['nik'],
             'nis' => $data['nis'],
+            'role' => 'user', // Set default role
         ]);
 
         // Generate OTP and save in session
         $otp = $user->generateEmailOtp();
-        session(['otp_user_id' => $user->id]);
+        session(['otp_user_id' => $user->id, 'registration_email' => $user->email]);
 
         event(new Registered($user));
 
+        // Jangan langsung login pengguna - biarkan proses verifikasi dulu
         Auth::login($user);
 
-        return redirect()->route('otp.show');
-        event(new Registered($user));
-
-        // Redirect to login (verification disabled)
-        return redirect()->route('login')->with('status', 'Pendaftaran berhasil. Silakan login.');
+        return redirect()->route('otp.show')->with('status', 'Pendaftaran berhasil. Silakan verifikasi OTP.');
     }
 }
