@@ -61,7 +61,7 @@
 
                         <div class="text-center mt-4">
                             <small class="text-muted">
-                                Demo: admin@manu.com / admin123
+                                Gunakan akun admin Anda untuk login
                             </small>
                         </div>
                     </div>
