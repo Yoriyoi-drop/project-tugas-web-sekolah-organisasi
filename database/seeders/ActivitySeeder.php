@@ -49,6 +49,14 @@ class ActivitySeeder extends Seeder
                 'date' => Carbon::now()->addDays(60),
                 'location' => 'School Grounds',
                 'status' => 'upcoming',
+            ],
+            [
+                'title' => 'School Cleanup Drive',
+                'description' => 'Community service event to clean and beautify the school premises.',
+                'category' => 'School',
+                'date' => Carbon::now()->addDays(20),
+                'location' => 'School Grounds',
+                'status' => 'upcoming',
             ]
         ];
 

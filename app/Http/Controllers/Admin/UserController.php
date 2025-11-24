@@ -30,15 +30,15 @@ class UserController extends Controller
     {
         $rules = [
             'name' => 'required|string|max:255',
-            'email' => ['required','string','email:rfc,dns','max:255','unique:users,email', new EmailDomainAllowed()],
-            'password' => 'required|string|min:6|confirmed',
+            'email' => ['required','string','email','max:255','unique:users,email'],
+            'password' => 'required|string|min:6',
         ];
 
         if (Schema::hasColumn('users', 'nik')) {
-            $rules['nik'] = ['required','string', new NikFormat()];
+            $rules['nik'] = ['nullable','string', new NikFormat()];
         }
         if (Schema::hasColumn('users', 'nis')) {
-            $rules['nis'] = ['required','string', new NisFormat()];
+            $rules['nis'] = ['nullable','string', new NisFormat()];
         }
 
         // Normalize before validation

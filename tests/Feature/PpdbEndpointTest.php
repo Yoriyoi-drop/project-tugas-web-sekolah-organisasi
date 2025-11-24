@@ -5,6 +5,9 @@ use App\Models\PPDB;
 it('returns ppdb list via api', function () {
     // migrate and create sample data
     $this->artisan('migrate')->assertExitCode(0);
+    
+    // Create a user for authentication
+    $user = \App\Models\User::factory()->create();
 
     PPDB::create([
         'name' => 'Test PPDB 1',
@@ -22,7 +25,7 @@ it('returns ppdb list via api', function () {
         'status' => 'pending'
     ]);
 
-    $response = $this->getJson('/api/data/ppdb');
+    $response = $this->actingAs($user)->getJson('/api/data/ppdb');
     $response->assertStatus(200);
     $response->assertJsonCount(1);
 });

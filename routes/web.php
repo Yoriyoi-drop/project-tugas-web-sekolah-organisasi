@@ -32,6 +32,8 @@ Route::post('/daftar/{organization}', [\App\Http\Controllers\RegistrationControl
 // OTP routes
 Route::get('/otp/verify', [\App\Http\Controllers\OtpController::class, 'show'])->name('otp.show');
 Route::post('/otp/verify', [\App\Http\Controllers\OtpController::class, 'verify'])->name('otp.verify');
+// Email verification route (for tests - uses same controller as OTP)
+Route::get('/email/verify', [\App\Http\Controllers\OtpController::class, 'show'])->name('verification.notice');
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->middleware('throttle:10,1');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
@@ -57,7 +59,7 @@ Route::post('/reset-password', [\App\Http\Controllers\Auth\PasswordResetControll
     ->name('password.update');
 
 // Profile routes
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'show'])->name('profile.show');
     Route::get('/profile/edit', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
@@ -81,7 +83,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // Admin routes (email verification disabled)
-Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'admin', 'verified'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('posts', \App\Http\Controllers\Admin\PostController::class);
     Route::resource('organizations', \App\Http\Controllers\Admin\OrganizationController::class);

@@ -7,6 +7,12 @@ class ActivityFactory extends Factory
 {
     public function definition()
     {
-        return [];
+        return [
+            'title' => $this->faker->sentence(),
+            'description' => $this->faker->paragraph(),
+            'date' => $this->faker->date(),
+            'location' => $this->faker->address(),
+            'category' => $this->faker->word(),
+        ];
     }
 }

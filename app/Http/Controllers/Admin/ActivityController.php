@@ -26,11 +26,17 @@ class ActivityController extends Controller
             'title' => 'required|max:255',
             'description' => 'required',
             'date' => 'required|date',
-            'location' => 'required'
+            'location' => 'required',
+            'category' => 'required|string|max:255'
         ]);
 
         Activity::create($request->all());
         return redirect()->route('admin.activities.index')->with('success', 'Activity created successfully');
+    }
+
+    public function show(Activity $activity)
+    {
+        return view('admin.activities.show', compact('activity'));
     }
 
     public function edit(Activity $activity)
@@ -44,7 +50,8 @@ class ActivityController extends Controller
             'title' => 'required|max:255',
             'description' => 'required',
             'date' => 'required|date',
-            'location' => 'required'
+            'location' => 'required',
+            'category' => 'required|string|max:255'
         ]);
 
         $activity->update($request->all());

@@ -29,6 +29,11 @@
                             @error('location')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="mb-3">
+                            <label class="form-label">Category</label>
+                            <input type="text" name="category" class="form-control @error('category') is-invalid @enderror" value="{{ old('category', $activity->category) }}">
+                            @error('category')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
+                        <div class="mb-3">
                             <label class="form-label">Description</label>
                             <textarea name="description" rows="5" class="form-control @error('description') is-invalid @enderror">{{ old('description', $activity->description) }}</textarea>
                             @error('description')<div class="invalid-feedback">{{ $message }}</div>@enderror

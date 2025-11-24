@@ -45,7 +45,8 @@ class RegisterController extends Controller
         event(new Registered($user));
 
         // Jangan langsung login pengguna - biarkan proses verifikasi dulu
-        Auth::login($user);
+        // Jangan langsung login pengguna - biarkan proses verifikasi dulu
+        // Auth::login($user);
 
         return redirect()->route('otp.show')->with('status', 'Pendaftaran berhasil. Silakan verifikasi OTP.');
     }

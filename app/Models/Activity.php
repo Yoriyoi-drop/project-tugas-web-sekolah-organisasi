@@ -10,7 +10,7 @@ class Activity extends Model
     use HasFactory;
     
     protected $fillable = [
-        'title', 'description', 'date', 'location'
+        'title', 'description', 'date', 'location', 'category'
     ];
 
     protected $casts = [

@@ -12,9 +12,25 @@ use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles {
+        hasRole as hasSpatieRole;
+    }
+
+    /**
+     * Send the email verification notification.
+     *
+     * @return void
+     */
+    public function sendEmailVerificationNotification()
+    {
+        // We use OTP for verification, handled manually in controllers.
+        // This override prevents Laravel from trying to send the default link
+        // which requires the 'verification.verify' route.
+    }
 
     public function generateEmailOtp($ip = null, $userAgent = null)
     {
@@ -83,7 +99,7 @@ class User extends Authenticatable
     {
         try {
             // Pertama periksa menggunakan metode asli Spatie
-            if ($this->hasDirectRole($role)) {
+            if ($this->hasSpatieRole($role)) {
                 return true;
             }
             
@@ -130,6 +146,11 @@ class User extends Authenticatable
     public function hasAbility(string $ability): bool
     {
         try {
+            // Admins have all abilities
+            if ($this->isAdmin()) {
+                return true;
+            }
+
             // Pertama periksa menggunakan metode can asli Spatie
             if ($this->can($ability)) {
                 return true;
