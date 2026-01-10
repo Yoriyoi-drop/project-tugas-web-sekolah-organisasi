@@ -4,16 +4,16 @@
 
 @section('content')
     <!-- Page Header -->
-    <section class="page-header">
-        <div class="container">
+    <section class="page-header py-5 d-flex align-items-center" style="min-height: 50vh;">
+        <div class="container" data-aos="fade-up">
             <div class="row justify-content-center text-center">
                 <div class="col-lg-8">
-                    <div class="mb-4">
-                        <i class="bi bi-building" style="font-size: 4rem;"></i>
+                    <div class="mb-4 d-inline-flex p-3 bg-white bg-opacity-10 rounded-circle shadow-sm">
+                        <i class="bi bi-building-school text-warning" style="font-size: 3rem;"></i>
                     </div>
-                    <h1 class="display-3 fw-bold mb-4">Tentang Kami</h1>
-                    <p class="lead mb-0">Mengenal Lebih Dekat Madrasah Aliyah NU Nusantara</p>
-                    <p class="mb-0">Lembaga pendidikan Islam yang membentuk generasi santri berakhlak mulia</p>
+                    <h1 class="display-3 fw-bold mb-4 text-white">Tentang Kami</h1>
+                    <p class="lead mb-0 text-white opacity-90">Mengenal Lebih Dekat Madrasah Aliyah NU Nusantara</p>
+                    <p class="text-white opacity-75">Lembaga pendidikan Islam yang membentuk generasi santri berakhlak mulia</p>
                 </div>
             </div>
         </div>
@@ -36,30 +36,14 @@
 
                     <!-- Stats -->
                     <div class="row g-3 mt-4">
+                        @foreach($statistics ?? [] as $stat)
                         <div class="col-6 col-md-3">
-                            <x-card class="text-center h-100">
-                                <div class="h3 text-primary fw-bold mb-1">39</div>
-                                <small class="text-muted">Tahun Berdiri</small>
+                            <x-card class="text-center h-100 border-0 shadow-sm">
+                                <div class="h3 text-primary fw-bold mb-1">{{ $stat->value }}</div>
+                                <small class="text-muted">{{ $stat->description }}</small>
                             </x-card>
                         </div>
-                        <div class="col-6 col-md-3">
-                            <x-card class="text-center h-100">
-                                <div class="h3 text-success fw-bold mb-1">850+</div>
-                                <small class="text-muted">Siswa Aktif</small>
-                            </x-card>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <x-card class="text-center h-100">
-                                <div class="h3 text-warning fw-bold mb-1">65</div>
-                                <small class="text-muted">Tenaga Pendidik</small>
-                            </x-card>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <x-card class="text-center h-100">
-                                <div class="h3 text-info fw-bold mb-1">2500+</div>
-                                <small class="text-muted">Alumni</small>
-                            </x-card>
-                        </div>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -112,7 +96,7 @@
                 </div>
             </div>
             <div class="row g-4 mb-5">
-                @foreach(\App\Models\Value::active()->ordered()->get() as $value)
+                @foreach($values ?? [] as $value)
                 <div class="col-lg-3 col-md-6">
                     <x-card class="text-center h-100">
                         <i class="bi {{ $value->icon }} text-{{ $value->color }} mb-3" style="font-size: 3rem;"></i>
@@ -131,30 +115,16 @@
                 </div>
             </div>
             <div class="row g-4 mb-5">
-                @foreach(\App\Models\Facility::active()->ordered()->get() as $facility)
+                @foreach($facilities ?? [] as $facility)
                 <div class="col-lg-4 col-md-6">
-                    <x-card class="h-100">
+                    <x-card class="h-100 border-0 shadow-sm">
                         <div class="d-flex align-items-start gap-3">
-                            <i class="bi {{ $facility->icon }} text-primary" style="font-size: 2rem;"></i>
-                            <div>
-                                <h6 class="fw-bold mb-2">{{ $facility->title }}</h6>
-                                <p class="text-muted mb-0">{{ $facility->description }}</p>
+                            <div class="bg-primary bg-opacity-10 p-3 rounded-3">
+                                <i class="bi {{ $facility->icon }} text-primary fs-3"></i>
                             </div>
-                        </div>
-                    </x-card>
-                </div>
-                @endforeach
-            </div>
-        </div>
-    </section>
-@endsectionility)
-                <div class="col-lg-4 col-md-6">
-                    <x-card class="h-100">
-                        <div class="d-flex align-items-start gap-3">
-                            <i class="bi {{ $facility['icon'] }} text-primary" style="font-size: 2rem;"></i>
                             <div>
-                                <h6 class="fw-bold mb-2">{{ $facility['title'] }}</h6>
-                                <p class="text-muted mb-0">{{ $facility['desc'] }}</p>
+                                <h6 class="fw-bold mb-2">{{ $facility->name }}</h6>
+                                <p class="text-muted small mb-0">{{ $facility->description }}</p>
                             </div>
                         </div>
                     </x-card>
@@ -182,12 +152,12 @@
                 @endphp
                 @foreach($achievements as $achievement)
                 <div class="col-lg-4 col-md-6">
-                    <x-card class="h-100">
+                    <x-card class="h-100 border-0 shadow-sm">
                         <div class="d-flex align-items-start gap-3">
-                            <i class="bi {{ $achievement['icon'] }} text-warning" style="font-size: 2rem;"></i>
+                            <i class="bi {{ $achievement['icon'] }} text-warning fs-2"></i>
                             <div>
                                 <h6 class="fw-bold mb-2">{{ $achievement['title'] }}</h6>
-                                <span class="badge bg-light text-dark">{{ $achievement['year'] }}</span>
+                                <span class="badge bg-light text-dark border">{{ $achievement['year'] }}</span>
                             </div>
                         </div>
                     </x-card>

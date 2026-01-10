@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\PPDB;
@@ -10,13 +11,12 @@ class PPDBController extends Controller
 {
     public function index()
     {
-        $ppdb = PPDB::latest()->paginate(10);
-        return view('ppdb.index', compact('ppdb'));
+        return view('pages.ppdb.index');
     }
 
     public function create()
     {
-        return view('ppdb.create');
+        return view('pages.ppdb.form');
     }
 
     public function store(PPDBRequest $request)
@@ -24,61 +24,38 @@ class PPDBController extends Controller
         try {
             DB::beginTransaction();
 
-            $ppdb = PPDB::create($request->validated());
+            $validated = $request->validated();
+            
+            // Basic sanitization
+            $validated['name'] = strip_tags($validated['name']);
+            $validated['birth_place'] = strip_tags($validated['birth_place']);
+            $validated['address'] = strip_tags($validated['address']);
+            $validated['parent_name'] = strip_tags($validated['parent_name']);
+            $validated['previous_school'] = strip_tags($validated['previous_school']);
+            $validated['desired_major'] = strip_tags($validated['desired_major'] ?? '');
+            
+            $validated['status'] = 'pending';
+
+            $ppdb = PPDB::create($validated);
 
             DB::commit();
 
-            return redirect()->route('ppdb.index')
-                ->with('success', 'Pendaftaran PPDB berhasil disimpan.');
+            return redirect()->route('ppdb.success')
+                ->with('registration_name', $ppdb->name);
         } catch (\Exception $e) {
             DB::rollback();
 
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+                ->with('error', 'Terjadi kesalahan saat memproses pendaftaran Anda. Silakan coba lagi.');
         }
     }
 
-    public function show(PPDB $ppdb)
+    public function success()
     {
-        return view('ppdb.show', compact('ppdb'));
-    }
-
-    public function edit(PPDB $ppdb)
-    {
-        return view('ppdb.edit', compact('ppdb'));
-    }
-
-    public function update(PPDBRequest $request, PPDB $ppdb)
-    {
-        try {
-            DB::beginTransaction();
-
-            $ppdb->update($request->validated());
-
-            DB::commit();
-
-            return redirect()->route('ppdb.index')
-                ->with('success', 'Data PPDB berhasil diperbarui.');
-        } catch (\Exception $e) {
-            DB::rollback();
-
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        if (!session('registration_name')) {
+            return redirect()->route('ppdb.create');
         }
-    }
-
-    public function destroy(PPDB $ppdb)
-    {
-        try {
-            $ppdb->delete();
-
-            return redirect()->route('ppdb.index')
-                ->with('success', 'Data PPDB berhasil dihapus.');
-        } catch (\Exception $e) {
-            return redirect()->back()
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
-        }
+        return view('pages.ppdb.success');
     }
 }

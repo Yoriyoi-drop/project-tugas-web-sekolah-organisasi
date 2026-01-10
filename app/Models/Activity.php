@@ -10,7 +10,7 @@ class Activity extends Model
     use HasFactory;
     
     protected $fillable = [
-        'title', 'description', 'date', 'location', 'category'
+        'title', 'slug', 'description', 'date', 'location', 'category'
     ];
 
     protected $casts = [
@@ -40,5 +40,20 @@ class Activity extends Model
             ResponseCache::forget('/beranda');
             ResponseCache::forget('/kegiatan');
         });
+
+        static::creating(function ($activity) {
+            $activity->slug = \Illuminate\Support\Str::slug($activity->title . '-' . \Illuminate\Support\Str::random(5));
+        });
+
+        static::updating(function ($activity) {
+            if ($activity->isDirty('title')) {
+                $activity->slug = \Illuminate\Support\Str::slug($activity->title . '-' . \Illuminate\Support\Str::random(5));
+            }
+        });
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
     }
 }

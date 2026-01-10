@@ -28,7 +28,12 @@ class StatisticController extends Controller
             'description' => 'required|max:255'
         ]);
 
-        Statistic::create($request->only(['label', 'value', 'description', 'order']));
+        $data = $request->only(['label', 'value', 'description', 'order']);
+        $data['label'] = strip_tags($data['label']);
+        $data['value'] = strip_tags($data['value']);
+        $data['description'] = strip_tags($data['description']);
+
+        Statistic::create($data);
         return redirect()->route('admin.statistics.index')->with('success', 'Statistic created successfully');
     }
 
@@ -45,7 +50,12 @@ class StatisticController extends Controller
             'description' => 'required|max:255'
         ]);
 
-        $statistic->update($request->only(['label', 'value', 'description', 'order']));
+        $data = $request->only(['label', 'value', 'description', 'order']);
+        $data['label'] = strip_tags($data['label']);
+        $data['value'] = strip_tags($data['value']);
+        $data['description'] = strip_tags($data['description']);
+
+        $statistic->update($data);
         return redirect()->route('admin.statistics.index')->with('success', 'Statistic updated successfully');
     }
 

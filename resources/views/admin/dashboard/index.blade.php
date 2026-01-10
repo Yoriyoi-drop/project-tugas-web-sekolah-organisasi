@@ -65,6 +65,21 @@
             </div>
         </div>
     </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-danger shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">PPDB Pending</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $stats['ppdb_pending'] ?? 0 }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="bi bi-person-plus fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Quick Actions -->
@@ -76,24 +91,29 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-3 mb-3">
-                        <a href="{{ route('admin.posts.create') }}" class="btn btn-primary btn-block">
+                    <div class="col-md-2 mb-3">
+                        <a href="{{ route('admin.posts.create') }}" class="btn btn-primary d-block w-100">
                             <i class="bi bi-plus-circle me-2"></i>New Post
                         </a>
                     </div>
-                    <div class="col-md-3 mb-3">
-                        <a href="{{ route('admin.organizations.create') }}" class="btn btn-success btn-block">
-                            <i class="bi bi-plus-circle me-2"></i>New Organization
+                    <div class="col-md-2 mb-3">
+                        <a href="{{ route('admin.organizations.create') }}" class="btn btn-success d-block w-100">
+                            <i class="bi bi-plus-circle me-2"></i>New Org
+                        </a>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <a href="{{ route('admin.activities.create') }}" class="btn btn-warning d-block w-100">
+                            <i class="bi bi-plus-circle me-2"></i>New Act
                         </a>
                     </div>
                     <div class="col-md-3 mb-3">
-                        <a href="{{ route('admin.activities.create') }}" class="btn btn-warning btn-block">
-                            <i class="bi bi-plus-circle me-2"></i>New Activity
+                        <a href="{{ route('admin.ppdb.index') }}" class="btn btn-danger d-block w-100">
+                            <i class="bi bi-person-lines-fill me-2"></i>Manage PPDB
                         </a>
                     </div>
                     <div class="col-md-3 mb-3">
-                        <a href="{{ route('admin.statistics.create') }}" class="btn btn-info btn-block">
-                            <i class="bi bi-plus-circle me-2"></i>New Statistic
+                        <a href="{{ route('admin.settings.index') }}" class="btn btn-info d-block w-100">
+                            <i class="bi bi-gear-fill me-2"></i>Settings
                         </a>
                     </div>
                 </div>

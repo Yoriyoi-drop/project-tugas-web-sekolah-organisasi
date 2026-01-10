@@ -30,6 +30,9 @@ class StudentController extends Controller
             'address' => 'required|string',
         ]);
 
+        $validated['name'] = strip_tags($validated['name']);
+        $validated['address'] = strip_tags($validated['address']);
+
         Student::create($validated);
         return redirect()->route('admin.students.index')->with('success', 'Student created successfully');
     }
@@ -48,12 +51,15 @@ class StudentController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'nis' => 'required|string|unique:students,nis,' . $student->id,
-            'email' => 'required|email|unique:students,email,' . $student->id,
+            'nis' => ['required', 'string', \Illuminate\Validation\Rule::unique('students', 'nis')->ignore($student->id)],
+            'email' => ['required', 'email', \Illuminate\Validation\Rule::unique('students', 'email')->ignore($student->id)],
             'phone' => 'required|string|max:20',
             'class' => 'required|string|max:50',
             'address' => 'required|string',
         ]);
+
+        $validated['name'] = strip_tags($validated['name']);
+        $validated['address'] = strip_tags($validated['address']);
 
         $student->update($validated);
         return redirect()->route('admin.students.index')->with('success', 'Student updated successfully');

@@ -10,7 +10,7 @@
                 <div class="card-header">
                     <h3 class="card-title">Create New Activity</h3>
                 </div>
-                <form action="{{ route('admin.activities.store') }}" method="POST">
+                <form action="{{ route('admin.activities.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="card-body">
                         <div class="mb-3">
@@ -27,6 +27,10 @@
                             <label class="form-label">Location</label>
                             <input type="text" name="location" class="form-control @error('location') is-invalid @enderror" value="{{ old('location') }}">
                             @error('location')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        <div class="mb-3">
+                            <label class="form-label">Featured Image</label>
+                            <input type="file" name="image" class="form-control @error('image') is-invalid @enderror" accept="image/*">
+                            @error('image')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Category</label>

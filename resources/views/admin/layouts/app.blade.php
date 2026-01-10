@@ -124,8 +124,18 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('admin.ppdb.*') ? 'active bg-primary text-white' : 'text-dark' }}" href="{{ route('admin.ppdb.index') }}">
+                                <i class="bi bi-person-plus me-2"></i>PPDB
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('admin.registrations.*') ? 'active bg-primary text-white' : 'text-dark' }}" href="{{ route('admin.registrations.index') }}">
-                                <i class="bi bi-person-plus me-2"></i>Registrations
+                                <i class="bi bi-journal-check me-2"></i>Registrations
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('admin.security.*') ? 'active bg-primary text-white' : 'text-dark' }}" href="{{ route('admin.security.audit') }}">
+                                <i class="bi bi-shield-lock me-2"></i>Security Audit
                             </a>
                         </li>
                         <li class="nav-item">

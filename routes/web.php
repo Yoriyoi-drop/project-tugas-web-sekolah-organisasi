@@ -9,9 +9,11 @@ use App\Http\Controllers\Admin\DashboardController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/beranda', [HomeController::class, 'index'])->name('beranda');
 Route::get('/organisasi', [OrganizationController::class, 'index'])->name('organisasi');
-Route::get('/organisasi/{id}', [OrganizationController::class, 'show'])->whereNumber('id')->name('organisasi.show');
+Route::get('/organisasi/{organization}', [OrganizationController::class, 'show'])->name('organisasi.show');
 Route::get('/blog', [BlogController::class, 'index'])->name('blog');
+Route::get('/blog/{post}', [BlogController::class, 'show'])->name('blog.show');
 Route::get('/kegiatan', [ActivityController::class, 'index'])->name('kegiatan');
+Route::get('/kegiatan/{activity}', [ActivityController::class, 'show'])->name('kegiatan.show');
 Route::get('/fasilitas', [\App\Http\Controllers\FacilityController::class, 'index'])->name('fasilitas');
 Route::get('/fasilitas/{facility}', [\App\Http\Controllers\FacilityController::class, 'show'])->name('fasilitas.show');
 Route::get('/tentang', [AboutController::class, 'index'])->name('tentang');
@@ -27,11 +29,18 @@ Route::get('/data-demo', function () {
 Route::get('/daftar/{organization}', [\App\Http\Controllers\RegistrationController::class, 'show'])->name('registration.show');
 Route::post('/daftar/{organization}', [\App\Http\Controllers\RegistrationController::class, 'store'])->name('registration.store');
 
+// PPDB routes
+Route::get('/ppdb', [\App\Http\Controllers\PPDBController::class, 'index'])->name('ppdb.index');
+Route::get('/ppdb/daftar', [\App\Http\Controllers\PPDBController::class, 'create'])->name('ppdb.create');
+Route::post('/ppdb/daftar', [\App\Http\Controllers\PPDBController::class, 'store'])->name('ppdb.store');
+Route::get('/ppdb/sukses', [\App\Http\Controllers\PPDBController::class, 'success'])->name('ppdb.success');
+
 // Authentication routes
 
 // OTP routes
 Route::get('/otp/verify', [\App\Http\Controllers\OtpController::class, 'show'])->name('otp.show');
 Route::post('/otp/verify', [\App\Http\Controllers\OtpController::class, 'verify'])->name('otp.verify');
+Route::post('/otp/resend', [\App\Http\Controllers\OtpController::class, 'resend'])->name('otp.resend');
 // Email verification route (for tests - uses same controller as OTP)
 Route::get('/email/verify', [\App\Http\Controllers\OtpController::class, 'show'])->name('verification.notice');
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -98,6 +107,7 @@ Route::middleware(['auth', 'admin', 'verified'])->prefix('admin')->name('admin.'
     Route::resource('registrations', \App\Http\Controllers\Admin\RegistrationController::class)->only(['index', 'show', 'destroy']);
     Route::patch('registrations/{registration}/status', [\App\Http\Controllers\Admin\RegistrationController::class, 'updateStatus'])->name('registrations.update-status');
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->only(['index', 'create', 'store']);
+    Route::resource('ppdb', \App\Http\Controllers\Admin\PPDBController::class);
 
     // Security audit routes
     Route::get('security/audit', [\App\Http\Controllers\Admin\SecurityAuditController::class, 'index'])

@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Organization;
+use App\Http\Requests\Admin\StoreOrganizationRequest;
+use App\Http\Requests\Admin\UpdateOrganizationRequest;
 use Illuminate\Http\Request;
 
 class OrganizationController extends Controller
@@ -22,56 +24,11 @@ class OrganizationController extends Controller
         return view('admin.organizations.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreOrganizationRequest $request)
     {
-        $request->validate([
-            'name' => 'required|max:255',
-            'type' => 'required|max:255',
-            'description' => 'required',
-            'icon' => 'required|max:255'
-        ]);
+        $data = $this->processRequestData($request);
 
-        // Process programs
-        $programs = [];
-        if ($request->programs) {
-            $programs = array_filter(array_map('trim', explode("\n", $request->programs)));
-        }
-
-        // Process leadership
-        $leadership = [];
-        if ($request->leadership_names && $request->leadership_positions) {
-            foreach ($request->leadership_names as $index => $name) {
-                if (!empty($name) && !empty($request->leadership_positions[$index])) {
-                    $leadership[] = [
-                        'name' => trim($name),
-                        'position' => trim($request->leadership_positions[$index])
-                    ];
-                }
-            }
-        }
-
-        // Process tags
-        $tags = [];
-        if ($request->tags) {
-            $tags = array_filter(array_map('trim', explode(',', $request->tags)));
-        }
-
-        Organization::create([
-            'name' => $request->name,
-            'type' => $request->type,
-            'description' => $request->description,
-            'icon' => $request->icon,
-            'color' => $request->color ?? 'primary',
-            'tagline' => $request->tagline,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'location' => $request->location,
-            'tags' => $tags,
-            'programs' => $programs,
-            'leadership' => $leadership,
-            'order' => $request->order ?? 0,
-            'is_active' => $request->is_active ?? true
-        ]);
+        Organization::create($data);
         return redirect()->route('admin.organizations.index')->with('success', 'Organization created successfully');
     }
 
@@ -80,15 +37,22 @@ class OrganizationController extends Controller
         return view('admin.organizations.edit', compact('organization'));
     }
 
-    public function update(Request $request, Organization $organization)
+    public function update(UpdateOrganizationRequest $request, Organization $organization)
     {
-        $request->validate([
-            'name' => 'required|max:255',
-            'type' => 'required|max:255',
-            'description' => 'required',
-            'icon' => 'required|max:255'
-        ]);
+        $data = $this->processRequestData($request);
 
+        $organization->update($data);
+        return redirect()->route('admin.organizations.index')->with('success', 'Organization updated successfully');
+    }
+
+    public function destroy(Organization $organization)
+    {
+        $organization->delete();
+        return redirect()->route('admin.organizations.index')->with('success', 'Organization deleted successfully');
+    }
+
+    private function processRequestData($request): array
+    {
         // Process programs
         $programs = [];
         if ($request->programs) {
@@ -114,10 +78,11 @@ class OrganizationController extends Controller
             $tags = array_filter(array_map('trim', explode(',', $request->tags)));
         }
 
-        $organization->update([
+        return [
             'name' => $request->name,
             'type' => $request->type,
-            'description' => $request->description,
+            // Basic XSS sanitization
+            'description' => strip_tags($request->description, '<p><b><i><u><ul><ol><li><br>'),
             'icon' => $request->icon,
             'color' => $request->color ?? 'primary',
             'tagline' => $request->tagline,
@@ -128,14 +93,7 @@ class OrganizationController extends Controller
             'programs' => $programs,
             'leadership' => $leadership,
             'order' => $request->order ?? 0,
-            'is_active' => $request->is_active ?? true
-        ]);
-        return redirect()->route('admin.organizations.index')->with('success', 'Organization updated successfully');
-    }
-
-    public function destroy(Organization $organization)
-    {
-        $organization->delete();
-        return redirect()->route('admin.organizations.index')->with('success', 'Organization deleted successfully');
+            'is_active' => $request->boolean('is_active') // Robust boolean handling
+        ];
     }
 }

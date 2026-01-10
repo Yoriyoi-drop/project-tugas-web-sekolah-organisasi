@@ -10,7 +10,7 @@ class Post extends Model
     use HasFactory;
     
     protected $fillable = [
-        'title', 'excerpt', 'content', 'icon', 'category', 'color',
+        'title', 'slug', 'excerpt', 'content', 'icon', 'category', 'color',
         'author', 'is_featured', 'is_published', 'published_at'
     ];
 
@@ -22,7 +22,6 @@ class Post extends Model
 
     protected $attributes = [
         'color' => 'primary',
-        'author' => 'Admin',
         'is_featured' => false,
         'is_published' => true
     ];
@@ -65,5 +64,20 @@ class Post extends Model
             ResponseCache::forget('/beranda');
             ResponseCache::forget('/blog');
         });
+
+        static::creating(function ($post) {
+            $post->slug = \Illuminate\Support\Str::slug($post->title . '-' . \Illuminate\Support\Str::random(5));
+        });
+
+        static::updating(function ($post) {
+            if ($post->isDirty('title')) {
+                $post->slug = \Illuminate\Support\Str::slug($post->title . '-' . \Illuminate\Support\Str::random(5));
+            }
+        });
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
     }
 }

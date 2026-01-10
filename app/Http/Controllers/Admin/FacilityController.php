@@ -40,8 +40,11 @@ class FacilityController extends Controller
         }
 
         if ($request->filled('features')) {
-            $validated['features'] = array_filter(explode(',', $request->features));
+            $validated['features'] = array_filter(array_map('trim', explode(',', $request->features)));
         }
+
+        $validated['description'] = strip_tags($validated['description'], '<p><b><i><u><ul><ol><li><br>');
+        $validated['is_active'] = $request->boolean('is_active', true);
 
         Facility::create($validated);
 
@@ -82,8 +85,11 @@ class FacilityController extends Controller
         }
 
         if ($request->filled('features')) {
-            $validated['features'] = array_filter(explode(',', $request->features));
+            $validated['features'] = array_filter(array_map('trim', explode(',', $request->features)));
         }
+
+        $validated['description'] = strip_tags($validated['description'], '<p><b><i><u><ul><ol><li><br>');
+        $validated['is_active'] = $request->boolean('is_active');
 
         $facility->update($validated);
 

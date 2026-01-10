@@ -43,10 +43,10 @@ class ContactController extends Controller
 
         // Save to DB
         Contact::create([
-            'name' => $validated['name'],
+            'name' => strip_tags($validated['name']),
             'email' => $validated['email'],
-            'subject' => $validated['subject'] ?? null,
-            'message' => $validated['message'],
+            'subject' => strip_tags($validated['subject'] ?? ''),
+            'message' => strip_tags($validated['message']),
             'is_read' => false,
         ]);
 

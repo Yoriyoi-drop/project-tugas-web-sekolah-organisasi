@@ -1,22 +1,23 @@
 /* Modern Bootstrap 5 Design System for MA NU Nusantara */
 :root {
     /* Laravel-inspired colors */
-    --bs-primary: #ef4444;
-    --bs-primary-rgb: 239, 68, 68;
-    --bs-secondary: #6b7280;
+    /* School Brand Colors (Green) */
+    --bs-primary: #0f766e;
+    --bs-primary-rgb: 15, 118, 110;
+    --bs-secondary: #64748b;
     --bs-success: #10b981;
-    --bs-info: #3b82f6;
+    --bs-info: #0ea5e9;
     --bs-warning: #f59e0b;
     --bs-danger: #ef4444;
     --bs-light: #f8fafc;
-    --bs-dark: #1f2937;
-    
+    --bs-dark: #0f172a;
+
     /* Custom colors */
     --ma-green: #0f766e;
     --ma-green-light: #14b8a6;
     --ma-gold: #f59e0b;
-    --ma-navy: #1e293b;
-    
+    --ma-navy: #0f172a;
+
     /* Typography */
     --bs-font-sans-serif: 'Inter', system-ui, -apple-system, sans-serif;
     --bs-font-serif: 'Playfair Display', Georgia, serif;
@@ -28,7 +29,7 @@ body {
     background-color: #fafafa;
     color: #374151;
     line-height: 1.6;
-    padding-top: 0;
+    padding-top: 72px;
 }
 
 /* Prevent content overlap */
@@ -45,18 +46,22 @@ main {
 
 /* Navigation */
 .navbar {
-    background: linear-gradient(135deg, var(--ma-green) 0%, var(--ma-green-light) 100%) !important;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    background: linear-gradient(135deg, var(--ma-green) 0%, var(--ma-green-light) 100%);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     padding: 0.75rem 0;
-    position: relative;
-    z-index: 1000;
+    transition: all 0.3s ease;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1030;
 }
 
 .navbar .container {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
 }
 
 .navbar-brand {
@@ -123,14 +128,14 @@ main {
         padding-top: 1rem;
         border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
-    
+
     .navbar-nav {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.5rem;
         width: 100%;
     }
-    
+
     .navbar-nav .nav-link {
         padding: 0.75rem 1rem !important;
         width: 100%;
@@ -401,20 +406,100 @@ main {
     .hero-section {
         padding: 3rem 0;
     }
-    
+
     .org-detail-card {
         padding: 1.5rem;
     }
-    
+
     .leadership-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .page-header h1 {
         font-size: 2rem;
     }
-    
+
     .org-name {
         font-size: 1.5rem;
     }
+}
+
+/* Animations & Utilities */
+.hover-up {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-up:hover {
+    transform: translateY(-8px);
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, var(--ma-green) 0%, var(--ma-green-light) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* AOS Animation Foundations */
+[data-aos] {
+    opacity: 0;
+    transition-property: transform, opacity;
+    transition-duration: 0.8s;
+    transition-timing-function: ease-out;
+}
+
+[data-aos="fade-up"] {
+    transform: translateY(30px);
+}
+
+[data-aos="fade-down"] {
+    transform: translateY(-30px);
+}
+
+[data-aos="fade-left"] {
+    transform: translateX(30px);
+}
+
+[data-aos="fade-right"] {
+    transform: translateX(-30px);
+}
+
+[data-aos="zoom-in"] {
+    transform: scale(0.9);
+}
+
+.aos-animate[data-aos] {
+    opacity: 1;
+    transform: translate(0) scale(1);
+}
+
+/* Base Responsive Fixes */
+:root {
+    scroll-behavior: smooth;
+}
+
+body {
+    overflow-x: hidden;
+    width: 100%;
+}
+
+
+[data-aos] {
+    opacity: 0;
+    transition-property: transform, opacity;
+}
+
+[data-aos="fade-up"] {
+    transform: translateY(20px);
+}
+
+[data-aos].aos-animate {
+    opacity: 1;
+    transform: translateY(0);
 }

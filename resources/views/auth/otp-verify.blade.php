@@ -24,7 +24,15 @@
                             <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                                 Verify
                             </button>
+                            
+                            <a href="#" onclick="event.preventDefault(); document.getElementById('resend-form').submit();" class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
+                                Resend OTP
+                            </a>
                         </div>
+                    </form>
+                    
+                    <form id="resend-form" action="{{ route('otp.resend') }}" method="POST" style="display: none;">
+                        @csrf
                     </form>
                 </div>
             </div>

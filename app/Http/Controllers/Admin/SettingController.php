@@ -33,11 +33,11 @@ class SettingController extends Controller
             'address' => 'required|string'
         ]);
 
-        Setting::set('site_name', $request->site_name);
-        Setting::set('site_description', $request->site_description);
+        Setting::set('site_name', strip_tags($request->site_name));
+        Setting::set('site_description', strip_tags($request->site_description));
         Setting::set('contact_email', $request->contact_email);
-        Setting::set('contact_phone', $request->contact_phone);
-        Setting::set('address', $request->address);
+        Setting::set('contact_phone', strip_tags($request->contact_phone));
+        Setting::set('address', strip_tags($request->address));
 
         \Log::info('Settings saved. Site name is now: ' . Setting::get('site_name'));
 

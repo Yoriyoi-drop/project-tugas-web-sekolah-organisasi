@@ -13,20 +13,15 @@ class RegisterController extends Controller
 {
     public function show()
     {
-        $hasNik = Schema::hasColumn('users', 'nik');
-        $hasNis = Schema::hasColumn('users', 'nis');
+        $hasNik = true;
+        $hasNis = true;
         return view('auth.register', compact('hasNik', 'hasNis'));
     }
 
     public function store(RegisterRequest $request)
     {
-        $hasNik = Schema::hasColumn('users', 'nik');
-        $hasNis = Schema::hasColumn('users', 'nis');
-
-        if (!$hasNik || !$hasNis) {
-            return back()->withErrors(['general' => 'Fitur pendaftaran belum lengkap. Silakan hubungi admin untuk menambahkan kolom NIK dan NIS pada panel.'])->withInput();
-        }
-
+        // Removed runtime schema checks for production stability.
+        
         $data = $request->validated();
 
         $user = User::create([

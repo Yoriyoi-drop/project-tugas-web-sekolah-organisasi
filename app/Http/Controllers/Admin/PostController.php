@@ -4,7 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Post;
-use Illuminate\Http\Request;
+use App\Http\Requests\Admin\StorePostRequest;
+use App\Http\Requests\Admin\UpdatePostRequest;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -20,30 +24,22 @@ class PostController extends Controller
         return view('admin.posts.create');
     }
 
-    public function store(Request $request)
+    public function store(StorePostRequest $request)
     {
-        $request->validate([
-            'title' => 'required|max:255',
-            'excerpt' => 'required|max:500',
-            'content' => 'required',
-            'category' => 'required|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048', // Max 2MB
-        ]);
-
         $data = [
             'title' => $request->title,
             'excerpt' => $request->excerpt,
-            'content' => strip_tags($request->content, '<p><br><strong><em><ul><ol><li><a><h1><h2><h3><h4><blockquote>'),
+            // Basic XSS protection: allow only safe tags
+            'content' => strip_tags($request->content, '<p><b><i><u><a><ul><ol><li><h1><h2><h3><h4><h5><h6><br><img><blockquote><div><span>'), 
             'category' => $request->category,
-            'is_published' => $request->status === 'published'
+            'author' => Auth::user()->name ?? 'Admin',
+            'is_published' => in_array($request->status, ['published', 'on', 'true', 1]),
         ];
 
-        // Handle image upload if present
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $filename = \Str::slug(pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME));
-            $extension = $image->getClientOriginalExtension();
-            $safeName = $filename . '_' . time() . '.' . $extension;
+            // Secure upload: Use UUID to prevent collision and guessing
+            $safeName = Str::uuid() . '.' . $image->getClientOriginalExtension();
             $path = $image->storeAs('posts', $safeName, 'public');
             $data['image'] = $path;
         }
@@ -57,35 +53,24 @@ class PostController extends Controller
         return view('admin.posts.edit', compact('post'));
     }
 
-    public function update(Request $request, Post $post)
+    public function update(UpdatePostRequest $request, Post $post)
     {
-        $request->validate([
-            'title' => 'required|max:255',
-            'excerpt' => 'required|max:500',
-            'content' => 'required',
-            'category' => 'required|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048', // Max 2MB
-        ]);
-
         $data = [
             'title' => $request->title,
             'excerpt' => $request->excerpt,
-            'content' => strip_tags($request->content, '<p><br><strong><em><ul><ol><li><a><h1><h2><h3><h4><blockquote>'),
+             // Basic XSS protection
+            'content' => strip_tags($request->content, '<p><b><i><u><a><ul><ol><li><h1><h2><h3><h4><h5><h6><br><img><blockquote><div><span>'),
             'category' => $request->category,
-            'is_published' => $request->status === 'published'
+            'is_published' => in_array($request->status, ['published', 'on', 'true', 1]),
         ];
 
-        // Handle image upload if present
         if ($request->hasFile('image')) {
-            // Delete old image if exists
-            if ($post->image && \Storage::disk('public')->exists($post->image)) {
-                \Storage::disk('public')->delete($post->image);
+            if ($post->image && Storage::disk('public')->exists($post->image)) {
+                Storage::disk('public')->delete($post->image);
             }
             
             $image = $request->file('image');
-            $filename = \Str::slug(pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME));
-            $extension = $image->getClientOriginalExtension();
-            $safeName = $filename . '_' . time() . '.' . $extension;
+            $safeName = Str::uuid() . '.' . $image->getClientOriginalExtension();
             $path = $image->storeAs('posts', $safeName, 'public');
             $data['image'] = $path;
         }
@@ -96,6 +81,9 @@ class PostController extends Controller
 
     public function destroy(Post $post)
     {
+        if ($post->image && Storage::disk('public')->exists($post->image)) {
+            Storage::disk('public')->delete($post->image);
+        }
         $post->delete();
         return redirect()->route('admin.posts.index')->with('success', 'Post deleted successfully');
     }

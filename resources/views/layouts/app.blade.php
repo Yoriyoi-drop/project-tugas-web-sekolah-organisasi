@@ -4,7 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', '{{ site_name() }}')</title>
+    <title>@yield('title', site_name())</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="@yield('meta_description', 'MA NU Nusantara - Membentuk generasi santri yang berakhlak mulia, cerdas, dan siap menghadapi tantangan zaman.')">
+    <meta name="keywords" content="MA NU Nusantara, Madrasah Aliyah, Sekolah Islam, PPDB 2024, Pendidikan Karakter">
+    <meta name="author" content="MA NU Nusantara">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:title" content="@yield('title', site_name())">
+    <meta property="og:description" content="@yield('meta_description', 'MA NU Nusantara - Membentuk generasi santri yang berakhlak mulia, cerdas, dan siap menghadapi tantangan zaman.')">
+    <meta property="og:image" content="{{ asset('images/og-image.png') }}">
 
     <!-- Preload critical resources -->
     <link rel="preload" href="{{ asset('css/bootstrap.min.css') }}" as="style">
@@ -22,14 +34,51 @@
 
     @stack('styles')
     @yield('css')
+    
+    <!-- Vite Scripts & Styles -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
     <style>
         /* Base responsive styles */
-        body { padding-top: 0; }
-        .container { max-width: 100%; padding: 0 15px; }
+        body { padding-top: 72px; }
+        .container { max-width: 1200px; padding: 0 15px; }
 
         /* Navbar responsive */
-        .navbar-toggler { border: none !important; box-shadow: none !important; }
+        .navbar-dark .navbar-toggler { border: none !important; box-shadow: none !important; color: white; }
         .navbar-toggler:focus { box-shadow: none !important; }
+
+        @media (max-width: 991.98px) {
+            .navbar-collapse {
+                background: linear-gradient(135deg, rgba(15, 118, 110, 0.95) 0%, rgba(20, 184, 166, 0.95) 100%);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                margin: 0.5rem -1rem 0;
+                padding: 1.5rem;
+                border-radius: 1rem;
+                box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+                max-height: 85vh;
+                overflow-y: auto;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            .navbar-nav .nav-link {
+                padding: 0.75rem 1rem !important;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            .navbar-nav .nav-link:last-child {
+                border-bottom: none;
+            }
+            .dropdown-menu {
+                background: rgba(255, 255, 255, 0.1) !important;
+                border: none !important;
+                margin-top: 0.5rem;
+            }
+            .dropdown-item {
+                color: white !important;
+            }
+            .dropdown-item:hover {
+                background: rgba(255, 255, 255, 0.2) !important;
+            }
+        }
 
         /* Typography responsive */
         .display-1 { font-size: clamp(2.5rem, 8vw, 5rem); }
@@ -53,67 +102,17 @@
         .card-body { padding: clamp(1rem, 3vw, 2rem); }
         .btn { min-height: 44px; padding: 0.75rem 1.5rem; }
 
-        /* Organization cards responsive */
-        .org-detail-card {
-            background: white;
-            border-radius: 1rem;
-            box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
-            padding: clamp(1.5rem, 4vw, 2.5rem);
-            margin-bottom: 2rem;
-        }
-
-        .org-logo i {
-            font-size: clamp(2.5rem, 6vw, 4rem);
-            margin-bottom: 1rem;
-        }
-
-        .org-name {
-            font-size: clamp(1.5rem, 4vw, 2rem);
-            margin-bottom: 0.5rem;
-        }
-
-        .leadership-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .leader-card {
-            background: #f8f9fa;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            text-align: center;
-        }
-
-        /* Mobile styles */
+        /* Mobile styles supplement */
         @media (max-width: 575.98px) {
-            .container { padding: 0 10px; }
             .btn { font-size: 0.9rem; padding: 0.5rem 1rem; }
-            .card-body { padding: 1rem; }
             .org-detail-card { padding: 1.5rem; }
-            .leadership-grid { grid-template-columns: 1fr; }
             .btn-group .btn { padding: 0.25rem 0.5rem; font-size: 0.75rem; }
-            .table-responsive table { font-size: 0.875rem; }
-            .modal-dialog { margin: 0.5rem; }
-            .offcanvas { width: 85vw; }
-        }
-
-        /* Tablet styles */
-        @media (min-width: 576px) and (max-width: 991.98px) {
-            .navbar-collapse {
-                background: white;
-                border-top: 1px solid #dee2e6;
-                margin-top: 1rem;
-                padding-top: 1rem;
-            }
-            .leadership-grid { grid-template-columns: repeat(2, 1fr); }
         }
 
         /* Form responsive */
         .form-control, .form-select {
             min-height: 44px;
-            font-size: 16px;
+            font-size: 16px !important;
             padding: 0.75rem 1rem;
         }
 
@@ -121,17 +120,6 @@
         @media screen and (max-width: 767px) {
             .form-control, .form-select, input, textarea {
                 font-size: 16px !important;
-            }
-        }
-
-        /* Better mobile navbar */
-        @media (max-width: 991.98px) {
-            .navbar-collapse {
-                background: white;
-                margin: 0.5rem -1rem -1rem;
-                padding: 1rem;
-                border-radius: 0 0 0.5rem 0.5rem;
-                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             }
         }
 
@@ -180,6 +168,18 @@
             .container { max-width: none !important; padding: 0 !important; }
             body { padding-top: 0 !important; }
         }
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .hover-up {
+            transition: all 0.3s ease;
+        }
+        .hover-up:hover {
+            transform: translateY(-5px);
+        }
     </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
@@ -197,6 +197,25 @@
     <!-- Bootstrap 5 JS with defer -->
     <script src="{{ asset('js/bootstrap.bundle.min.js') }}" defer></script>
     <script src="{{ asset('js/performance.js') }}" defer></script>
+
+    <script>
+        // AOS (Animate on Scroll) Trigger
+        document.addEventListener('DOMContentLoaded', function() {
+            const observerOptions = {
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('aos-animate');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('[data-aos]').forEach(el => observer.observe(el));
+        });
+    </script>
 
     @stack('scripts')
 </body>

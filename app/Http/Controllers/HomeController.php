@@ -15,8 +15,19 @@ class HomeController extends Controller
                                                      ->where('is_active', true)
                                                      ->orderBy('order')
                                                      ->get(),
-                'organizations' => Organization::where('is_active', true)
-                                               ->orderBy('order')
+                'organizations' => Organization::select('id', 'slug', 'name', 'type', 'description', 'icon', 'color', 'image', 'tags')
+                                               ->active()
+                                               ->ordered()
+                                               ->get(),
+                'latestPosts' => Post::select('id', 'slug', 'title', 'excerpt', 'icon', 'color', 'category', 'published_at', 'created_at')
+                                     ->published()
+                                     ->latest()
+                                     ->take(3)
+                                     ->get(),
+                'upcomingActivities' => Activity::select('id', 'slug', 'title', 'description', 'date', 'location', 'category')
+                                               ->upcoming()
+                                               ->orderBy('date')
+                                               ->take(3)
                                                ->get()
             ];
         });

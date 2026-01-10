@@ -14,11 +14,11 @@ class BlogController extends Controller
         $search = $request->get('search');
         
         $featuredPost = Cache::remember('featured_post', 1800, function () {
-            return Post::select('id', 'title', 'excerpt', 'icon', 'color', 'category', 'author', 'published_at', 'created_at')
+            return Post::select('id', 'slug', 'title', 'excerpt', 'icon', 'color', 'category', 'author', 'published_at', 'created_at')
                       ->published()->featured()->latest()->first();
         });
         
-        $postsQuery = Post::select('id', 'title', 'excerpt', 'icon', 'color', 'category', 'published_at', 'created_at')
+        $postsQuery = Post::select('id', 'slug', 'title', 'excerpt', 'icon', 'color', 'category', 'published_at', 'created_at')
                          ->published()->where('is_featured', false);
         
         if ($category) {
@@ -37,7 +37,7 @@ class BlogController extends Controller
         $posts = $postsQuery->latest()->paginate(6)->appends(request()->query());
         
         $recentPosts = Cache::remember('recent_posts', 900, function () {
-            return Post::select('id', 'title', 'icon', 'published_at', 'created_at')
+            return Post::select('id', 'slug', 'title', 'icon', 'published_at', 'created_at')
                       ->published()->latest()->take(4)->get();
         });
         
@@ -51,5 +51,20 @@ class BlogController extends Controller
         $totalPosts = Post::published()->count();
         
         return view('pages.blog', compact('featuredPost', 'posts', 'recentPosts', 'categories', 'totalPosts', 'category', 'search'));
+    }
+
+    public function show(Post $post)
+    {
+        // Ensure post is published
+        if (!$post->is_published) {
+            abort(404);
+        }
+
+        $recentPosts = Cache::remember('recent_posts', 900, function () {
+            return Post::select('id', 'title', 'slug', 'icon', 'published_at', 'created_at')
+                      ->published()->latest()->take(4)->get();
+        });
+
+        return view('pages.blog.show', compact('post', 'recentPosts'));
     }
 }

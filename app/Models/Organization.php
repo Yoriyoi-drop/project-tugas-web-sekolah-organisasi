@@ -10,7 +10,7 @@ class Organization extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'type', 'tagline', 'description', 'icon', 'color', 'image',
+        'name', 'slug', 'type', 'tagline', 'description', 'icon', 'color', 'image',
         'tags', 'programs', 'leadership', 'email', 'phone', 'location',
         'is_active', 'order'
     ];
@@ -57,10 +57,28 @@ class Organization extends Model
         parent::boot();
 
         static::saved(function () {
-            // Hapus cache respons ketika organisasi diperbarui
+            // Hapus cache respons (Spatie)
             ResponseCache::forget('/');
             ResponseCache::forget('/beranda');
             ResponseCache::forget('/organisasi');
+            
+            // Hapus cache manual aplikasi
+            \Illuminate\Support\Facades\Cache::forget('all_organizations');
         });
+
+        static::creating(function ($org) {
+            $org->slug = \Illuminate\Support\Str::slug($org->name . '-' . \Illuminate\Support\Str::random(5));
+        });
+
+        static::updating(function ($org) {
+            if ($org->isDirty('name')) {
+                $org->slug = \Illuminate\Support\Str::slug($org->name . '-' . \Illuminate\Support\Str::random(5));
+            }
+        });
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
     }
 }

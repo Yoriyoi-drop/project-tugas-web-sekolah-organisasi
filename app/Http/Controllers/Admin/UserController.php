@@ -5,11 +5,10 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
 use App\Rules\EmailDomainAllowed;
 use App\Rules\NikFormat;
 use App\Rules\NisFormat;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -21,8 +20,11 @@ class UserController extends Controller
 
     public function create()
     {
-        $hasNik = Schema::hasColumn('users', 'nik');
-        $hasNis = Schema::hasColumn('users', 'nis');
+        // Don't perform runtime schema checks. 
+        // We assume the application is deployed with the correct migrations.
+        // If feature toggles are needed, use config or a proper feature flag service.
+        $hasNik = true; 
+        $hasNis = true;
         return view('admin.users.create', compact('hasNik', 'hasNis'));
     }
 
@@ -30,47 +32,49 @@ class UserController extends Controller
     {
         $rules = [
             'name' => 'required|string|max:255',
-            'email' => ['required','string','email','max:255','unique:users,email'],
+            'email' => ['required','string','email','max:255', 'unique:users,email'],
             'password' => 'required|string|min:6',
+            'nik' => ['nullable','string', new NikFormat()], 
+            'nis' => ['nullable','string', new NisFormat()],
         ];
 
-        if (Schema::hasColumn('users', 'nik')) {
-            $rules['nik'] = ['nullable','string', new NikFormat()];
-        }
-        if (Schema::hasColumn('users', 'nis')) {
-            $rules['nis'] = ['nullable','string', new NisFormat()];
-        }
-
-        // Normalize before validation
+        // Normalize inputs first so validation runs on clean data
         $request->merge([
             'nik' => self::normalizeId($request->input('nik')),
             'nis' => self::normalizeId($request->input('nis')),
         ]);
-
+        
         $data = $request->validate($rules);
 
-        // Enforce uniqueness via hashes because nik/nis are encrypted at rest
-        if (!empty($data['nik']) && Schema::hasColumn('users', 'nik_hash')) {
+        // Note: The User model has Mutators (setNikAttribute/setNisAttribute)
+        // that automatically encrypt the value AND generate the hash (nik_hash/nis_hash).
+        // We do typically need to check uniqueness of the HASH manually if we can't use standard validators.
+        // But doing it here duplicates logic. 
+        // A better approach for the future is to create a custom Rule `UniqueEncrypted`
+        // For now, we keep the uniqueness check but simplify it.
+        
+        if (!empty($data['nik'])) {
+            // We use the same normalization logic as the model to check uniqueness
             $nikHash = hash('sha256', $data['nik']);
-            if (DB::table('users')->where('nik_hash', $nikHash)->exists()) {
-                return back()->withErrors(['nik' => 'NIK sudah terdaftar.'])->withInput();
+            if (User::where('nik_hash', $nikHash)->exists()) {
+               return back()->withErrors(['nik' => 'NIK sudah terdaftar.'])->withInput();
             }
         }
-        if (!empty($data['nis']) && Schema::hasColumn('users', 'nis_hash')) {
-            $nisHash = hash('sha256', $data['nis']);
-            if (DB::table('users')->where('nis_hash', $nisHash)->exists()) {
+        
+        if (!empty($data['nis'])) {
+             $nisHash = hash('sha256', $data['nis']);
+             if (User::where('nis_hash', $nisHash)->exists()) {
                 return back()->withErrors(['nis' => 'NIS sudah terdaftar.'])->withInput();
-            }
+             }
         }
 
         $payload = [
-            'name' => $data['name'],
+            'name' => strip_tags($data['name']),
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'nik' => $data['nik'] ?? null,
+            'nis' => $data['nis'] ?? null,
         ];
-
-        if (isset($data['nik'])) { $payload['nik'] = $data['nik']; }
-        if (isset($data['nis'])) { $payload['nis'] = $data['nis']; }
 
         User::create($payload);
 

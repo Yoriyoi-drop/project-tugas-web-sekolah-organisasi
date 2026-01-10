@@ -373,9 +373,9 @@ class ProfileController extends Controller
                 if (trim($request->phone) !== trim($userPhone)) {
                     return response()->json(['message' => 'Nomor telepon tidak sesuai dengan akun yang sedang login.'], 422);
                 }
-                $sid = env('TWILIO_SID');
-                $token = env('TWILIO_TOKEN');
-                $from = env('TWILIO_FROM'); // E.164 format
+                $sid = config('services.twilio.sid');
+                $token = config('services.twilio.token');
+                $from = config('services.twilio.from'); // E.164 format
                 if (!$sid || !$token || !$from) {
                     return response()->json(['message' => 'Konfigurasi Twilio belum lengkap.'], 500);
                 }

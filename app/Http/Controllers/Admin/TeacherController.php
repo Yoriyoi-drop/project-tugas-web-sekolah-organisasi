@@ -32,6 +32,9 @@ class TeacherController extends Controller
         // Ensure a unique NIP is provided for the teacher (migration requires it)
         $validated['nip'] = Teacher::generateNip();
 
+        $validated['name'] = strip_tags($validated['name']);
+        $validated['qualification'] = strip_tags($validated['qualification']);
+
         Teacher::create($validated);
         return redirect()->route('admin.teachers.index')->with('success', 'Teacher created successfully');
     }
@@ -55,6 +58,9 @@ class TeacherController extends Controller
             'subject' => 'required|string|max:100',
             'qualification' => 'required|string',
         ]);
+
+        $validated['name'] = strip_tags($validated['name']);
+        $validated['qualification'] = strip_tags($validated['qualification']);
 
         $teacher->update($validated);
         return redirect()->route('admin.teachers.index')->with('success', 'Teacher updated successfully');

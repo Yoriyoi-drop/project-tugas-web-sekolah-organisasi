@@ -12,8 +12,8 @@ class ContinueClient
     public function __construct()
     {
         // Choose provider via .env: CONTINUE_PROVIDER=openrouter|huggingface
-        $this->provider = env('CONTINUE_PROVIDER', 'openrouter');
-        $this->apiKey = env('CONTINUE_API_KEY') ?: null;
+        $this->provider = config('services.continue.provider', 'openrouter');
+        $this->apiKey = config('services.continue.api_key') ?: null;
     }
 
     /**
@@ -22,9 +22,9 @@ class ContinueClient
     public function chat(array $messages, ?string $model = null)
     {
         if ($this->provider === 'openrouter') {
-            $url = env('OPENROUTER_API_BASE', 'https://openrouter.ai/api/v1/chat/completions');
+            $url = config('services.openrouter.api_base', 'https://openrouter.ai/api/v1/chat/completions');
             $payload = [
-                'model' => $model ?: env('OPENROUTER_MODEL', 'r1:free'),
+                'model' => $model ?: config('services.openrouter.model', 'r1:free'),
                 'messages' => $messages,
             ];
 
@@ -37,7 +37,7 @@ class ContinueClient
 
         if ($this->provider === 'huggingface') {
             // Hugging Face Inference API is model-specific.
-            $hfModel = $model ?: env('HUGGINGFACE_MODEL', 'gpt2');
+            $hfModel = $model ?: config('services.huggingface.model', 'gpt2');
             $url = "https://api-inference.huggingface.co/models/{$hfModel}";
 
             // Simple conversion: flatten messages into a single prompt

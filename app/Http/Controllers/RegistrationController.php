@@ -32,13 +32,13 @@ class RegistrationController extends Controller
 
         Registration::create([
             'organization_id' => $organization->id,
-            'name' => $request->name,
+            'name' => strip_tags($request->name),
             'email' => $request->email,
-            'phone' => $request->phone,
-            'class' => $request->class,
-            'nis' => $request->nis,
-            'address' => $request->address,
-            'motivation' => $request->motivation,
+            'phone' => strip_tags($request->phone),
+            'class' => strip_tags($request->class),
+            'nis' => strip_tags($request->nis),
+            'address' => strip_tags($request->address),
+            'motivation' => strip_tags($request->motivation),
             'skills' => $skills,
             'experiences' => $experiences
         ]);

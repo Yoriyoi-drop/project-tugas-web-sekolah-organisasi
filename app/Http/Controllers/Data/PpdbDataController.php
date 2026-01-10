@@ -12,7 +12,7 @@ class PpdbDataController extends Controller
      */
     public function index()
     {
-        $items = PPDB::orderBy('created_at', 'desc')->get();
+        $items = PPDB::orderBy('created_at', 'desc')->paginate(15);
         return response()->json($items);
     }
 

@@ -10,7 +10,7 @@
                 <div class="card-header">
                     <h3 class="card-title">Edit Post</h3>
                 </div>
-                <form action="{{ route('admin.posts.update', $post) }}" method="POST">
+                <form action="{{ route('admin.posts.update', $post) }}" method="POST" enctype="multipart/form-data">
                     @csrf @method('PUT')
                     <div class="card-body">
                         <div class="mb-3">
@@ -33,6 +33,17 @@
                                 <option value="Prestasi" {{ old('category', $post->category) == 'Prestasi' ? 'selected' : '' }}>Prestasi</option>
                             </select>
                             @error('category')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Featured Image</label>
+                            @if($post->image && Storage::disk('public')->exists($post->image))
+                                <div class="mb-2">
+                                    <img src="{{ Storage::url($post->image) }}" alt="Current Image" class="img-thumbnail" style="max-height: 150px">
+                                </div>
+                            @endif
+                            <input type="file" name="image" class="form-control @error('image') is-invalid @enderror" accept="image/*">
+                            <small class="text-muted">Leave empty to keep current image</small>
+                            @error('image')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Content</label>

@@ -26,6 +26,7 @@ class FacilityController extends Controller
         
         $facilities = $query->orderBy('category')->orderBy('name')->paginate(12);
         $categories = Facility::where('status', 'active')
+                             ->where('is_active', true)
                              ->distinct()
                              ->pluck('category')
                              ->sort();
@@ -35,11 +36,11 @@ class FacilityController extends Controller
     
     public function show(Facility $facility)
     {
-        if ($facility->status !== 'active') {
+        if ($facility->status !== 'active' || !$facility->is_active) {
             abort(404);
         }
         
-        $relatedFacilities = Facility::where('status', 'active')
+        $relatedFacilities = Facility::active()
                                    ->where('category', $facility->category)
                                    ->where('id', '!=', $facility->id)
                                    ->limit(3)

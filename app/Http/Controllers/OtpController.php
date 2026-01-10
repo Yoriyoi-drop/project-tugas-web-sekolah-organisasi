@@ -146,4 +146,33 @@ class OtpController extends Controller
         return redirect()->route('login')
             ->with('status', 'Email verified successfully. Please login.');
     }
+    public function resend()
+    {
+        $user_id = session('otp_user_id');
+        if (!$user_id) {
+            return redirect()->route('login')->withErrors(['email' => 'Session expired. Please login again.']);
+        }
+
+        $user = User::find($user_id);
+        if (!$user) {
+            return redirect()->route('login')->withErrors(['email' => 'User not found.']);
+        }
+
+        if ($user->hasVerifiedEmail()) {
+            return redirect()->route('login')->with('status', 'Email already verified.');
+        }
+
+        // Rate limiting for resend (e.g., 3 per minute)
+        $key = 'otp_resend_' . $user->id;
+        if (RateLimiter::tooManyAttempts($key, 3)) {
+            $seconds = RateLimiter::availableIn($key);
+            return back()->withErrors(['code' => "Too many resend attempts. Please wait {$seconds} seconds."]);
+        }
+        RateLimiter::hit($key, 60);
+
+        // Generate new OTP (invalidates old ones)
+        $user->generateEmailOtp();
+
+        return back()->with('status', 'A new verification code has been sent to your email.');
+    }
 }

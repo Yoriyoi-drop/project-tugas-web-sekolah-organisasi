@@ -1,11 +1,11 @@
 <?php
 
 use App\Models\PPDB;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+uses(RefreshDatabase::class);
 
 it('returns ppdb list via api', function () {
-    // migrate and create sample data
-    $this->artisan('migrate')->assertExitCode(0);
-    
     // Create a user for authentication
     $user = \App\Models\User::factory()->create();
 
@@ -27,5 +27,8 @@ it('returns ppdb list via api', function () {
 
     $response = $this->actingAs($user)->getJson('/api/data/ppdb');
     $response->assertStatus(200);
-    $response->assertJsonCount(1);
+    // Since we returned pagination, the structure changes.
+    // We check if the data exists in the 'data' key or if 1 record is present in total.
+    // For simple pagination:
+    $response->assertJsonCount(1, 'data');
 });

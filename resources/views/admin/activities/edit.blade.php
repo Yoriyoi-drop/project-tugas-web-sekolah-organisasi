@@ -10,7 +10,7 @@
                 <div class="card-header">
                     <h3 class="card-title">Edit Activity</h3>
                 </div>
-                <form action="{{ route('admin.activities.update', $activity) }}" method="POST">
+                <form action="{{ route('admin.activities.update', $activity) }}" method="POST" enctype="multipart/form-data">
                     @csrf @method('PUT')
                     <div class="card-body">
                         <div class="mb-3">
@@ -27,6 +27,16 @@
                             <label class="form-label">Location</label>
                             <input type="text" name="location" class="form-control @error('location') is-invalid @enderror" value="{{ old('location', $activity->location) }}">
                             @error('location')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        <div class="mb-3">
+                            <label class="form-label">Featured Image</label>
+                            @if($activity->image && Storage::disk('public')->exists($activity->image))
+                                <div class="mb-2">
+                                    <img src="{{ Storage::url($activity->image) }}" alt="Current Image" class="img-thumbnail" style="max-height: 150px">
+                                </div>
+                            @endif
+                            <input type="file" name="image" class="form-control @error('image') is-invalid @enderror" accept="image/*">
+                            <small class="text-muted">Leave empty to keep current image</small>
+                            @error('image')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Category</label>

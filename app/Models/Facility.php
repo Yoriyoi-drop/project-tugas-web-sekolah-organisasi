@@ -11,6 +11,7 @@ class Facility extends Model
     use HasFactory;
     protected $fillable = [
         'name',
+        'slug',
         'icon',
         'image',
         'description',
@@ -55,5 +56,20 @@ class Facility extends Model
             ResponseCache::forget('/beranda');
             ResponseCache::forget('/fasilitas');
         });
+
+        static::creating(function ($facility) {
+            $facility->slug = \Illuminate\Support\Str::slug($facility->name . '-' . \Illuminate\Support\Str::random(5));
+        });
+
+        static::updating(function ($facility) {
+            if ($facility->isDirty('name')) {
+                $facility->slug = \Illuminate\Support\Str::slug($facility->name . '-' . \Illuminate\Support\Str::random(5));
+            }
+        });
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
     }
 }

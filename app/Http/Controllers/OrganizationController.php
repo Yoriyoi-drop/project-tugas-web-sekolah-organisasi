@@ -9,7 +9,7 @@ class OrganizationController extends Controller
     public function index()
     {
         $organizations = Cache::remember('all_organizations', 3600, function () {
-            return Organization::select('id', 'name', 'type', 'description', 'icon', 'color', 'tagline')
+            return Organization::select('id', 'slug', 'name', 'type', 'description', 'icon', 'color', 'tagline')
                              ->where('is_active', true)
                              ->orderBy('order')
                              ->get();
@@ -18,9 +18,9 @@ class OrganizationController extends Controller
         return view('organisasi.index', compact('organizations'));
     }
 
-    public function show($id)
+    public function show(Organization $organization)
     {
-        $organization = Organization::with(['students', 'teachers'])->findOrFail($id);
+        $organization->load(['students', 'teachers']);
         return view('organisasi.show', compact('organization'));
     }
 }

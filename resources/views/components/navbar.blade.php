@@ -1,7 +1,7 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
     <div class="container">
         <a class="navbar-brand d-flex align-items-center fw-bold" href="{{ route('beranda') }}">
-            <i class="bi bi-mortarboard-fill me-2 text-primary"></i>
+            <i class="bi bi-mortarboard-fill me-2 text-warning"></i>
             {{ site_name() }}
         </a>
 
@@ -12,37 +12,42 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link py-2 px-3 {{ request()->routeIs('beranda') ? 'active fw-bold text-primary' : '' }}" href="{{ route('beranda') }}">
+                    <a class="nav-link py-2 px-3 {{ request()->routeIs('beranda') ? 'active fw-bold text-warning' : '' }}" href="{{ route('beranda') }}">
                         <i class="bi bi-house-fill me-2 d-lg-none"></i>Beranda
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link py-2 px-3 {{ request()->routeIs('tentang') ? 'active fw-bold text-primary' : '' }}" href="{{ route('tentang') }}">
+                    <a class="nav-link py-2 px-3 {{ request()->routeIs('tentang') ? 'active fw-bold text-warning' : '' }}" href="{{ route('tentang') }}">
                         <i class="bi bi-info-circle-fill me-2 d-lg-none"></i>Tentang
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link py-2 px-3 {{ request()->routeIs('kegiatan') ? 'active fw-bold text-primary' : '' }}" href="{{ route('kegiatan') }}">
+                    <a class="nav-link py-2 px-3 {{ request()->routeIs('kegiatan') ? 'active fw-bold text-warning' : '' }}" href="{{ route('kegiatan') }}">
                         <i class="bi bi-calendar-event-fill me-2 d-lg-none"></i>Kegiatan
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link py-2 px-3 {{ request()->routeIs('organisasi') ? 'active fw-bold text-primary' : '' }}" href="{{ route('organisasi') }}">
+                    <a class="nav-link py-2 px-3 {{ request()->routeIs('organisasi') ? 'active fw-bold text-warning' : '' }}" href="{{ route('organisasi') }}">
                         <i class="bi bi-people-fill me-2 d-lg-none"></i>Organisasi
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link py-2 px-3 {{ request()->routeIs('blog') ? 'active fw-bold text-primary' : '' }}" href="{{ route('blog') }}">
+                    <a class="nav-link py-2 px-3 {{ request()->routeIs('blog') ? 'active fw-bold text-warning' : '' }}" href="{{ route('blog') }}">
                         <i class="bi bi-journal-text me-2 d-lg-none"></i>Blog
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link py-2 px-3 {{ request()->routeIs('fasilitas*') ? 'active fw-bold text-primary' : '' }}" href="{{ route('fasilitas') }}">
+                    <a class="nav-link py-2 px-3 {{ request()->routeIs('fasilitas*') ? 'active fw-bold text-warning' : '' }}" href="{{ route('fasilitas') }}">
                         <i class="bi bi-building me-2 d-lg-none"></i>Fasilitas
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link py-2 px-3 {{ request()->routeIs('kontak') ? 'active fw-bold text-primary' : '' }}" href="{{ route('kontak') }}">
+                    <a class="nav-link py-2 px-3 {{ request()->routeIs('ppdb*') ? 'active fw-bold text-warning' : '' }}" href="{{ route('ppdb.index') }}">
+                        <i class="bi bi-person-plus me-2 d-lg-none"></i>PPDB
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link py-2 px-3 {{ request()->routeIs('kontak') ? 'active fw-bold text-warning' : '' }}" href="{{ route('kontak') }}">
                         <i class="bi bi-envelope-fill me-2 d-lg-none"></i>Kontak
                     </a>
                 </li>
@@ -80,12 +85,12 @@
                         </ul>
                     </li>
                 @else
-                    <li class="nav-item d-lg-flex align-items-center mt-2 mt-lg-0">
-                        <a class="btn btn-outline-primary w-100 w-lg-auto" href="{{ route('login') }}">
-                            <i class="bi bi-box-arrow-in-right me-1"></i>Masuk
+                    <li class="nav-item d-lg-flex align-items-center mt-2 mt-lg-0 ms-lg-3">
+                        <a class="nav-link px-3 me-lg-2 d-flex align-items-center" href="{{ route('login') }}">
+                            <i class="bi bi-person-lock me-2"></i>Masuk
                         </a>
-                        <a class="btn btn-primary w-100 w-lg-auto ms-lg-2 mt-2 mt-lg-0" href="{{ route('register') }}">
-                            <i class="bi bi-person-plus me-1"></i>Daftar
+                        <a class="btn btn-warning fw-bold px-4 py-2 rounded-pill shadow-sm d-flex align-items-center w-100 w-lg-auto" href="{{ route('register') }}">
+                            <i class="bi bi-person-plus-fill me-2"></i>Daftar
                         </a>
                     </li>
                 @endauth

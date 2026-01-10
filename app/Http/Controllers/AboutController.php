@@ -5,6 +5,14 @@ class AboutController extends Controller
 {
     public function index()
     {
-        return view('pages.about');
+        $data = \Illuminate\Support\Facades\Cache::remember('about_data', 3600, function () {
+            return [
+                'statistics' => \App\Models\Statistic::active()->ordered()->get(),
+                'values' => \App\Models\Value::active()->ordered()->get(),
+                'facilities' => \App\Models\Facility::active()->ordered()->get()
+            ];
+        });
+
+        return view('pages.tentang', $data);
     }
 }
