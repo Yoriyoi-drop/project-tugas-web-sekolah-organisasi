@@ -1,0 +1,121 @@
+/* Performance Optimizations */
+
+/* Critical CSS - Load above the fold content first */
+.critical-css {
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.6;
+}
+
+/* Image lazy loading placeholder */
+.lazy {
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.lazy.loaded {
+    opacity: 1;
+}
+
+/* Optimize font loading */
+@font-face {
+    font-family: 'Poppins';
+    font-display: swap;
+    src: url('/fonts/poppins-regular.woff2') format('woff2'),
+         url('/fonts/poppins-regular.woff') format('woff');
+}
+
+/* Reduce repaints and reflows */
+.optimized-layout {
+    contain: layout style paint;
+}
+
+/* GPU acceleration for animations */
+.gpu-accelerated {
+    transform: translateZ(0);
+    will-change: transform;
+}
+
+/* Optimize images for different screen sizes */
+.responsive-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Reduce layout thrashing */
+.layout-stable {
+    position: relative;
+}
+
+/* Optimize button interactions */
+.btn-optimized {
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Loading states */
+.loading {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+/* Skeleton loading animation */
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Optimize form inputs */
+.form-optimized {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+/* Reduce paint complexity */
+.paint-optimized {
+    isolation: isolate;
+}
+
+/* Optimize table rendering */
+.table-optimized {
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+/* Media queries for responsive performance */
+@media (max-width: 768px) {
+    .hide-mobile {
+        display: none;
+    }
+}
+
+@media (min-width: 769px) {
+    .hide-desktop {
+        display: none;
+    }
+}
+
+/* Print optimizations */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+}

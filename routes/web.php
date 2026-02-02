@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\{HomeController, LoginController, OrganizationController, BlogController, ActivityController, AboutController, ContactController};
+use App\Http\Controllers\{HomeController, LoginController, OrganizationController, BlogController, ActivityController, AboutController, ContactController, AnalyticsController};
 use App\Http\Controllers\Admin\DashboardController;
 
 // Public routes
@@ -34,6 +34,12 @@ Route::get('/ppdb', [\App\Http\Controllers\PPDBController::class, 'index'])->nam
 Route::get('/ppdb/daftar', [\App\Http\Controllers\PPDBController::class, 'create'])->name('ppdb.create');
 Route::post('/ppdb/daftar', [\App\Http\Controllers\PPDBController::class, 'store'])->name('ppdb.store');
 Route::get('/ppdb/sukses', [\App\Http\Controllers\PPDBController::class, 'success'])->name('ppdb.success');
+
+// Student Registration routes
+Route::get('/pendaftaran-siswa', [\App\Http\Controllers\StudentRegistrationController::class, 'index'])->name('student-registration.index');
+Route::get('/pendaftaran-siswa/daftar', [\App\Http\Controllers\StudentRegistrationController::class, 'create'])->name('student-registration.create');
+Route::post('/pendaftaran-siswa/daftar', [\App\Http\Controllers\StudentRegistrationController::class, 'store'])->name('student-registration.store');
+Route::get('/pendaftaran-siswa/sukses', [\App\Http\Controllers\StudentRegistrationController::class, 'success'])->name('student-registration.success');
 
 // Authentication routes
 
@@ -98,6 +104,29 @@ Route::middleware(['auth', 'admin', 'verified'])->prefix('admin')->name('admin.'
     Route::resource('organizations', \App\Http\Controllers\Admin\OrganizationController::class);
     Route::resource('activities', \App\Http\Controllers\Admin\ActivityController::class);
     Route::resource('statistics', \App\Http\Controllers\Admin\StatisticController::class);
+    
+    // Organization membership management
+    Route::get('organizations/{organization}/members', [\App\Http\Controllers\Admin\MemberController::class, 'index'])->name('organizations.members.index');
+    Route::get('organizations/{organization}/members/create', [\App\Http\Controllers\Admin\MemberController::class, 'create'])->name('organizations.members.create');
+    Route::post('organizations/{organization}/members', [\App\Http\Controllers\Admin\MemberController::class, 'store'])->name('organizations.members.store');
+    Route::get('organizations/{organization}/members/{member}', [\App\Http\Controllers\Admin\MemberController::class, 'show'])->name('organizations.members.show');
+    Route::get('organizations/{organization}/members/{member}/edit', [\App\Http\Controllers\Admin\MemberController::class, 'edit'])->name('organizations.members.edit');
+    Route::put('organizations/{organization}/members/{member}', [\App\Http\Controllers\Admin\MemberController::class, 'update'])->name('organizations.members.update');
+    Route::delete('organizations/{organization}/members/{member}', [\App\Http\Controllers\Admin\MemberController::class, 'destroy'])->name('organizations.members.destroy');
+    Route::post('organizations/{organization}/members/{member}/promote', [\App\Http\Controllers\Admin\MemberController::class, 'promote'])->name('organizations.members.promote');
+    Route::post('organizations/{organization}/members/{member}/status', [\App\Http\Controllers\Admin\MemberController::class, 'changeStatus'])->name('organizations.members.status');
+    Route::post('organizations/{organization}/members/bulk', [\App\Http\Controllers\Admin\MemberController::class, 'bulkAction'])->name('organizations.members.bulk');
+    
+    // Organization period management
+    Route::get('organizations/{organization}/periods', [\App\Http\Controllers\Admin\OrganizationPeriodController::class, 'index'])->name('organizations.periods.index');
+    Route::get('organizations/{organization}/periods/create', [\App\Http\Controllers\Admin\OrganizationPeriodController::class, 'create'])->name('organizations.periods.create');
+    Route::post('organizations/{organization}/periods', [\App\Http\Controllers\Admin\OrganizationPeriodController::class, 'store'])->name('organizations.periods.store');
+    Route::get('organizations/{organization}/periods/{period}', [\App\Http\Controllers\Admin\OrganizationPeriodController::class, 'show'])->name('organizations.periods.show');
+    Route::get('organizations/{organization}/periods/{period}/edit', [\App\Http\Controllers\Admin\OrganizationPeriodController::class, 'edit'])->name('organizations.periods.edit');
+    Route::put('organizations/{organization}/periods/{period}', [\App\Http\Controllers\Admin\OrganizationPeriodController::class, 'update'])->name('organizations.periods.update');
+    Route::delete('organizations/{organization}/periods/{period}', [\App\Http\Controllers\Admin\OrganizationPeriodController::class, 'destroy'])->name('organizations.periods.destroy');
+    Route::post('organizations/{organization}/periods/{period}/activate', [\App\Http\Controllers\Admin\OrganizationPeriodController::class, 'activate'])->name('organizations.periods.activate');
+    Route::put('organizations/{organization}/periods/{period}/leadership', [\App\Http\Controllers\Admin\OrganizationPeriodController::class, 'updateLeadership'])->name('organizations.periods.leadership');
     Route::resource('students', \App\Http\Controllers\Admin\StudentController::class);
     Route::resource('teachers', \App\Http\Controllers\Admin\TeacherController::class);
     Route::resource('facilities', \App\Http\Controllers\Admin\FacilityController::class);
@@ -108,10 +137,27 @@ Route::middleware(['auth', 'admin', 'verified'])->prefix('admin')->name('admin.'
     Route::patch('registrations/{registration}/status', [\App\Http\Controllers\Admin\RegistrationController::class, 'updateStatus'])->name('registrations.update-status');
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->only(['index', 'create', 'store']);
     Route::resource('ppdb', \App\Http\Controllers\Admin\PPDBController::class);
+    
+    // Student Registration management
+    Route::get('student-registrations', [\App\Http\Controllers\StudentRegistrationController::class, 'adminIndex'])->name('student-registrations.index');
+    Route::get('student-registrations/{registration}', [\App\Http\Controllers\StudentRegistrationController::class, 'show'])->name('student-registrations.show');
+    Route::post('student-registrations/{registration}/approve', [\App\Http\Controllers\StudentRegistrationController::class, 'approve'])->name('student-registrations.approve');
+    Route::post('student-registrations/{registration}/reject', [\App\Http\Controllers\StudentRegistrationController::class, 'reject'])->name('student-registrations.reject');
 
     // Security audit routes
     Route::get('security/audit', [\App\Http\Controllers\Admin\SecurityAuditController::class, 'index'])
         ->name('security.audit');
     Route::get('security/export', [\App\Http\Controllers\Admin\SecurityAuditController::class, 'export'])
         ->name('security.export');
+
+    // Analytics routes
+    Route::get('analytics', [\App\Http\Controllers\Admin\AnalyticsController::class, 'index'])->name('analytics.index');
+    Route::get('analytics/organization/{organization}', [\App\Http\Controllers\Admin\AnalyticsController::class, 'organization'])->name('analytics.organization');
+    Route::get('analytics/reports', [\App\Http\Controllers\Admin\AnalyticsController::class, 'reports'])->name('analytics.reports');
+    Route::post('analytics/reports/generate', [\App\Http\Controllers\Admin\AnalyticsController::class, 'generateReport'])->name('analytics.reports.generate');
+    Route::get('analytics/reports/{report}/download', [\App\Http\Controllers\Admin\AnalyticsController::class, 'downloadReport'])->name('analytics.reports.download');
+    Route::delete('analytics/reports/{report}', [\App\Http\Controllers\Admin\AnalyticsController::class, 'deleteReport'])->name('analytics.reports.delete');
+    Route::get('analytics/performance', [\App\Http\Controllers\Admin\AnalyticsController::class, 'performance'])->name('analytics.performance');
+    Route::get('analytics/compare', [\App\Http\Controllers\Admin\AnalyticsController::class, 'compare'])->name('analytics.compare');
+    Route::post('analytics/compare', [\App\Http\Controllers\Admin\AnalyticsController::class, 'compareResults'])->name('analytics.compare.results');
 });

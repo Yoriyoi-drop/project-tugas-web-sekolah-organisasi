@@ -32,8 +32,12 @@ class SecurityLoggingTest extends TestCase
 
         $this->withSession(['otp_user_id' => $user->id]);
 
+        // Visit the OTP page to set CSRF token in session
+        $this->get(route('otp.show'));
+
         $response = $this->post(route('otp.verify'), [
-            'code' => 'WRONG1'
+            'code' => 'WRONG1',
+            '_token' => csrf_token()
         ]);
 
         $this->assertDatabaseHas('security_logs', [
@@ -50,8 +54,12 @@ class SecurityLoggingTest extends TestCase
 
         $this->withSession(['otp_user_id' => $user->id]);
 
+        // Visit the OTP page to set CSRF token in session
+        $this->get(route('otp.show'));
+
         $response = $this->post(route('otp.verify'), [
-            'code' => $code
+            'code' => $code,
+            '_token' => csrf_token()
         ]);
 
         $this->assertDatabaseHas('security_logs', [

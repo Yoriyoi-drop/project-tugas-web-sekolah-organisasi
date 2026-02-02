@@ -47,3 +47,15 @@ Thumbs.db
 /public/js/app.js
 /public/mix-manifest.json
 .vercel
+
+# Documentation (keep main README.md)
+!/README.md
+!/CHANGELOG.md
+!/docs/
+docs/legacy/
+docs/guides/README_FIXES.md
+docs/guides/SETUP.md
+docs/guides/STATUS_UPDATE.md
+docs/guides/TECHNICAL_UPDATES.md
+docs/legacy/PROJECT_NOTES.md
+docs/legacy/PROJECT_SUMMARY.md

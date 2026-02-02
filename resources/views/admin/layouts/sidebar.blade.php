@@ -106,7 +106,13 @@
                         <li class="nav-item">
                             <a class="nav-link text-white-50 py-2 px-3 {{ request()->routeIs('admin.registrations.*') ? 'text-white bg-secondary' : '' }}" 
                                href="{{ route('admin.registrations.index') }}">
-                                <i class="bi bi-person-plus me-2"></i>Pendaftaran
+                                <i class="bi bi-person-plus me-2"></i>Pendaftaran Organisasi
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white-50 py-2 px-3 {{ request()->routeIs('student-registrations.*') ? 'text-white bg-secondary' : '' }}" 
+                               href="{{ route('student-registrations.index') }}">
+                                <i class="bi bi-person-badge me-2"></i>Pendaftaran Akun Siswa
                             </a>
                         </li>
                     </ul>

@@ -25,7 +25,10 @@
                 <div class="text-muted mb-2">{{ $org->tagline }}</div>
               @endif
               <p class="mb-3">{{ Str::limit($org->description, 100) }}</p>
-              <a href="{{ route('organisasi.show', $org->id) }}" class="btn btn-outline-primary btn-sm">Selengkapnya</a>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="badge bg-primary rounded-pill">{{ $org->member_count ?? 0 }} Anggota</span>
+                <a href="{{ route('organisasi.show', $org->slug) }}" class="btn btn-outline-primary btn-sm">Selengkapnya</a>
+              </div>
             </div>
           </div>
         </div>

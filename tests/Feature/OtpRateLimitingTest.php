@@ -23,10 +23,14 @@ test('user is rate limited after multiple failed OTP attempts', function () {
         'last_sent_at' => now(),
     ]);
 
+    // Visit the OTP page to set CSRF token in session
+    $this->get(route('otp.show'));
+
     // Make 5 failed attempts
     for ($i = 0; $i < 5; $i++) {
         $response = $this->post(route('otp.verify'), [
-            'code' => 'wrong_code'
+            'code' => 'wrong_code',
+            '_token' => csrf_token()
         ]);
         $response->assertStatus(302);
         $response->assertSessionHasErrors('code');
@@ -34,7 +38,8 @@ test('user is rate limited after multiple failed OTP attempts', function () {
 
     // The 6th attempt should fail with account locked
     $response = $this->post(route('otp.verify'), [
-        'code' => 'wrong_code'
+        'code' => 'wrong_code',
+        '_token' => csrf_token()
     ]);
 
     $response->assertStatus(302);
@@ -55,10 +60,14 @@ test('account is locked after exceeding failed attempts', function () {
         'last_sent_at' => now(),
     ]);
 
+    // Visit the OTP page to set CSRF token in session
+    $this->get(route('otp.show'));
+
     // Make 6 failed attempts
     for ($i = 0; $i < 6; $i++) {
         $response = $this->post(route('otp.verify'), [
-            'code' => 'wrong_code'
+            'code' => 'wrong_code',
+            '_token' => csrf_token()
         ]);
         $response->assertStatus(302);
     }
@@ -74,8 +83,12 @@ test('locked account cannot attempt OTP verification', function () {
     // Lock the account
     $this->user->lockAccount(15);
 
+    // Visit the OTP page to set CSRF token in session
+    $this->get(route('otp.show'));
+
     $response = $this->post(route('otp.verify'), [
-        'code' => '123456'
+        'code' => '123456',
+        '_token' => csrf_token()
     ]);
 
     $response->assertStatus(302);
@@ -98,9 +111,13 @@ test('successful OTP verification resets failed attempts', function () {
     // Unlock account to allow verification
     $this->user->unlockAccount();
 
+    // Visit the OTP page to set CSRF token in session
+    $this->get(route('otp.show'));
+
     // Verify with correct code
     $response = $this->post(route('otp.verify'), [
-        'code' => '123456'
+        'code' => '123456',
+        '_token' => csrf_token()
     ]);
 
     // Refresh user from database

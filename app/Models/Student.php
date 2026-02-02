@@ -22,6 +22,22 @@ class Student extends Model
         return $this->belongsToMany(Organization::class, 'organization_student')->withTimestamps();
     }
 
+    // New membership relationships
+    public function memberships()
+    {
+        return $this->hasMany(Member::class);
+    }
+
+    public function activeMemberships()
+    {
+        return $this->memberships()->where('status', 'active');
+    }
+
+    public function leadershipRoles()
+    {
+        return $this->memberships()->leadership();
+    }
+
     /**
      * Generate a simple unique NIS for a newly created student.
      * Format: {year}{sequential number}, e.g. 2025001
@@ -49,5 +65,72 @@ class Student extends Model
         }
 
         return (string) $next;
+    }
+
+    // Membership methods
+    public function joinOrganization($organizationId, $role = 'member')
+    {
+        $organization = Organization::findOrFail($organizationId);
+        
+        // Check if already a member
+        if ($this->hasMembership($organizationId)) {
+            throw new \Exception("Student is already a member of this organization");
+        }
+        
+        return $organization->addMember($this->id, $role);
+    }
+
+    public function leaveOrganization($organizationId)
+    {
+        $membership = $this->memberships()
+                          ->where('organization_id', $organizationId)
+                          ->where('status', 'active')
+                          ->first();
+                          
+        if ($membership) {
+            $membership->changeStatus('inactive');
+            return true;
+        }
+        
+        return false;
+    }
+
+    public function hasMembership($organizationId)
+    {
+        return $this->memberships()
+                   ->where('organization_id', $organizationId)
+                   ->where('status', 'active')
+                   ->exists();
+    }
+
+    public function getOrganizationRoles($organizationId)
+    {
+        return $this->memberships()
+                   ->where('organization_id', $organizationId)
+                   ->where('status', 'active')
+                   ->pluck('role')
+                   ->toArray();
+    }
+
+    public function isLeaderInOrganization($organizationId)
+    {
+        return $this->memberships()
+                   ->where('organization_id', $organizationId)
+                   ->where('status', 'active')
+                   ->leadership()
+                   ->exists();
+    }
+
+    public function getActiveOrganizations()
+    {
+        return $this->activeMemberships()
+                   ->with('organization')
+                   ->get()
+                   ->pluck('organization');
+    }
+
+    public function getTotalOrganizations()
+    {
+        return $this->activeMemberships()->count();
     }
 }

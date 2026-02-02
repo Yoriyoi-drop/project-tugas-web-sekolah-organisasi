@@ -47,6 +47,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link py-2 px-3 {{ request()->routeIs('student-registration*') ? 'active fw-bold text-warning' : '' }}" href="{{ route('student-registration.index') }}">
+                        <i class="bi bi-person-badge me-2 d-lg-none"></i>Daftar Akun
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link py-2 px-3 {{ request()->routeIs('kontak') ? 'active fw-bold text-warning' : '' }}" href="{{ route('kontak') }}">
                         <i class="bi bi-envelope-fill me-2 d-lg-none"></i>Kontak
                     </a>

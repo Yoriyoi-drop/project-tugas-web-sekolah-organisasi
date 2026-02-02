@@ -11,6 +11,25 @@
     <meta name="keywords" content="MA NU Nusantara, Madrasah Aliyah, Sekolah Islam, PPDB 2024, Pendidikan Karakter">
     <meta name="author" content="MA NU Nusantara">
     
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#0d6efd">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="SekolahOrg">
+    <meta name="application-name" content="SekolahOrg">
+    <meta name="msapplication-TileColor" content="#0d6efd">
+    <meta name="msapplication-config" content="/browserconfig.xml">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('icons/apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('icons/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('icons/favicon-16x16.png') }}">
+    <link rel="mask-icon" href="{{ asset('icons/safari-pinned-tab.svg') }}" color="#0d6efd">
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
+    
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">
@@ -40,12 +59,75 @@
 
     <style>
         /* Base responsive styles */
-        body { padding-top: 72px; }
+        body { 
+            padding-top: 72px; 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
         .container { max-width: 1200px; padding: 0 15px; }
 
-        /* Navbar responsive */
-        .navbar-dark .navbar-toggler { border: none !important; box-shadow: none !important; color: white; }
+        /* Mobile-first improvements */
+        .navbar-dark .navbar-toggler { 
+            border: none !important; 
+            box-shadow: none !important; 
+            color: white; 
+            padding: 0.25rem 0.5rem;
+        }
         .navbar-toggler:focus { box-shadow: none !important; }
+        
+        /* Mobile navigation improvements */
+        .mobile-nav-btn {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #0d6efd;
+            color: white;
+            border: none;
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .mobile-nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(13, 110, 253, 0.4);
+        }
+        
+        /* Mobile bottom navigation */
+        .mobile-bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e9ecef;
+            padding: 8px 0;
+            z-index: 999;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .mobile-bottom-nav .nav-link {
+            color: #6c757d;
+            text-align: center;
+            padding: 8px;
+            font-size: 0.75rem;
+            transition: color 0.3s ease;
+        }
+        
+        .mobile-bottom-nav .nav-link.active,
+        .mobile-bottom-nav .nav-link:hover {
+            color: #0d6efd;
+        }
+        
+        .mobile-bottom-nav .nav-link i {
+            display: block;
+            font-size: 1.25rem;
+            margin-bottom: 2px;
+        }
 
         @media (max-width: 991.98px) {
             .navbar-collapse {
@@ -168,6 +250,43 @@
             .container { max-width: none !important; padding: 0 !important; }
             body { padding-top: 0 !important; }
         }
+        
+        /* Mobile-specific styles */
+        @media (max-width: 767.98px) {
+            .mobile-nav-btn {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .mobile-bottom-nav {
+                display: flex;
+            }
+            
+            /* Adjust body padding for mobile bottom nav */
+            body {
+                padding-bottom: 70px;
+            }
+            
+            /* Mobile card improvements */
+            .card {
+                margin-bottom: 1rem;
+                border-radius: 0.75rem;
+            }
+            
+            /* Mobile button improvements */
+            .btn {
+                min-height: 48px;
+                font-weight: 500;
+            }
+            
+            /* Mobile form improvements */
+            .form-control, .form-select {
+                min-height: 48px;
+                border-radius: 0.5rem;
+            }
+        }
+        
         .glass-morphism {
             background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(10px);
@@ -191,6 +310,45 @@
         @yield('content')
     </main>
 
+    <!-- Mobile Bottom Navigation -->
+    @if(request()->is('/organisasi*') || request()->is('/'))
+    <nav class="mobile-bottom-nav">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <a href="{{ route('beranda') }}" class="nav-link {{ request()->routeIs('beranda') ? 'active' : '' }}">
+                        <i class="bi bi-house-door"></i>
+                        Beranda
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="{{ route('organisasi') }}" class="nav-link {{ request()->routeIs('organisasi*') ? 'active' : '' }}">
+                        <i class="bi bi-building"></i>
+                        Organisasi
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="{{ route('kegiatan') }}" class="nav-link {{ request()->routeIs('kegiatan*') ? 'active' : '' }}">
+                        <i class="bi bi-calendar-event"></i>
+                        Kegiatan
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="{{ route('tentang') }}" class="nav-link {{ request()->routeIs('tentang') ? 'active' : '' }}">
+                        <i class="bi bi-info-circle"></i>
+                        Tentang
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    @endif
+
+    <!-- Mobile Navigation Button (Floating Action Button) -->
+    <button class="mobile-nav-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <i class="bi bi-arrow-up"></i>
+    </button>
+
     <!-- Footer -->
     @include('components.footer')
 
@@ -198,7 +356,84 @@
     <script src="{{ asset('js/bootstrap.bundle.min.js') }}" defer></script>
     <script src="{{ asset('js/performance.js') }}" defer></script>
 
+    <!-- Service Worker Registration -->
     <script>
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('{{ asset('sw.js') }}')
+                    .then(registration => {
+                        console.log('SW registered: ', registration);
+                        
+                        // Check for updates
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // New content is available
+                                    if (confirm('New version available! Reload to update?')) {
+                                        window.location.reload();
+                                    }
+                                }
+                            });
+                        });
+                    })
+                    .catch(registrationError => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+
+        // PWA Install Prompt
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Show install button (optional)
+            const installBtn = document.createElement('button');
+            installBtn.textContent = 'Install App';
+            installBtn.className = 'btn btn-primary position-fixed';
+            installBtn.style.cssText = 'bottom: 80px; right: 20px; z-index: 1001;';
+            installBtn.onclick = () => {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                    } else {
+                        console.log('User dismissed the install prompt');
+                    }
+                    deferredPrompt = null;
+                    installBtn.remove();
+                });
+            };
+            document.body.appendChild(installBtn);
+        });
+
+        // Mobile Navigation Active State
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set active nav based on current URL
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.mobile-bottom-nav .nav-link');
+            
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath || 
+                    (currentPath.startsWith(link.getAttribute('href')) && link.getAttribute('href') !== '/')) {
+                    link.classList.add('active');
+                }
+            });
+            
+            // Show/hide scroll to top button
+            const scrollBtn = document.querySelector('.mobile-nav-btn');
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    scrollBtn.style.display = 'flex';
+                } else {
+                    scrollBtn.style.display = 'none';
+                }
+            });
+        });
+
         // AOS (Animate on Scroll) Trigger
         document.addEventListener('DOMContentLoaded', function() {
             const observerOptions = {

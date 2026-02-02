@@ -13,6 +13,9 @@ class EmailVerificationTest extends TestCase
 
     public function test_registration_does_not_autologin_user()
     {
+        // Visit the registration page to set CSRF token in session
+        $this->get(route('register'));
+
         $userData = [
             'name' => 'Test User',
             'email' => 'test@example.com',
@@ -20,6 +23,7 @@ class EmailVerificationTest extends TestCase
             'password_confirmation' => 'password',
             'nik' => '1234567890123456',
             'nis' => '1234567890',
+            '_token' => csrf_token(),
         ];
 
         // Ensure we have the columns (mocking schema check if needed, but we use sqlite memory which should have migrations)

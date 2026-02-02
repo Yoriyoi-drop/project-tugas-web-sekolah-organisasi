@@ -13,8 +13,10 @@ class ActivityCreationTest extends TestCase
 
     public function test_admin_can_create_activity()
     {
+        $this->withoutMiddleware();
+
         $admin = User::factory()->create(['is_admin' => true, 'email_verified_at' => now()]);
-        
+
         $activityData = [
             'title' => 'New Activity',
             'description' => 'Description',
@@ -31,8 +33,10 @@ class ActivityCreationTest extends TestCase
 
     public function test_activity_creation_requires_category()
     {
+        $this->withoutMiddleware();
+
         $admin = User::factory()->create(['is_admin' => true, 'email_verified_at' => now()]);
-        
+
         $activityData = [
             'title' => 'New Activity',
             'description' => 'Description',

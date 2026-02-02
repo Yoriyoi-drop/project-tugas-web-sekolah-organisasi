@@ -6,6 +6,8 @@ Modern responsive website built with Laravel & Bootstrap 5
 
 - ✅ **Modern Contact Page** - Teal gradient design with interactive form
 - ✅ **Password Verification** - 6-digit code with countdown timer
+- ✅ **Student Registration System** - Complete account registration with approval workflow
+- ✅ **PPDB Management** - Online student admission system
 - ✅ **Fully Responsive** - Mobile-first Bootstrap 5 design
 - ✅ **Security Features** - 2FA, rate limiting, audit logging
 - ✅ **Admin Panel** - Organization & user management
@@ -135,7 +137,48 @@ php artisan serve
 - **Role Management**: Spatie Laravel Permission
 - **Deployment**: Vercel/Netlify ready
 
-## 📝 Version 1.15 Updates & Fixes
+## 🎓 Student Registration System
+
+### Overview
+Complete student account registration system with admin approval workflow, similar to PPDB but focused on creating user accounts for the learning management system.
+
+### Features
+- **Public Registration Form** - Modern, responsive registration interface
+- **Admin Approval System** - Admin dashboard to review and approve/reject registrations
+- **Automatic Account Creation** - User accounts created automatically upon approval
+- **Role Assignment** - Approved students get "calon siswa" role
+- **Email Validation** - Unique email validation across registration and user tables
+- **Comprehensive Validation** - NIK, phone, and data validation
+- **Modern UI/UX** - Animated hero section, floating cards, and smooth transitions
+
+### Routes
+- `/pendaftaran-siswa` - Registration information page
+- `/pendaftaran-siswa/daftar` - Registration form
+- `/admin/student-registrations` - Admin management dashboard
+
+### Database Schema
+```sql
+student_registrations:
+- id, name, nik, email, birth_date, birth_place
+- gender, address, phone, parent_name, parent_phone
+- previous_school, desired_major
+- status (pending/approved/rejected)
+- notes, approved_at, rejected_at
+- approved_by, rejected_by
+- created_at, updated_at
+```
+
+## 📝 Version 1.16 Updates & Fixes
+
+### 🎓 New Features
+- **Student Registration System** - Complete account registration workflow
+  - Modern hero section with animations and floating cards
+  - Comprehensive registration form with validation
+  - Admin dashboard for managing registrations
+  - Automatic user account creation upon approval
+  - Role-based access control for "calon siswa" role
+  - Statistics and progress tracking
+  - Mobile-responsive design with smooth animations
 
 ### 🔧 Bug Fixes
 - **Fixed avatar upload blank issue**: Added proper error handling and fallback avatar
@@ -165,6 +208,11 @@ php artisan serve
 - **Asset optimization**: Removed unused Bootstrap CSS files to reduce project size
 
 ### 🎨 UI/UX Improvements
+- **Student Registration Interface**: Modern, animated landing page
+  - Full-screen hero with gradient backgrounds
+  - Floating animation cards with statistics
+  - Smooth transitions and hover effects
+  - Mobile-responsive design
 - **Better avatar display**: More reliable avatar loading with fallback
   - Uses `$user->avatar_url` accessor instead of direct `Storage::url()` calls
   - Shows default avatar when user avatar is missing
@@ -172,20 +220,36 @@ php artisan serve
 - **Improved accessibility**: Better alt tags and semantic HTML
 
 ### 🏗️ Architecture Enhancements
+- **Student Registration Architecture**: Complete MVC implementation
+  - `StudentRegistration` model with relationships and scopes
+  - `StudentRegistrationController` with CRUD operations
+  - `StudentRegistrationRequest` for validation
+  - Factory for testing
+  - Comprehensive unit tests (15 test cases)
 - **Better role system consistency**: Hybrid approach supporting both legacy and Spatie systems
 - **Added sync functions**: `syncLegacyRolesToSpatie()` for migration support
 - **Improved error logging**: More comprehensive error tracking across systems
 - **Backward compatibility maintained**: Still supports legacy role/ability tables
+
+### 🧪 Testing
+- **Student Registration Tests**: Complete unit test coverage
+  - Model creation and validation tests
+  - Relationship and scope tests
+  - Approval/rejection workflow tests
+  - Accessor and helper method tests
+  - Total: 495 test cases passing
 
 ## 📸 Screenshots
 
 ### Desktop
 ![Contact Page]
 ![Password Verification]
+![Student Registration]
 
 ### Mobile
 ![Contact Mobile]
 ![Password Mobile]
+![Student Registration Mobile]
 
 ## 🔐 Security Features
 
@@ -195,6 +259,7 @@ php artisan serve
 - **Audit Logging** - Comprehensive security event tracking
 - **Sensitive Data Encryption** - Phone numbers and addresses encrypted at rest
 - **Role-Based Access Control** - Fine-grained permission system
+- **Student Registration Validation** - NIK, email, and phone validation
 
 ## 🚀 Deployment
 

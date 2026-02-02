@@ -28,13 +28,17 @@ class StudentManagementTest extends TestCase
     {
         $admin = User::factory()->create(['is_admin' => true]);
 
+        // Visit the create page to set CSRF token in session
+        $this->actingAs($admin)->get(route('admin.students.create'));
+
         $response = $this->actingAs($admin)->post(route('admin.students.store'), [
             'name' => 'Test Student',
             'nis' => '123456',
             'email' => 'student@test.com',
             'phone' => '08123456789',
             'class' => 'X IPA 1',
-            'address' => 'Test Address'
+            'address' => 'Test Address',
+            '_token' => csrf_token() // Add CSRF token
         ]);
 
         $response->assertRedirect(route('admin.students.index'));
@@ -50,13 +54,17 @@ class StudentManagementTest extends TestCase
         $admin = User::factory()->create(['is_admin' => true]);
         $student = Student::factory()->create();
 
+        // Visit the edit page to set CSRF token in session
+        $this->actingAs($admin)->get(route('admin.students.edit', $student));
+
         $response = $this->actingAs($admin)->put(route('admin.students.update', $student), [
             'name' => 'Updated Name',
             'nis' => $student->nis,
             'email' => 'updated@test.com',
             'phone' => '08123456789',
             'class' => 'XI IPA 1',
-            'address' => 'Updated Address'
+            'address' => 'Updated Address',
+            '_token' => csrf_token() // Add CSRF token
         ]);
 
         $response->assertRedirect(route('admin.students.index'));
@@ -72,7 +80,13 @@ class StudentManagementTest extends TestCase
         $admin = User::factory()->create(['is_admin' => true]);
         $student = Student::factory()->create();
 
-        $response = $this->actingAs($admin)->delete(route('admin.students.destroy', $student));
+        // Visit the index page to set CSRF token in session
+        $this->actingAs($admin)->get(route('admin.students.index'));
+
+        $response = $this->actingAs($admin)
+                         ->delete(route('admin.students.destroy', $student), [
+                             '_token' => $this->app['session']->token()
+                         ]);
 
         $response->assertRedirect(route('admin.students.index'));
         $this->assertDatabaseMissing('students', ['id' => $student->id]);

@@ -43,6 +43,8 @@ class AdminFullFeatureTest extends TestCase
     // Posts (already covered in previous test, but repeat for completeness)
     public function test_admin_can_create_post()
     {
+        $this->actingAsAdmin()->get(route('admin.posts.create'));
+
         $category = Category::factory()->create();
         $postData = [
             'title' => 'Full Test Post',
@@ -51,6 +53,7 @@ class AdminFullFeatureTest extends TestCase
             'category' => $category->name,
             'status' => 'published',
             'image' => UploadedFile::fake()->image('post.jpg'),
+            '_token' => $this->app['session']->token()
         ];
         $response = $this->actingAsAdmin()->post(route('admin.posts.store'), $postData);
         $response->assertRedirect(route('admin.posts.index'));
@@ -59,6 +62,8 @@ class AdminFullFeatureTest extends TestCase
 
     public function test_admin_can_manage_organizations()
     {
+        $this->actingAsAdmin()->get(route('admin.organizations.create'));
+
         $orgData = [
             'name' => 'Org Test',
             'type' => 'Test Type',
@@ -66,6 +71,7 @@ class AdminFullFeatureTest extends TestCase
             'icon' => 'fa-test',
             'is_active' => true,
             'order' => 1,
+            '_token' => $this->app['session']->token()
         ];
         $response = $this->actingAsAdmin()->post(route('admin.organizations.store'), $orgData);
         $response->assertRedirect(route('admin.organizations.index'));
@@ -77,7 +83,9 @@ class AdminFullFeatureTest extends TestCase
         $activity = Activity::factory()->create();
         $this->actingAsAdmin()->get(route('admin.activities.show', $activity))
             ->assertStatus(200);
-        $this->actingAsAdmin()->delete(route('admin.activities.destroy', $activity))
+        $this->actingAsAdmin()->delete(route('admin.activities.destroy', $activity), [
+            '_token' => $this->app['session']->token()
+        ])
             ->assertRedirect(route('admin.activities.index'));
     }
 
@@ -89,6 +97,8 @@ class AdminFullFeatureTest extends TestCase
 
     public function test_admin_can_manage_students()
     {
+        $this->actingAsAdmin()->get(route('admin.students.create'));
+
         $studentData = [
             'name' => 'Student Test',
             'nis' => '123456',
@@ -96,6 +106,7 @@ class AdminFullFeatureTest extends TestCase
             'phone' => '08123456789',
             'class' => '10A',
             'address' => 'Jl. Test',
+            '_token' => $this->app['session']->token()
         ];
         $response = $this->actingAsAdmin()->post(route('admin.students.store'), $studentData);
         $response->assertRedirect(route('admin.students.index'));
@@ -121,18 +132,23 @@ class AdminFullFeatureTest extends TestCase
         $message = Contact::factory()->create();
         $this->actingAsAdmin()->get(route('admin.messages.show', $message))
             ->assertStatus(200);
-        $this->actingAsAdmin()->delete(route('admin.messages.destroy', $message))
+        $this->actingAsAdmin()->delete(route('admin.messages.destroy', $message), [
+            '_token' => $this->app['session']->token()
+        ])
             ->assertRedirect(route('admin.messages.index'));
     }
 
     public function test_admin_can_update_settings()
     {
+        $this->actingAsAdmin()->get(route('admin.settings.index'));
+
         $settingsData = [
             'site_name' => 'New Site',
             'site_description' => 'Desc',
             'contact_email' => 'info@example.com',
             'contact_phone' => '+62 812 3456',
             'address' => 'Jl. Baru',
+            '_token' => $this->app['session']->token()
         ];
         $response = $this->actingAsAdmin()->put(route('admin.settings.update'), $settingsData);
         $response->assertRedirect(route('admin.settings.index'));
@@ -143,12 +159,17 @@ class AdminFullFeatureTest extends TestCase
         $registration = Registration::factory()->create();
         $this->actingAsAdmin()->get(route('admin.registrations.show', $registration))
             ->assertStatus(200);
-        $this->actingAsAdmin()->patch(route('admin.registrations.update-status', $registration), ['status' => 'approved'])
+        $this->actingAsAdmin()->patch(route('admin.registrations.update-status', $registration), [
+            'status' => 'approved',
+            '_token' => $this->app['session']->token()
+        ])
             ->assertRedirect(route('admin.registrations.index'));
     }
 
     public function test_admin_can_manage_users()
     {
+        $this->actingAsAdmin()->get(route('admin.users.create'));
+
         $userData = [
             'name' => 'New User',
             'email' => 'newuser@example.com',
@@ -157,6 +178,7 @@ class AdminFullFeatureTest extends TestCase
             'is_admin' => false,
             'nik' => '1234567890123456',
             'nis' => '1234567890',
+            '_token' => $this->app['session']->token()
         ];
         $response = $this->actingAsAdmin()->post(route('admin.users.store'), $userData);
         $response->assertRedirect(route('admin.users.index'));

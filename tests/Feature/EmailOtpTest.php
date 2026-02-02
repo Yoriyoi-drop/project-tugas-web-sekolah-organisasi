@@ -15,6 +15,9 @@ class EmailOtpTest extends TestCase
     {
         Notification::fake();
 
+        // Visit the registration page to set CSRF token in session
+        $this->get(route('register'));
+
         $response = $this->post(route('register.store'), [
             'name' => 'Test User',
             'email' => 'test@example.com',
@@ -22,6 +25,7 @@ class EmailOtpTest extends TestCase
             'password_confirmation' => 'password',
             'nik' => '1234567890123456',
             'nis' => '1234567890',
+            '_token' => csrf_token(),
         ]);
 
         $response->assertRedirect(route('otp.show'));
@@ -37,11 +41,17 @@ class EmailOtpTest extends TestCase
             'email_verified_at' => null,
         ]);
 
+        // Set the user ID in session for OTP verification
         $this->withSession(['otp_user_id' => $user->id]);
+
+        // Visit the OTP page to set CSRF token in session
+        $this->get(route('otp.show'));
+
         $code = $user->generateEmailOtp('127.0.0.1', 'PHPUnit');
 
         $response = $this->post(route('otp.verify'), [
             'code' => $code,
+            '_token' => csrf_token(),
         ]);
 
         $response->assertRedirect(route('login'));

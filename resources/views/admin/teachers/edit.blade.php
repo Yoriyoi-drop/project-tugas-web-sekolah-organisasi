@@ -1,12 +1,15 @@
 {{-- Admin Teachers Edit --}}
 @extends('admin.layouts.app')
+
 @section('content')
-<div class="container py-4">
-	<div class="card">
-		<div class="card-header">
-			<h5 class="mb-0">Edit Teacher</h5>
-		</div>
-		<div class="card-body">
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header py-3">
+          <h5 class="mb-0">Edit Teacher</h5>
+        </div>
+        <div class="card-body">
 			<form method="POST" action="{{ route('admin.teachers.update', $teacher) }}">
 				@csrf
 				@method('PUT')
@@ -48,7 +51,9 @@
 					<button type="submit" class="btn btn-primary">Update</button>
 				</div>
 			</form>
-		</div>
-	</div>
-	</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 @endsection

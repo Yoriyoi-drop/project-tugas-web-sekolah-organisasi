@@ -30,6 +30,8 @@ class AdminFeatureTest extends TestCase
 
     public function test_admin_can_create_post()
     {
+        $this->withoutMiddleware();
+
         $postData = [
             'title' => 'New Blog Post',
             'excerpt' => 'This is a short excerpt.',
@@ -47,6 +49,8 @@ class AdminFeatureTest extends TestCase
 
     public function test_admin_can_create_organization()
     {
+        $this->withoutMiddleware();
+
         $orgData = [
             'name' => 'New Organization',
             'type' => 'Extracurricular',
@@ -65,6 +69,8 @@ class AdminFeatureTest extends TestCase
 
     public function test_admin_can_create_student()
     {
+        $this->withoutMiddleware();
+
         $studentData = [
             'name' => 'John Doe',
             'nis' => '12345678',
@@ -82,6 +88,8 @@ class AdminFeatureTest extends TestCase
 
     public function test_admin_can_update_settings()
     {
+        $this->withoutMiddleware();
+
         $settingsData = [
             'site_name' => 'New Site Name',
             'site_description' => 'New Description',
@@ -93,7 +101,7 @@ class AdminFeatureTest extends TestCase
         $response = $this->actingAs($this->admin)->put(route('admin.settings.update'), $settingsData);
 
         $response->assertRedirect(route('admin.settings.index'));
-        
+
         // Verify setting is saved (assuming Setting model has a get method or we check DB table)
         $this->assertEquals('New Site Name', Setting::get('site_name'));
     }

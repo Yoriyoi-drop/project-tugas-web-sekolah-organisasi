@@ -34,12 +34,16 @@ class TeacherManagementTest extends TestCase
     {
         $admin = User::factory()->create(['is_admin' => true]);
 
+        // Visit the create page to set CSRF token in session
+        $this->actingAs($admin)->get(route('admin.teachers.create'));
+
         $response = $this->actingAs($admin)->post(route('admin.teachers.store'), [
             'name' => 'New Guru',
             'email' => 'newguru@test.com',
             'phone' => '081300000000',
             'subject' => 'Physics',
-            'qualification' => 'M.Sc'
+            'qualification' => 'M.Sc',
+            '_token' => $this->app['session']->token()
         ]);
 
         $response->assertRedirect(route('admin.teachers.index'));
@@ -61,12 +65,16 @@ class TeacherManagementTest extends TestCase
             'qualification' => 'S.Hum'
         ]);
 
+        // Visit the edit page to set CSRF token in session
+        $this->actingAs($admin)->get(route('admin.teachers.edit', $teacher));
+
         $response = $this->actingAs($admin)->put(route('admin.teachers.update', $teacher), [
             'name' => 'Updated Guru',
             'email' => 'updatedguru@test.com',
             'phone' => '081211111111',
             'subject' => 'Geography',
-            'qualification' => 'M.A'
+            'qualification' => 'M.A',
+            '_token' => $this->app['session']->token()
         ]);
 
         $response->assertRedirect(route('admin.teachers.index'));
@@ -89,7 +97,12 @@ class TeacherManagementTest extends TestCase
             'qualification' => 'S.Pd'
         ]);
 
-        $response = $this->actingAs($admin)->delete(route('admin.teachers.destroy', $teacher));
+        // Visit the index page to set CSRF token in session
+        $this->actingAs($admin)->get(route('admin.teachers.index'));
+
+        $response = $this->actingAs($admin)
+                         ->withHeader('X-CSRF-TOKEN', csrf_token())
+                         ->delete(route('admin.teachers.destroy', $teacher));
 
         $response->assertRedirect(route('admin.teachers.index'));
 

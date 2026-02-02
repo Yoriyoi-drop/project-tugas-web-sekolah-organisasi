@@ -51,7 +51,9 @@ class StudentController extends Controller
             'class' => 'nullable|string|max:50',
         ]);
 
-        $student = Student::create($request->all());
+        $student = Student::create($request->only([
+            'name', 'nis', 'email', 'phone', 'class'
+        ]));
 
         return response()->json([
             'success' => true,
@@ -79,7 +81,9 @@ class StudentController extends Controller
             'class' => 'nullable|string|max:50',
         ]);
 
-        $student->update($request->all());
+        $student->update($request->only([
+            'name', 'nis', 'email', 'phone', 'class'
+        ]));
 
         return response()->json([
             'success' => true,

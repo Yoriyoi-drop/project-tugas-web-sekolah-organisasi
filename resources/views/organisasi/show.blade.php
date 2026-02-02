@@ -75,52 +75,205 @@
         <div class="card border-0 shadow-sm mt-3">
           <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-3">
-              <h5 class="mb-0"><i class="bi bi-people-fill me-2"></i>Anggota (Siswa)</h5>
-              <span class="badge bg-primary">{{ $organization->students->count() }} siswa</span>
+              <h5 class="mb-0"><i class="bi bi-people-fill me-2"></i>Anggota Aktif</h5>
+              <div class="d-flex gap-2">
+                <span class="badge bg-primary">{{ $organization->activeMembers->count() }} Aktif</span>
+                @if($memberStats['inactive'] ?? 0)
+                <span class="badge bg-secondary">{{ $memberStats['inactive'] }} Tidak Aktif</span>
+                @endif
+                @if($memberStats['alumni'] ?? 0)
+                <span class="badge bg-success">{{ $memberStats['alumni'] }} Alumni</span>
+                @endif
+              </div>
             </div>
-            @if($organization->students->count() > 0)
+            
+            @if($organization->activeMembers->count() > 0)
             <div class="row row-cols-1 row-cols-md-2 g-2">
-              @foreach($organization->students as $student)
+              @foreach($organization->activeMembers as $member)
               <div class="col">
                 <div class="p-2 border rounded d-flex align-items-center gap-2">
                   <i class="bi bi-person-circle fs-4 text-secondary"></i>
-                  <div>
-                    <div class="fw-semibold">{{ $student->name }}</div>
-                    <small class="text-muted">Kelas {{ $student->class ?? '-' }}</small>
+                  <div class="flex-grow-1">
+                    <div class="fw-semibold">{{ $member->full_name }}</div>
+                    <small class="text-muted">
+                      {{ $member->member_type === 'student' ? 'Kelas ' . ($member->student->class ?? '-') : 'Guru' }} 
+                      • {{ $member->role_display_name }}
+                    </small>
                   </div>
+                  @if($member->role !== 'member')
+                  <span class="badge bg-warning text-dark">{{ $member->role_display_name }}</span>
+                  @endif
                 </div>
               </div>
               @endforeach
             </div>
             @else
-              <p class="text-muted mb-0">Belum ada anggota terdaftar.</p>
+              <p class="text-muted mb-0">Belum ada anggota aktif terdaftar.</p>
             @endif
           </div>
         </div>
 
+        @if($leadershipMembers->count() > 0)
         <div class="card border-0 shadow-sm mt-3">
           <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <h5 class="mb-0"><i class="bi bi-mortarboard me-2"></i>Pembina (Guru)</h5>
-              <span class="badge bg-success">{{ $organization->teachers->count() }} pembina</span>
-            </div>
-            @if($organization->teachers->count() > 0)
-            <div class="list-group list-group-flush">
-              @foreach($organization->teachers as $teacher)
-              <div class="list-group-item d-flex align-items-center justify-content-between">
-                <div class="d-flex align-items-center gap-2">
-                  <i class="bi bi-person-badge fs-5 text-secondary"></i>
-                  <div>
-                    <div class="fw-semibold">{{ $teacher->name }}</div>
-                    <small class="text-muted">{{ $teacher->subject ?? 'Guru' }} • {{ $teacher->pivot->role ?? 'pembina' }}</small>
-                  </div>
+            <h5 class="mb-3"><i class="bi bi-award me-2"></i>Struktur Kepemimpinan</h5>
+            <div class="row g-3">
+              @foreach($leadershipMembers as $leader)
+              <div class="col-md-6">
+                <div class="p-3 bg-light rounded h-100">
+                  <div class="fw-semibold">{{ $leader->full_name }}</div>
+                  <div class="text-muted">{{ $leader->role_display_name }}</div>
+                  @if($leader->position)
+                  <div class="small text-primary">{{ $leader->position }}</div>
+                  @endif
                 </div>
               </div>
               @endforeach
             </div>
-            @else
-              <p class="text-muted mb-0">Belum ada pembina ditetapkan.</p>
-            @endif
+          </div>
+        </div>
+        @endif
+
+        <!-- Collaboration Features Section -->
+        <div class="card border-0 shadow-sm mt-3">
+          <div class="card-body">
+            <h5 class="mb-3"><i class="bi bi-chat-square-text me-2"></i>Aktivitas Kolaborasi</h5>
+            
+            <!-- Navigation Tabs -->
+            <ul class="nav nav-tabs mb-3" id="collaborationTabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="discussions-tab" data-bs-toggle="tab" data-bs-target="#discussions" type="button" role="tab">
+                  <i class="bi bi-chat-dots me-1"></i>Diskusi
+                  <span class="badge bg-primary ms-1">{{ $organization->activeDiscussions()->count() }}</span>
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="activities-tab" data-bs-toggle="tab" data-bs-target="#activities" type="button" role="tab">
+                  <i class="bi bi-calendar-event me-1"></i>Kegiatan
+                  <span class="badge bg-success ms-1">{{ $organization->upcomingActivities()->count() }}</span>
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="announcements-tab" data-bs-toggle="tab" data-bs-target="#announcements" type="button" role="tab">
+                  <i class="bi bi-megaphone me-1"></i>Pengumuman
+                  <span class="badge bg-warning ms-1">{{ $organization->activeAnnouncements()->count() }}</span>
+                </button>
+              </li>
+            </ul>
+
+            <!-- Tab Content -->
+            <div class="tab-content" id="collaborationTabsContent">
+              <!-- Discussions Tab -->
+              <div class="tab-pane fade show active" id="discussions" role="tabpanel">
+                @php
+                  $latestDiscussions = $organization->getLatestDiscussions(3);
+                @endphp
+                @if($latestDiscussions->count() > 0)
+                  <div class="list-group list-group-flush">
+                    @foreach($latestDiscussions as $discussion)
+                    <div class="list-group-item list-group-item-action">
+                      <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1">{{ $discussion->title }}</h6>
+                        <small class="text-muted">{{ $discussion->time_ago }}</small>
+                      </div>
+                      <p class="mb-1 text-truncate">{{ Str::limit(strip_tags($discussion->content), 80) }}</p>
+                      <small class="text-muted">
+                        <i class="bi bi-person me-1"></i>{{ $discussion->author->name }}
+                        @if($discussion->reply_count > 0)
+                        <span class="ms-2"><i class="bi bi-chat me-1"></i>{{ $discussion->reply_count }} balasan</span>
+                        @endif
+                        @if($discussion->is_pinned)
+                        <span class="ms-2 badge bg-warning text-dark"><i class="bi bi-pin me-1"></i>Dipin</span>
+                        @endif
+                      </small>
+                    </div>
+                    @endforeach
+                  </div>
+                  <div class="text-center mt-3">
+                    <a href="#" class="btn btn-outline-primary btn-sm">Lihat Semua Diskusi</a>
+                  </div>
+                @else
+                  <div class="text-center text-muted py-3">
+                    <i class="bi bi-chat-dots fs-1 mb-2 d-block"></i>
+                    <p>Belum ada diskusi. Mulai diskusi pertama!</p>
+                  </div>
+                @endif
+              </div>
+
+              <!-- Activities Tab -->
+              <div class="tab-pane fade" id="activities" role="tabpanel">
+                @php
+                  $upcomingActivities = $organization->getUpcomingEvents(3);
+                @endphp
+                @if($upcomingActivities->count() > 0)
+                  <div class="list-group list-group-flush">
+                    @foreach($upcomingActivities as $activity)
+                    <div class="list-group-item list-group-item-action">
+                      <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1">{{ $activity->title }}</h6>
+                        <small class="text-muted">{{ $activity->start_datetime->format('d M H:i') }}</small>
+                      </div>
+                      <p class="mb-1 text-truncate">{{ Str::limit($activity->description, 80) }}</p>
+                      <small class="text-muted">
+                        <span class="badge bg-{{ $activity->type === 'meeting' ? 'info' : 'success' }}">{{ $activity->formatted_type }}</span>
+                        @if($activity->location)
+                        <span class="ms-2"><i class="bi bi-geo-alt me-1"></i>{{ $activity->location }}</span>
+                        @endif
+                        @if($activity->max_participants)
+                        <span class="ms-2"><i class="bi bi-people me-1"></i>{{ $activity->registered_count }}/{{ $activity->max_participants }}</span>
+                        @endif
+                      </small>
+                    </div>
+                    @endforeach
+                  </div>
+                  <div class="text-center mt-3">
+                    <a href="#" class="btn btn-outline-success btn-sm">Lihat Semua Kegiatan</a>
+                  </div>
+                @else
+                  <div class="text-center text-muted py-3">
+                    <i class="bi bi-calendar-event fs-1 mb-2 d-block"></i>
+                    <p>Belum ada kegiatan yang dijadwalkan.</p>
+                  </div>
+                @endif
+              </div>
+
+              <!-- Announcements Tab -->
+              <div class="tab-pane fade" id="announcements" role="tabpanel">
+                @php
+                  $importantAnnouncements = $organization->getImportantAnnouncements(3);
+                @endphp
+                @if($importantAnnouncements->count() > 0)
+                  <div class="list-group list-group-flush">
+                    @foreach($importantAnnouncements as $announcement)
+                    <div class="list-group-item list-group-item-action">
+                      <div class="d-flex w-100 justify-content-between">
+                        <h6 class="mb-1">
+                          {{ $announcement->title }}
+                          @if($announcement->priority === 'urgent')
+                          <span class="badge bg-danger ms-1">PENTING</span>
+                          @endif
+                        </h6>
+                        <small class="text-muted">{{ $announcement->time_ago }}</small>
+                      </div>
+                      <p class="mb-1 text-truncate">{{ Str::limit(strip_tags($announcement->content), 80) }}</p>
+                      <small class="text-muted">
+                        <i class="bi bi-person me-1"></i>{{ $announcement->author->name }}
+                        <span class="ms-2 badge bg-{{ $announcement->priority === 'urgent' ? 'danger' : 'secondary' }}">{{ $announcement->formatted_priority }}</span>
+                      </small>
+                    </div>
+                    @endforeach
+                  </div>
+                  <div class="text-center mt-3">
+                    <a href="#" class="btn btn-outline-warning btn-sm">Lihat Semua Pengumuman</a>
+                  </div>
+                @else
+                  <div class="text-center text-muted py-3">
+                    <i class="bi bi-megaphone fs-1 mb-2 d-block"></i>
+                    <p>Tidak ada pengumuman penting saat ini.</p>
+                  </div>
+                @endif
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -153,6 +306,29 @@
               @foreach($organization->tags as $tag)
                 <span class="badge bg-light text-dark border me-1 mb-1">{{ $tag }}</span>
               @endforeach
+            </div>
+            @endif
+
+            @if($organization->activePeriod)
+            <div class="mb-3">
+              <h6 class="text-muted mb-2">Periode Aktif</h6>
+              <div class="small">
+                <strong>{{ $organization->activePeriod->period_name }}</strong><br>
+                <span class="text-muted">{{ $organization->activePeriod->duration }}</span>
+              </div>
+            </div>
+            @endif
+
+            @if($organization->periods->count() > 0)
+            <div class="mb-3">
+              <h6 class="text-muted mb-2">Periode Sebelumnya</h6>
+              <div class="small">
+                @foreach($organization->periods->take(2) as $period)
+                @if(!$period->is_active)
+                <div class="mb-1">{{ $period->period_name }}</div>
+                @endif
+                @endforeach
+              </div>
             </div>
             @endif
 
