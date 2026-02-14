@@ -17,7 +17,7 @@ class AvatarController extends Controller
     public function upload(Request $request)
     {
         $request->validate([
-            'avatar' => 'required|image|mimes:jpeg,png,jpg|max:2048'
+            'avatar' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240'
         ]);
 
         $user = Auth::user();
@@ -29,9 +29,17 @@ class AvatarController extends Controller
 
         // Simpan avatar baru
         try {
-            $path = $request->file('avatar')->store('avatars', 'public');
+            $file = $request->file('avatar');
+            \Log::info('Avatar upload attempt', [
+                'file_size' => $file->getSize(),
+                'mime_type' => $file->getMimeType(),
+                'original_name' => $file->getClientOriginalName()
+            ]);
+            
+            $path = $file->store('avatars', 'public');
             
             if (!$path) {
+                \Log::error('Avatar upload failed: Unable to store file');
                 return redirect()->route('profile.show')->with('error', 'Gagal mengupload avatar. Silakan coba lagi.');
             }
 
@@ -41,7 +49,10 @@ class AvatarController extends Controller
             
             return redirect()->route('profile.show')->with('success', 'Avatar berhasil diupload.');
         } catch (\Exception $e) {
-            \Log::error('Avatar upload failed: ' . $e->getMessage());
+            \Log::error('Avatar upload failed: ' . $e->getMessage(), [
+                'exception' => $e,
+                'trace' => $e->getTraceAsString()
+            ]);
             return redirect()->route('profile.show')->with('error', 'Gagal mengupload avatar. Silakan coba lagi.');
         }
     }

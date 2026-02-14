@@ -54,7 +54,8 @@ class EmailOtpTest extends TestCase
             '_token' => csrf_token(),
         ]);
 
-        $response->assertRedirect(route('login'));
+        // After successful verification, user should be logged in and redirected to profile
+        $response->assertRedirect(route('profile.show'));
         $this->assertNotNull($user->fresh()->email_verified_at);
     }
 }

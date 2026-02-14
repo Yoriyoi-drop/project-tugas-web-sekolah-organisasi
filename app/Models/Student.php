@@ -49,22 +49,30 @@ class Student extends Model
     public static function generateNis(): string
     {
         $yearPrefix = date('Y');
+        $startRange = intval($yearPrefix . '001');
+        $endRange = intval($yearPrefix . '999');
 
         // Get the highest NIS starting with the current year directly from the database
-        $maxNis = static::where('nis', 'like', $yearPrefix . '%')->max('nis');
+        $maxNis = static::whereBetween('nis', [$startRange, $endRange])
+                            ->max('nis');
 
         if ($maxNis) {
             $next = intval($maxNis) + 1;
         } else {
-            $next = intval($yearPrefix . '001');
+            $next = $startRange;
         }
 
-        // Ensure uniqueness (loop to handle potential race conditions)
-        while (static::where('nis', (string) $next)->exists()) {
+        // Ensure uniqueness within the year range (handle potential race conditions)
+        while ($next <= $endRange && static::where('nis', (string) $next)->exists()) {
             $next++;
         }
 
-        return (string) $next;
+        // If we've reached the end of the range, throw an exception
+        if ($next > $endRange) {
+            throw new \Exception("NIS range exhausted for year {$yearPrefix}");
+        }
+
+        return str_pad((string) $next, strlen($yearPrefix) + 3, '0', STR_PAD_LEFT);
     }
 
     // Membership methods

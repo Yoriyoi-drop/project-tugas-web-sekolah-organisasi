@@ -170,12 +170,55 @@ class GenerateReportJob implements ShouldQueue
      */
     protected function generateAttendanceReport(): array
     {
-        // This is a placeholder - implement actual attendance logic
+        $attendances = \App\Models\ActivityRegistration::with(['member.user', 'activity'])
+            ->when(isset($this->parameters['date_from']), function ($query) {
+                $query->whereDate('created_at', '>=', $this->parameters['date_from']);
+            })
+            ->when(isset($this->parameters['date_to']), function ($query) {
+                $query->whereDate('created_at', '<=', $this->parameters['date_to']);
+            })
+            ->when(isset($this->parameters['activity_id']), function ($query) {
+                $query->where('activity_id', $this->parameters['activity_id']);
+            })
+            ->get();
+
+        // Group attendances by activity
+        $attendancesByActivity = $attendances->groupBy('activity_id');
+
+        $reportData = [];
+        foreach ($attendancesByActivity as $activityId => $activityAttendances) {
+            $firstAttendance = $activityAttendances->first();
+            if ($firstAttendance && $firstAttendance->activity) {
+                $activity = $firstAttendance->activity;
+                $reportData[] = [
+                    'activity' => [
+                        'id' => $activity->id,
+                        'title' => $activity->title,
+                        'start_datetime' => $activity->start_datetime,
+                        'end_datetime' => $activity->end_datetime,
+                    ],
+                    'total_attendees' => $activityAttendances->count(),
+                    'confirmed_attendees' => $activityAttendances->where('status', 'confirmed')->count(),
+                    'attended_attendees' => $activityAttendances->where('status', 'attended')->count(),
+                    'attendees' => $activityAttendances->map(function ($attendance) {
+                        return [
+                            'member_name' => $attendance->member->user->name ?? 'Unknown',
+                            'status' => $attendance->status,
+                            'registered_at' => $attendance->created_at,
+                            'attended_at' => $attendance->attended_at,
+                        ];
+                    }),
+                ];
+            }
+        }
+
         return [
             'title' => 'Laporan Kehadiran',
             'generated_at' => now()->format('Y-m-d H:i:s'),
             'parameters' => $this->parameters,
-            'data' => [],
+            'total_activities' => count($reportData),
+            'total_attendances' => $attendances->count(),
+            'data' => $reportData,
         ];
     }
 

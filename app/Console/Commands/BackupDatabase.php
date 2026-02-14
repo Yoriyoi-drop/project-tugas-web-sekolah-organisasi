@@ -125,7 +125,34 @@ class BackupDatabase extends Command
         $safeCommand = preg_replace('/-p\S+/', '-p****', $command);
         $this->info('Executing: ' . $safeCommand);
 
-        return exec($command, $output, $returnCode) === null && $returnCode === 0;
+        // Use proc_open for better security and control
+        $descriptorspec = [
+            0 => ["pipe", "r"],  // stdin
+            1 => ["pipe", "w"],  // stdout
+            2 => ["pipe", "w"]   // stderr
+        ];
+
+        $process = proc_open($command, $descriptorspec, $pipes);
+
+        if (is_resource($process)) {
+            // Close pipes
+            fclose($pipes[0]);
+            $output = stream_get_contents($pipes[1]);
+            $error_output = stream_get_contents($pipes[2]);
+            fclose($pipes[1]);
+            fclose($pipes[2]);
+
+            $returnCode = proc_close($process);
+
+            if ($returnCode !== 0) {
+                $this->error('Backup command failed with error: ' . $error_output);
+                return false;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -134,7 +161,38 @@ class BackupDatabase extends Command
     protected function compressBackup($path)
     {
         $this->info('Compressing backup file...');
-        exec('gzip ' . $path);
+        
+        // Validate the path to prevent command injection
+        $path = escapeshellarg($path);
+        
+        // Use proc_open for better security and control
+        $descriptorspec = [
+            0 => ["pipe", "r"],
+            1 => ["pipe", "w"],
+            2 => ["pipe", "w"]
+        ];
+
+        $process = proc_open("gzip $path", $descriptorspec, $pipes);
+
+        if (is_resource($process)) {
+            // Close pipes
+            fclose($pipes[0]);
+            $output = stream_get_contents($pipes[1]);
+            $error_output = stream_get_contents($pipes[2]);
+            fclose($pipes[1]);
+            fclose($pipes[2]);
+
+            $returnCode = proc_close($process);
+
+            if ($returnCode !== 0) {
+                $this->error('Compression failed with error: ' . $error_output);
+                return false;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     /**

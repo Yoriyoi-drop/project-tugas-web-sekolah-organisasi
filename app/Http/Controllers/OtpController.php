@@ -143,8 +143,11 @@ class OtpController extends Controller
         $otp->delete();
         session()->forget('otp_user_id');
 
-        return redirect()->route('login')
-            ->with('status', 'Email verified successfully. Please login.');
+        // Setelah verifikasi email berhasil, login pengguna secara otomatis
+        Auth::login($user);
+
+        return redirect()->intended('/profile')
+            ->with('status', 'Email verified successfully. You are now logged in.');
     }
     public function resend()
     {

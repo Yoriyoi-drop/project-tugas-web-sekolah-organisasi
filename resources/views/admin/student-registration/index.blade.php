@@ -17,11 +17,56 @@
                             <p class="text-muted mb-0 mt-1">Kelola pendaftaran akun siswa baru</p>
                         </div>
                         <div class="d-flex gap-2">
-                            <form method="GET" action="{{ route('student-registrations.index') }}" class="d-flex">
-                                <input type="text" name="search" class="form-control me-2" placeholder="Cari nama atau email..." value="{{ request('search') }}">
-                                <button type="submit" class="btn btn-outline-primary">
-                                    <i class="bi bi-search"></i>
+                            <!-- Advanced Filter Button -->
+                            <button class="btn btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#advancedFilter" aria-expanded="{{ (request('search') || request('status') || request('date_from') || request('date_to')) ? 'true' : 'false' }}">
+                                <i class="bi bi-funnel me-1"></i>Filter
+                            </button>
+                            
+                            <div class="dropdown">
+                                <button class="btn btn-outline-success dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-download me-1"></i>Ekspor
                                 </button>
+                                <ul class="dropdown-menu" aria-labelledby="exportDropdown">
+                                    <li><a class="dropdown-item" href="{{ route('student-registrations.export', ['format' => 'csv']) }}"><i class="bi bi-filetype-csv me-2"></i>Ekspor ke CSV</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('student-registrations.export', ['format' => 'excel']) }}"><i class="bi bi-file-earmark-spreadsheet me-2"></i>Ekspor ke Excel</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Advanced Filter Form -->
+                    <div class="collapse {{ (request('search') || request('status') || request('date_from') || request('date_to')) ? 'show' : '' }}" id="advancedFilter">
+                        <div class="mt-3 p-3 bg-light rounded">
+                            <form method="GET" action="{{ route('student-registrations.index') }}">
+                                <div class="row g-3">
+                                    <div class="col-md-3">
+                                        <input type="text" name="search" class="form-control" placeholder="Cari nama, email, NIK, dll..." value="{{ request('search') }}">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <select name="status" class="form-select">
+                                            <option value="">Semua Status</option>
+                                            <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Menunggu</option>
+                                            <option value="approved" {{ request('status') === 'approved' ? 'selected' : '' }}>Disetujui</option>
+                                            <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>Ditolak</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="date" name="date_from" class="form-control" placeholder="Tanggal Awal" value="{{ request('date_from') }}">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="date" name="date_to" class="form-control" placeholder="Tanggal Akhir" value="{{ request('date_to') }}">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="d-flex gap-2">
+                                            <button type="submit" class="btn btn-primary flex-grow-1">
+                                                <i class="bi bi-search me-1"></i>Cari
+                                            </button>
+                                            <a href="{{ route('student-registrations.index') }}" class="btn btn-outline-secondary flex-grow-1">
+                                                <i class="bi bi-arrow-repeat me-1"></i>Reset
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
                             </form>
                         </div>
                     </div>

@@ -18,25 +18,25 @@ class OrganizationPeriodSeeder extends Seeder
         $previousPeriod = (date('Y') - 1) . '/' . date('Y');
 
         foreach ($organizations as $org) {
-            // Create current period
-            $currentPeriodRecord = OrganizationPeriod::create([
-                'organization_id' => $org->id,
-                'period_name' => $currentPeriod,
-                'start_date' => now()->startOfYear(),
-                'end_date' => now()->endOfYear(),
-                'is_active' => true,
-                'description' => "Periode kepengurusan {$currentPeriod} untuk {$org->name}",
-                'member_count' => 0
-            ]);
-
-            // Create previous period
-            OrganizationPeriod::create([
+            // Create previous period first (inactive)
+            $previousPeriodRecord = OrganizationPeriod::create([
                 'organization_id' => $org->id,
                 'period_name' => $previousPeriod,
                 'start_date' => now()->subYear()->startOfYear(),
                 'end_date' => now()->subYear()->endOfYear(),
                 'is_active' => false,
                 'description' => "Periode kepengurusan {$previousPeriod} untuk {$org->name}",
+                'member_count' => 0
+            ]);
+
+            // Create current period (active)
+            $currentPeriodRecord = OrganizationPeriod::create([
+                'organization_id' => $org->id,
+                'period_name' => $currentPeriod,
+                'start_date' => now()->startOfYear(),
+                'end_date' => now()->endOfYear(),
+                'is_active' => true,  // This will automatically deactivate the previous period
+                'description' => "Periode kepengurusan {$currentPeriod} untuk {$org->name}",
                 'member_count' => 0
             ]);
 

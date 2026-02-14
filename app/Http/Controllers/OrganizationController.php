@@ -12,9 +12,10 @@ class OrganizationController extends Controller
             return Organization::select('id', 'slug', 'name', 'type', 'description', 'icon', 'color', 'tagline', 'member_count')
                              ->where('is_active', true)
                              ->orderBy('order')
+                             ->withCount('activeMembers') // Eager load member count to avoid additional queries
                              ->get();
         });
-        
+
         return view('organisasi.index', compact('organizations'));
     }
 

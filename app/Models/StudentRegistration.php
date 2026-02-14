@@ -5,10 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Notifications\Notifiable;
 
 class StudentRegistration extends Model
 {
-    use HasFactory;
+    use HasFactory, Notifiable;
+    
     protected $table = 'student_registrations';
 
     protected $fillable = [
@@ -46,6 +48,11 @@ class StudentRegistration extends Model
     public function rejectedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'rejected_by');
+    }
+
+    public function routeNotificationForMail()
+    {
+        return $this->email;
     }
 
     public function scopePending($query)

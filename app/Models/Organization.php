@@ -289,21 +289,24 @@ class Organization extends Model
 
     public function getRecentActivity()
     {
-        // Use eager loading to prevent N+1 queries
+        // Optimized to prevent N+1 queries by getting all records at once
         $discussions = $this->discussions()
-                           ->with('author')
+                           ->with('author:id,name')
                            ->latest()
                            ->limit(3)
+                           ->select('id', 'organization_id', 'title', 'content', 'author_id', 'created_at', 'updated_at')
                            ->get();
-                           
+
         $activities = $this->activities()
                          ->latest()
                          ->limit(3)
+                         ->select('id', 'organization_id', 'title', 'description', 'start_datetime', 'end_datetime', 'location', 'created_at', 'updated_at')
                          ->get();
-                         
+
         $announcements = $this->announcements()
                             ->latest()
                             ->limit(3)
+                            ->select('id', 'organization_id', 'title', 'content', 'author_id', 'published_at', 'created_at', 'updated_at')
                             ->get();
 
         return collect()
@@ -317,9 +320,10 @@ class Organization extends Model
     public function getUpcomingEvents($limit = 5)
     {
         return $this->upcomingActivities()
-                   ->with(['organization', 'registrations'])
+                   ->with(['organization:id,name,slug', 'registrations:id,activity_id']) // Optimized with specific columns
                    ->orderBy('start_datetime')
                    ->limit($limit)
+                   ->select('id', 'organization_id', 'title', 'description', 'start_datetime', 'end_datetime', 'location', 'type', 'max_participants', 'created_at', 'updated_at') // Select specific columns to reduce data transfer
                    ->get();
     }
 

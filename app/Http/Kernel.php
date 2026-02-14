@@ -67,6 +67,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'role' => \App\Http\Middleware\RoleMiddleware::class,
         'api.version' => \App\Http\Middleware\ApiVersionMiddleware::class,
+        'admin' => \App\Http\Middleware\AdminOrRedirect::class,
         // Spatie response cache middleware alias (use on routes to cache responses)
         'response.cache' => \Spatie\ResponseCache\Middleware\CacheResponse::class,
     ];

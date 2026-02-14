@@ -32,39 +32,39 @@
                                 <div class="mb-5">
                                     <h5 class="fw-bold text-primary mb-4 pb-2 border-bottom">1. Data Pribadi Calon Siswa</h5>
                                     <div class="row g-3">
-                                        <div class="col-md-6">
+                                        <div class="col-12 col-md-6">
                                             <label for="name" class="form-label">Nama Lengkap <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" required placeholder="Masukkan nama lengkap">
                                             @error('name') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-12 col-md-6">
                                             <label for="nik" class="form-label">NIK (16 Digit) <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control @error('nik') is-invalid @enderror" id="nik" name="nik" value="{{ old('nik') }}" required placeholder="Masukkan 16 digit NIK" maxlength="16">
                                             @error('nik') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-12 col-md-6">
                                             <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
                                             <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" required placeholder="nama@gmail.com">
                                             @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-12 col-md-6">
                                             <label for="phone" class="form-label">Nomor Telepon <span class="text-danger">*</span></label>
                                             <input type="tel" class="form-control @error('phone') is-invalid @enderror" id="phone" name="phone" value="{{ old('phone') }}" required placeholder="08123456789">
                                             @error('phone') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-12 col-md-6">
                                             <label for="birth_place" class="form-label">Tempat Lahir <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control @error('birth_place') is-invalid @enderror" id="birth_place" name="birth_place" value="{{ old('birth_place') }}" required placeholder="Kota/Kabupaten">
                                             @error('birth_place') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-12 col-md-6">
                                             <label for="birth_date" class="form-label">Tanggal Lahir <span class="text-danger">*</span></label>
                                             <input type="date" class="form-control @error('birth_date') is-invalid @enderror" id="birth_date" name="birth_date" value="{{ old('birth_date') }}" required>
                                             @error('birth_date') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-12 col-md-6">
                                             <label class="form-label">Jenis Kelamin <span class="text-danger">*</span></label>
-                                            <div class="d-flex gap-3">
+                                            <div class="d-flex flex-column flex-md-row gap-3">
                                                 <div class="form-check">
                                                     <input class="form-check-input @error('gender') is-invalid @enderror" type="radio" name="gender" id="gender_male" value="male" {{ old('gender') == 'male' ? 'checked' : '' }} required>
                                                     <label class="form-check-label" for="gender_male">
@@ -92,12 +92,12 @@
                                 <div class="mb-5">
                                     <h5 class="fw-bold text-primary mb-4 pb-2 border-bottom">2. Data Orang Tua/Wali</h5>
                                     <div class="row g-3">
-                                        <div class="col-md-6">
+                                        <div class="col-12 col-md-6">
                                             <label for="parent_name" class="form-label">Nama Orang Tua/Wali <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control @error('parent_name') is-invalid @enderror" id="parent_name" name="parent_name" value="{{ old('parent_name') }}" required placeholder="Nama lengkap orang tua/wali">
                                             @error('parent_name') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-12 col-md-6">
                                             <label for="parent_phone" class="form-label">Nomor Telepon Orang Tua/Wali <span class="text-danger">*</span></label>
                                             <input type="tel" class="form-control @error('parent_phone') is-invalid @enderror" id="parent_phone" name="parent_phone" value="{{ old('parent_phone') }}" required placeholder="08123456789">
                                             @error('parent_phone') <div class="invalid-feedback">{{ $message }}</div> @enderror
@@ -109,12 +109,12 @@
                                 <div class="mb-5">
                                     <h5 class="fw-bold text-primary mb-4 pb-2 border-bottom">3. Data Pendidikan</h5>
                                     <div class="row g-3">
-                                        <div class="col-md-6">
+                                        <div class="col-12 col-md-6">
                                             <label for="previous_school" class="form-label">Sekolah Asal <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control @error('previous_school') is-invalid @enderror" id="previous_school" name="previous_school" value="{{ old('previous_school') }}" required placeholder="Nama sekolah asal">
                                             @error('previous_school') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                         </div>
-                                        <div class="col-md-6">
+                                        <div class="col-12 col-md-6">
                                             <label for="desired_major" class="form-label">Jurusan yang Diinginkan</label>
                                             <input type="text" class="form-control @error('desired_major') is-invalid @enderror" id="desired_major" name="desired_major" value="{{ old('desired_major') }}" placeholder="IPA/IPS/Bahasa, dll">
                                             @error('desired_major') <div class="invalid-feedback">{{ $message }}</div> @enderror
@@ -123,11 +123,11 @@
                                 </div>
 
                                 <!-- Submit Button -->
-                                <div class="text-center">
-                                    <button type="submit" class="btn btn-primary btn-lg px-5 py-3 fw-bold">
+                                <div class="d-grid d-md-flex justify-content-center gap-3">
+                                    <button type="submit" class="btn btn-primary btn-lg px-5 py-3 fw-bold flex-grow-1">
                                         <i class="bi bi-send me-2"></i>Daftar Sekarang
                                     </button>
-                                    <a href="{{ route('student-registration.index') }}" class="btn btn-outline-secondary btn-lg px-5 py-3 fw-bold ms-2">
+                                    <a href="{{ route('student-registration.index') }}" class="btn btn-outline-secondary btn-lg px-5 py-3 fw-bold flex-grow-1">
                                         <i class="bi bi-arrow-left me-2"></i>Kembali
                                     </a>
                                 </div>

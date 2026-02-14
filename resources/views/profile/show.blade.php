@@ -304,7 +304,7 @@
                     @csrf
                     <div class="mb-3">
                         <input type="file" class="form-control" name="avatar" accept="image/*" required>
-                        <div class="form-text">Max 2MB, format: JPG, PNG</div>
+                        <div class="form-text">Max 10MB, format: JPG, PNG, GIF</div>
                     </div>
                     <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-primary">

@@ -1,10 +1,10 @@
 <div class="container" style="max-width: 400px; margin: 50px auto;">
     <h2 style="text-align:center;">Login</h2>
-    <form method="POST" action="{{ route('auth') }}">
+    <form method="POST" action="{{ route('login') }}">
         @csrf
         <div style="margin-bottom: 15px;">
-            <label for="username">Email</label>
-            <input type="email" id="username" name="username" class="form-control" required autofocus style="width:100%;padding:8px;">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" class="form-control" required autofocus style="width:100%;padding:8px;">
         </div>
         <div style="margin-bottom: 15px;">
             <label for="password">Password</label>

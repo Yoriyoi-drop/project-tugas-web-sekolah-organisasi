@@ -26,9 +26,10 @@ class RoleAndAbilitySeeder extends Seeder
         ];
 
         foreach ($abilities as $ability) {
-            Ability::create([
+            Ability::firstOrCreate([
+                'slug' => $ability['slug']
+            ], [
                 'name' => $ability['name'],
-                'slug' => $ability['slug'],
                 'description' => 'Allows user to ' . Str::lower($ability['name']),
             ]);
         }
@@ -58,14 +59,19 @@ class RoleAndAbilitySeeder extends Seeder
         ];
 
         foreach ($roles as $roleData) {
-            $role = Role::create([
+            $role = Role::firstOrCreate([
+                'slug' => $roleData['slug']
+            ], [
                 'name' => $roleData['name'],
-                'slug' => $roleData['slug'],
                 'description' => $roleData['name'] . ' role in the organization',
             ]);
 
             $abilities = Ability::whereIn('slug', $roleData['abilities'])->get();
-            $role->abilities()->attach($abilities);
+            
+            // Hanya attach abilities jika role baru dibuat
+            if (!$role->abilities()->count()) {
+                $role->abilities()->attach($abilities);
+            }
         }
     }
 }

@@ -14,18 +14,28 @@ class CollaborationSeeder extends Seeder
     public function run()
     {
         $organizations = Organization::all();
-        $adminUser = User::where('email', 'admin@example.com')->first();
+        // Mencari admin user dengan email yang benar sesuai dengan AdminUserSeeder
+        $adminUser = User::where('email', 'admin@sekolah.org')
+                        ->orWhere('email', 'admin2@sekolah.org')
+                        ->orWhere('is_admin', true)
+                        ->first();
 
         foreach ($organizations as $org) {
             // Create sample discussions
             $this->createSampleDiscussions($org, $adminUser);
-            
+
             // Create sample activities
             $this->createSampleActivities($org, $adminUser);
-            
+
             // Create sample announcements
             $this->createSampleAnnouncements($org, $adminUser);
         }
+        
+        // Jika tidak ada admin user ditemukan, beri peringatan
+        if (!$adminUser) {
+            $this->command->warn('Admin user tidak ditemukan. Pastikan AdminUserSeeder telah dijalankan terlebih dahulu.');
+        }
+    }
     }
 
     private function createSampleDiscussions($organization, $adminUser)
@@ -52,6 +62,11 @@ class CollaborationSeeder extends Seeder
         ];
 
         foreach ($discussions as $data) {
+            // Jika admin user tidak ditemukan, lewati pembuatan diskusi
+            if (!$adminUser) {
+                continue;
+            }
+            
             $discussion = $organization->discussions()->create([
                 'title' => $data['title'],
                 'content' => $data['content'],
@@ -119,6 +134,11 @@ class CollaborationSeeder extends Seeder
         ];
 
         foreach ($activities as $data) {
+            // Jika admin user tidak ditemukan, lewati pembuatan aktivitas
+            if (!$adminUser) {
+                continue;
+            }
+            
             $activity = $organization->activities()->create(array_merge($data, [
                 'created_by' => $adminUser->id,
                 'registered_count' => rand(5, 20),
@@ -168,6 +188,11 @@ class CollaborationSeeder extends Seeder
         ];
 
         foreach ($announcements as $data) {
+            // Jika admin user tidak ditemukan, lewati pembuatan pengumuman
+            if (!$adminUser) {
+                continue;
+            }
+            
             $organization->announcements()->create(array_merge($data, [
                 'author_id' => $adminUser->id,
                 'view_count' => rand(30, 150),

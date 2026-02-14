@@ -402,4 +402,38 @@ class User extends Authenticatable implements MustVerifyEmail
         return asset('images/default-avatar.svg');
     }
 
+    /**
+     * Boot the model with cache invalidation.
+     */
+    protected static function booted(): void
+    {
+        // Invalidate cache when user data changes
+        static::updated(function ($user) {
+            self::invalidateRelatedCaches($user);
+        });
+
+        static::created(function ($user) {
+            self::invalidateRelatedCaches($user);
+        });
+
+        static::deleted(function ($user) {
+            self::invalidateRelatedCaches($user);
+        });
+    }
+
+    /**
+     * Invalidate caches related to this user.
+     */
+    private static function invalidateRelatedCaches($user): void
+    {
+        // Clear response cache for security audit pages
+        if (class_exists(\Spatie\ResponseCache\Facades\ResponseCache::class)) {
+            \Spatie\ResponseCache\Facades\ResponseCache::clear();
+        }
+
+        // Clear any other user-specific caches
+        \Cache::forget("user_permissions_{$user->id}");
+        \Cache::forget("dashboard_stats_{$user->id}");
+    }
+
 }

@@ -43,6 +43,13 @@ Route::get('/pendaftaran-siswa/sukses', [\App\Http\Controllers\StudentRegistrati
 
 // Authentication routes
 
+// Admin login routes
+use App\Http\Controllers\Admin\AdminLoginController;
+
+Route::get('/admin/login', [AdminLoginController::class, 'showLoginForm'])->name('admin.login');
+Route::post('/admin/login', [AdminLoginController::class, 'login'])->name('admin.login.submit')->middleware('throttle:10,1');
+Route::post('/admin/logout', [AdminLoginController::class, 'logout'])->name('admin.logout');
+
 // OTP routes
 Route::get('/otp/verify', [\App\Http\Controllers\OtpController::class, 'show'])->name('otp.show');
 Route::post('/otp/verify', [\App\Http\Controllers\OtpController::class, 'verify'])->name('otp.verify');
@@ -97,67 +104,146 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/avatar/delete', [\App\Http\Controllers\AvatarController::class, 'delete'])->name('avatar.delete');
 });
 
-// Admin routes (email verification disabled)
-Route::middleware(['auth', 'admin', 'verified'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    Route::resource('posts', \App\Http\Controllers\Admin\PostController::class);
-    Route::resource('organizations', \App\Http\Controllers\Admin\OrganizationController::class);
-    Route::resource('activities', \App\Http\Controllers\Admin\ActivityController::class);
-    Route::resource('statistics', \App\Http\Controllers\Admin\StatisticController::class);
+// Admin routes (using custom admin middleware, email verification only required for specific routes)
+Route::middleware(['auth', \App\Http\Middleware\AdminOrRedirect::class])->prefix('admin')->group(function () {
+    Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
     
+    // Posts - hanya operasi create, edit, update, destroy yang memerlukan verifikasi
+    Route::get('posts', [\App\Http\Controllers\Admin\PostController::class, 'index'])->name('admin.posts.index');
+    Route::get('posts/create', [\App\Http\Controllers\Admin\PostController::class, 'create'])->name('admin.posts.create')->middleware('verified');
+    Route::post('posts', [\App\Http\Controllers\Admin\PostController::class, 'store'])->name('admin.posts.store')->middleware('verified');
+    Route::get('posts/{post}', [\App\Http\Controllers\Admin\PostController::class, 'show'])->name('admin.posts.show');
+    Route::get('posts/{post}/edit', [\App\Http\Controllers\Admin\PostController::class, 'edit'])->name('admin.posts.edit')->middleware('verified');
+    Route::put('posts/{post}', [\App\Http\Controllers\Admin\PostController::class, 'update'])->name('admin.posts.update')->middleware('verified');
+    Route::delete('posts/{post}', [\App\Http\Controllers\Admin\PostController::class, 'destroy'])->name('admin.posts.destroy')->middleware('verified');
+    
+    // Organizations - hanya operasi create, edit, update, destroy yang memerlukan verifikasi
+    Route::get('organizations', [\App\Http\Controllers\Admin\OrganizationController::class, 'index'])->name('admin.organizations.index');
+    Route::get('organizations/create', [\App\Http\Controllers\Admin\OrganizationController::class, 'create'])->name('admin.organizations.create')->middleware('verified');
+    Route::post('organizations', [\App\Http\Controllers\Admin\OrganizationController::class, 'store'])->name('admin.organizations.store')->middleware('verified');
+    Route::get('organizations/{organization}', [\App\Http\Controllers\Admin\OrganizationController::class, 'show'])->name('admin.organizations.show');
+    Route::get('organizations/{organization}/edit', [\App\Http\Controllers\Admin\OrganizationController::class, 'edit'])->name('admin.organizations.edit')->middleware('verified');
+    Route::put('organizations/{organization}', [\App\Http\Controllers\Admin\OrganizationController::class, 'update'])->name('admin.organizations.update')->middleware('verified');
+    Route::delete('organizations/{organization}', [\App\Http\Controllers\Admin\OrganizationController::class, 'destroy'])->name('admin.organizations.destroy')->middleware('verified');
+    
+    // Activities - hanya operasi create, edit, update, destroy yang memerlukan verifikasi
+    Route::get('activities', [\App\Http\Controllers\Admin\ActivityController::class, 'index'])->name('admin.activities.index');
+    Route::get('activities/create', [\App\Http\Controllers\Admin\ActivityController::class, 'create'])->name('admin.activities.create')->middleware('verified');
+    Route::post('activities', [\App\Http\Controllers\Admin\ActivityController::class, 'store'])->name('admin.activities.store')->middleware('verified');
+    Route::get('activities/{activity}', [\App\Http\Controllers\Admin\ActivityController::class, 'show'])->name('admin.activities.show');
+    Route::get('activities/{activity}/edit', [\App\Http\Controllers\Admin\ActivityController::class, 'edit'])->name('admin.activities.edit')->middleware('verified');
+    Route::put('activities/{activity}', [\App\Http\Controllers\Admin\ActivityController::class, 'update'])->name('admin.activities.update')->middleware('verified');
+    Route::delete('activities/{activity}', [\App\Http\Controllers\Admin\ActivityController::class, 'destroy'])->name('admin.activities.destroy')->middleware('verified');
+    
+    // Statistics - hanya operasi create, edit, update, destroy yang memerlukan verifikasi
+    Route::get('statistics', [\App\Http\Controllers\Admin\StatisticController::class, 'index'])->name('admin.statistics.index');
+    Route::get('statistics/create', [\App\Http\Controllers\Admin\StatisticController::class, 'create'])->name('admin.statistics.create')->middleware('verified');
+    Route::post('statistics', [\App\Http\Controllers\Admin\StatisticController::class, 'store'])->name('admin.statistics.store')->middleware('verified');
+    Route::get('statistics/{statistic}', [\App\Http\Controllers\Admin\StatisticController::class, 'show'])->name('admin.statistics.show');
+    Route::get('statistics/{statistic}/edit', [\App\Http\Controllers\Admin\StatisticController::class, 'edit'])->name('admin.statistics.edit')->middleware('verified');
+    Route::put('statistics/{statistic}', [\App\Http\Controllers\Admin\StatisticController::class, 'update'])->name('admin.statistics.update')->middleware('verified');
+    Route::delete('statistics/{statistic}', [\App\Http\Controllers\Admin\StatisticController::class, 'destroy'])->name('admin.statistics.destroy')->middleware('verified');
+
     // Organization membership management
-    Route::get('organizations/{organization}/members', [\App\Http\Controllers\Admin\MemberController::class, 'index'])->name('organizations.members.index');
-    Route::get('organizations/{organization}/members/create', [\App\Http\Controllers\Admin\MemberController::class, 'create'])->name('organizations.members.create');
-    Route::post('organizations/{organization}/members', [\App\Http\Controllers\Admin\MemberController::class, 'store'])->name('organizations.members.store');
-    Route::get('organizations/{organization}/members/{member}', [\App\Http\Controllers\Admin\MemberController::class, 'show'])->name('organizations.members.show');
-    Route::get('organizations/{organization}/members/{member}/edit', [\App\Http\Controllers\Admin\MemberController::class, 'edit'])->name('organizations.members.edit');
-    Route::put('organizations/{organization}/members/{member}', [\App\Http\Controllers\Admin\MemberController::class, 'update'])->name('organizations.members.update');
-    Route::delete('organizations/{organization}/members/{member}', [\App\Http\Controllers\Admin\MemberController::class, 'destroy'])->name('organizations.members.destroy');
-    Route::post('organizations/{organization}/members/{member}/promote', [\App\Http\Controllers\Admin\MemberController::class, 'promote'])->name('organizations.members.promote');
-    Route::post('organizations/{organization}/members/{member}/status', [\App\Http\Controllers\Admin\MemberController::class, 'changeStatus'])->name('organizations.members.status');
-    Route::post('organizations/{organization}/members/bulk', [\App\Http\Controllers\Admin\MemberController::class, 'bulkAction'])->name('organizations.members.bulk');
-    
+    Route::get('organizations/{organization}/members', [\App\Http\Controllers\Admin\MemberController::class, 'index'])->name('admin.organizations.members.index');
+    Route::get('organizations/{organization}/members/create', [\App\Http\Controllers\Admin\MemberController::class, 'create'])->name('admin.organizations.members.create')->middleware('verified');
+    Route::post('organizations/{organization}/members', [\App\Http\Controllers\Admin\MemberController::class, 'store'])->name('admin.organizations.members.store')->middleware('verified');
+    Route::get('organizations/{organization}/members/{member}', [\App\Http\Controllers\Admin\MemberController::class, 'show'])->name('admin.organizations.members.show');
+    Route::get('organizations/{organization}/members/{member}/edit', [\App\Http\Controllers\Admin\MemberController::class, 'edit'])->name('admin.organizations.members.edit')->middleware('verified');
+    Route::put('organizations/{organization}/members/{member}', [\App\Http\Controllers\Admin\MemberController::class, 'update'])->name('admin.organizations.members.update')->middleware('verified');
+    Route::delete('organizations/{organization}/members/{member}', [\App\Http\Controllers\Admin\MemberController::class, 'destroy'])->name('admin.organizations.members.destroy')->middleware('verified');
+    Route::post('organizations/{organization}/members/{member}/promote', [\App\Http\Controllers\Admin\MemberController::class, 'promote'])->name('admin.organizations.members.promote')->middleware('verified');
+    Route::post('organizations/{organization}/members/{member}/status', [\App\Http\Controllers\Admin\MemberController::class, 'changeStatus'])->name('admin.organizations.members.status')->middleware('verified');
+    Route::post('organizations/{organization}/members/bulk', [\App\Http\Controllers\Admin\MemberController::class, 'bulkAction'])->name('admin.organizations.members.bulk')->middleware('verified');
+
     // Organization period management
-    Route::get('organizations/{organization}/periods', [\App\Http\Controllers\Admin\OrganizationPeriodController::class, 'index'])->name('organizations.periods.index');
-    Route::get('organizations/{organization}/periods/create', [\App\Http\Controllers\Admin\OrganizationPeriodController::class, 'create'])->name('organizations.periods.create');
-    Route::post('organizations/{organization}/periods', [\App\Http\Controllers\Admin\OrganizationPeriodController::class, 'store'])->name('organizations.periods.store');
-    Route::get('organizations/{organization}/periods/{period}', [\App\Http\Controllers\Admin\OrganizationPeriodController::class, 'show'])->name('organizations.periods.show');
-    Route::get('organizations/{organization}/periods/{period}/edit', [\App\Http\Controllers\Admin\OrganizationPeriodController::class, 'edit'])->name('organizations.periods.edit');
-    Route::put('organizations/{organization}/periods/{period}', [\App\Http\Controllers\Admin\OrganizationPeriodController::class, 'update'])->name('organizations.periods.update');
-    Route::delete('organizations/{organization}/periods/{period}', [\App\Http\Controllers\Admin\OrganizationPeriodController::class, 'destroy'])->name('organizations.periods.destroy');
-    Route::post('organizations/{organization}/periods/{period}/activate', [\App\Http\Controllers\Admin\OrganizationPeriodController::class, 'activate'])->name('organizations.periods.activate');
-    Route::put('organizations/{organization}/periods/{period}/leadership', [\App\Http\Controllers\Admin\OrganizationPeriodController::class, 'updateLeadership'])->name('organizations.periods.leadership');
-    Route::resource('students', \App\Http\Controllers\Admin\StudentController::class);
-    Route::resource('teachers', \App\Http\Controllers\Admin\TeacherController::class);
-    Route::resource('facilities', \App\Http\Controllers\Admin\FacilityController::class);
-    Route::resource('messages', \App\Http\Controllers\Admin\MessageController::class)->only(['index', 'show', 'destroy']);
-    Route::get('settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
-    Route::put('settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
-    Route::resource('registrations', \App\Http\Controllers\Admin\RegistrationController::class)->only(['index', 'show', 'destroy']);
-    Route::patch('registrations/{registration}/status', [\App\Http\Controllers\Admin\RegistrationController::class, 'updateStatus'])->name('registrations.update-status');
-    Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->only(['index', 'create', 'store']);
-    Route::resource('ppdb', \App\Http\Controllers\Admin\PPDBController::class);
+    Route::get('organizations/{organization}/periods', [\App\Http\Controllers\Admin\OrganizationPeriodController::class, 'index'])->name('admin.organizations.periods.index');
+    Route::get('organizations/{organization}/periods/create', [\App\Http\Controllers\Admin\OrganizationPeriodController::class, 'create'])->name('admin.organizations.periods.create')->middleware('verified');
+    Route::post('organizations/{organization}/periods', [\App\Http\Controllers\Admin\OrganizationPeriodController::class, 'store'])->name('admin.organizations.periods.store')->middleware('verified');
+    Route::get('organizations/{organization}/periods/{period}', [\App\Http\Controllers\Admin\OrganizationPeriodController::class, 'show'])->name('admin.organizations.periods.show');
+    Route::get('organizations/{organization}/periods/{period}/edit', [\App\Http\Controllers\Admin\OrganizationPeriodController::class, 'edit'])->name('admin.organizations.periods.edit')->middleware('verified');
+    Route::put('organizations/{organization}/periods/{period}', [\App\Http\Controllers\Admin\OrganizationPeriodController::class, 'update'])->name('admin.organizations.periods.update')->middleware('verified');
+    Route::delete('organizations/{organization}/periods/{period}', [\App\Http\Controllers\Admin\OrganizationPeriodController::class, 'destroy'])->name('admin.organizations.periods.destroy')->middleware('verified');
+    Route::post('organizations/{organization}/periods/{period}/activate', [\App\Http\Controllers\Admin\OrganizationPeriodController::class, 'activate'])->name('admin.organizations.periods.activate')->middleware('verified');
+    Route::put('organizations/{organization}/periods/{period}/leadership', [\App\Http\Controllers\Admin\OrganizationPeriodController::class, 'updateLeadership'])->name('admin.organizations.periods.leadership')->middleware('verified');
     
+    // Students - hanya operasi create, edit, update, destroy yang memerlukan verifikasi
+    Route::get('students', [\App\Http\Controllers\Admin\StudentController::class, 'index'])->name('admin.students.index');
+    Route::get('students/create', [\App\Http\Controllers\Admin\StudentController::class, 'create'])->name('admin.students.create')->middleware('verified');
+    Route::post('students', [\App\Http\Controllers\Admin\StudentController::class, 'store'])->name('admin.students.store')->middleware('verified');
+    Route::get('students/{student}', [\App\Http\Controllers\Admin\StudentController::class, 'show'])->name('admin.students.show');
+    Route::get('students/{student}/edit', [\App\Http\Controllers\Admin\StudentController::class, 'edit'])->name('admin.students.edit')->middleware('verified');
+    Route::put('students/{student}', [\App\Http\Controllers\Admin\StudentController::class, 'update'])->name('admin.students.update')->middleware('verified');
+    Route::delete('students/{student}', [\App\Http\Controllers\Admin\StudentController::class, 'destroy'])->name('admin.students.destroy')->middleware('verified');
+    
+    // Teachers - hanya operasi create, edit, update, destroy yang memerlukan verifikasi
+    Route::get('teachers', [\App\Http\Controllers\Admin\TeacherController::class, 'index'])->name('admin.teachers.index');
+    Route::get('teachers/create', [\App\Http\Controllers\Admin\TeacherController::class, 'create'])->name('admin.teachers.create')->middleware('verified');
+    Route::post('teachers', [\App\Http\Controllers\Admin\TeacherController::class, 'store'])->name('admin.teachers.store')->middleware('verified');
+    Route::get('teachers/{teacher}', [\App\Http\Controllers\Admin\TeacherController::class, 'show'])->name('admin.teachers.show');
+    Route::get('teachers/{teacher}/edit', [\App\Http\Controllers\Admin\TeacherController::class, 'edit'])->name('admin.teachers.edit')->middleware('verified');
+    Route::put('teachers/{teacher}', [\App\Http\Controllers\Admin\TeacherController::class, 'update'])->name('admin.teachers.update')->middleware('verified');
+    Route::delete('teachers/{teacher}', [\App\Http\Controllers\Admin\TeacherController::class, 'destroy'])->name('admin.teachers.destroy')->middleware('verified');
+    
+    // Facilities - hanya operasi create, edit, update, destroy yang memerlukan verifikasi
+    Route::get('facilities', [\App\Http\Controllers\Admin\FacilityController::class, 'index'])->name('admin.facilities.index');
+    Route::get('facilities/create', [\App\Http\Controllers\Admin\FacilityController::class, 'create'])->name('admin.facilities.create')->middleware('verified');
+    Route::post('facilities', [\App\Http\Controllers\Admin\FacilityController::class, 'store'])->name('admin.facilities.store')->middleware('verified');
+    Route::get('facilities/{facility}', [\App\Http\Controllers\Admin\FacilityController::class, 'show'])->name('admin.facilities.show');
+    Route::get('facilities/{facility}/edit', [\App\Http\Controllers\Admin\FacilityController::class, 'edit'])->name('admin.facilities.edit')->middleware('verified');
+    Route::put('facilities/{facility}', [\App\Http\Controllers\Admin\FacilityController::class, 'update'])->name('admin.facilities.update')->middleware('verified');
+    Route::delete('facilities/{facility}', [\App\Http\Controllers\Admin\FacilityController::class, 'destroy'])->name('admin.facilities.destroy')->middleware('verified');
+    
+    // Messages - hanya operasi destroy yang memerlukan verifikasi
+    Route::get('messages', [\App\Http\Controllers\Admin\MessageController::class, 'index'])->name('admin.messages.index');
+    Route::get('messages/{message}', [\App\Http\Controllers\Admin\MessageController::class, 'show'])->name('admin.messages.show');
+    Route::delete('messages/{message}', [\App\Http\Controllers\Admin\MessageController::class, 'destroy'])->name('admin.messages.destroy')->middleware('verified');
+    
+    // Settings - hanya operasi update yang memerlukan verifikasi
+    Route::get('settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('admin.settings.index');
+    Route::put('settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('admin.settings.update')->middleware('verified');
+    
+    // Registrations - hanya operasi destroy dan update-status yang memerlukan verifikasi
+    Route::get('registrations', [\App\Http\Controllers\Admin\RegistrationController::class, 'index'])->name('admin.registrations.index');
+    Route::get('registrations/{registration}', [\App\Http\Controllers\Admin\RegistrationController::class, 'show'])->name('admin.registrations.show');
+    Route::patch('registrations/{registration}/status', [\App\Http\Controllers\Admin\RegistrationController::class, 'updateStatus'])->name('admin.registrations.update-status')->middleware('verified');
+    Route::delete('registrations/{registration}', [\App\Http\Controllers\Admin\RegistrationController::class, 'destroy'])->name('admin.registrations.destroy')->middleware('verified');
+    
+    // Users - hanya operasi create dan store yang memerlukan verifikasi
+    Route::get('users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.users.index');
+    Route::get('users/create', [\App\Http\Controllers\Admin\UserController::class, 'create'])->name('admin.users.create')->middleware('verified');
+    Route::post('users', [\App\Http\Controllers\Admin\UserController::class, 'store'])->name('admin.users.store')->middleware('verified');
+    
+    // PPDB - hanya operasi create, edit, update, destroy yang memerlukan verifikasi
+    Route::get('ppdb', [\App\Http\Controllers\Admin\PPDBController::class, 'index'])->name('admin.ppdb.index');
+    Route::get('ppdb/create', [\App\Http\Controllers\Admin\PPDBController::class, 'create'])->name('admin.ppdb.create')->middleware('verified');
+    Route::post('ppdb', [\App\Http\Controllers\Admin\PPDBController::class, 'store'])->name('admin.ppdb.store')->middleware('verified');
+    Route::get('ppdb/{ppdb}', [\App\Http\Controllers\Admin\PPDBController::class, 'show'])->name('admin.ppdb.show');
+    Route::get('ppdb/{ppdb}/edit', [\App\Http\Controllers\Admin\PPDBController::class, 'edit'])->name('admin.ppdb.edit')->middleware('verified');
+    Route::put('ppdb/{ppdb}', [\App\Http\Controllers\Admin\PPDBController::class, 'update'])->name('admin.ppdb.update')->middleware('verified');
+    Route::delete('ppdb/{ppdb}', [\App\Http\Controllers\Admin\PPDBController::class, 'destroy'])->name('admin.ppdb.destroy')->middleware('verified');
+
     // Student Registration management
-    Route::get('student-registrations', [\App\Http\Controllers\StudentRegistrationController::class, 'adminIndex'])->name('student-registrations.index');
-    Route::get('student-registrations/{registration}', [\App\Http\Controllers\StudentRegistrationController::class, 'show'])->name('student-registrations.show');
-    Route::post('student-registrations/{registration}/approve', [\App\Http\Controllers\StudentRegistrationController::class, 'approve'])->name('student-registrations.approve');
-    Route::post('student-registrations/{registration}/reject', [\App\Http\Controllers\StudentRegistrationController::class, 'reject'])->name('student-registrations.reject');
+    Route::get('student-registrations', [\App\Http\Controllers\StudentRegistrationController::class, 'adminIndex'])->name('admin.student-registrations.index');
+    Route::get('student-registrations/{registration}', [\App\Http\Controllers\StudentRegistrationController::class, 'show'])->name('admin.student-registrations.show');
+    Route::post('student-registrations/{registration}/approve', [\App\Http\Controllers\StudentRegistrationController::class, 'approve'])->name('admin.student-registrations.approve')->middleware('verified');
+    Route::post('student-registrations/{registration}/reject', [\App\Http\Controllers\StudentRegistrationController::class, 'reject'])->name('admin.student-registrations.reject')->middleware('verified');
+    Route::get('student-registrations/export', [\App\Http\Controllers\StudentRegistrationController::class, 'export'])->name('student-registrations.export')->middleware('verified');
 
     // Security audit routes
     Route::get('security/audit', [\App\Http\Controllers\Admin\SecurityAuditController::class, 'index'])
-        ->name('security.audit');
+        ->name('admin.security.audit');
     Route::get('security/export', [\App\Http\Controllers\Admin\SecurityAuditController::class, 'export'])
-        ->name('security.export');
+        ->name('admin.security.export');
 
     // Analytics routes
-    Route::get('analytics', [\App\Http\Controllers\Admin\AnalyticsController::class, 'index'])->name('analytics.index');
-    Route::get('analytics/organization/{organization}', [\App\Http\Controllers\Admin\AnalyticsController::class, 'organization'])->name('analytics.organization');
-    Route::get('analytics/reports', [\App\Http\Controllers\Admin\AnalyticsController::class, 'reports'])->name('analytics.reports');
-    Route::post('analytics/reports/generate', [\App\Http\Controllers\Admin\AnalyticsController::class, 'generateReport'])->name('analytics.reports.generate');
-    Route::get('analytics/reports/{report}/download', [\App\Http\Controllers\Admin\AnalyticsController::class, 'downloadReport'])->name('analytics.reports.download');
-    Route::delete('analytics/reports/{report}', [\App\Http\Controllers\Admin\AnalyticsController::class, 'deleteReport'])->name('analytics.reports.delete');
-    Route::get('analytics/performance', [\App\Http\Controllers\Admin\AnalyticsController::class, 'performance'])->name('analytics.performance');
-    Route::get('analytics/compare', [\App\Http\Controllers\Admin\AnalyticsController::class, 'compare'])->name('analytics.compare');
-    Route::post('analytics/compare', [\App\Http\Controllers\Admin\AnalyticsController::class, 'compareResults'])->name('analytics.compare.results');
+    Route::get('analytics', [\App\Http\Controllers\Admin\AnalyticsController::class, 'index'])->name('admin.analytics.index');
+    Route::get('analytics/organization/{organization}', [\App\Http\Controllers\Admin\AnalyticsController::class, 'organization'])->name('admin.analytics.organization');
+    Route::get('analytics/reports', [\App\Http\Controllers\Admin\AnalyticsController::class, 'reports'])->name('admin.analytics.reports');
+    Route::post('analytics/reports/generate', [\App\Http\Controllers\Admin\AnalyticsController::class, 'generateReport'])->name('admin.analytics.reports.generate');
+    Route::get('analytics/reports/{report}/download', [\App\Http\Controllers\Admin\AnalyticsController::class, 'downloadReport'])->name('admin.analytics.reports.download');
+    Route::delete('analytics/reports/{report}', [\App\Http\Controllers\Admin\AnalyticsController::class, 'deleteReport'])->name('admin.analytics.reports.delete');
+    Route::get('analytics/performance', [\App\Http\Controllers\Admin\AnalyticsController::class, 'performance'])->name('admin.analytics.performance');
+    Route::get('analytics/compare', [\App\Http\Controllers\Admin\AnalyticsController::class, 'compare'])->name('admin.analytics.compare');
+    Route::post('analytics/compare', [\App\Http\Controllers\Admin\AnalyticsController::class, 'compareResults'])->name('admin.analytics.compare.results');
 });

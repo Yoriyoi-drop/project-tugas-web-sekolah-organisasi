@@ -172,8 +172,38 @@ class MonitorSystemHealth extends Command
             'message' => $message
         ]);
 
-        // You can implement email, Slack, or other notification methods here
-        // Example: Mail::to('admin@example.com')->send(new SystemHealthAlert($alerts));
+        // Send notification to admin users
+        $adminUsers = \App\Models\User::where('is_admin', true)->get();
+        
+        foreach ($adminUsers as $admin) {
+            // Send notification via database
+            $admin->notify(new \App\Notifications\GeneralNotification(
+                $message,
+                'high'
+            ));
+        }
+
+        // Send email to admin if configured
+        $adminEmail = config('mail.from.address', 'admin@manu.com');
+        if ($adminEmail) {
+            \App\Jobs\SendEmailNotification::dispatch(
+                $adminEmail,
+                'System Health Alert',
+                \App\Mail\SystemHealthAlert::class,
+                ['alerts' => $alerts, 'message' => $message]
+            );
+        }
+
+        // You can also implement Slack, Discord, or other notification methods here
+        // Example: Send to Slack webhook if configured
+        $slackWebhook = config('services.slack.webhook_url');
+        if ($slackWebhook) {
+            \Http::post($slackWebhook, [
+                'text' => $message,
+                'channel' => '#alerts',
+                'username' => 'System Monitor Bot',
+            ]);
+        }
     }
 
     /**

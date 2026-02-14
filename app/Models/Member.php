@@ -86,11 +86,31 @@ class Member extends Model
 
     public function getFullNameAttribute()
     {
+        // Use pre-loaded relationships to avoid N+1 queries
+        if ($this->relationLoaded('student') && $this->student) {
+            return $this->student->name;
+        }
+        
+        if ($this->relationLoaded('teacher') && $this->teacher) {
+            return $this->teacher->name;
+        }
+        
+        // Fallback to lazy loading if relationships not loaded
         return $this->student?->name ?? $this->teacher?->name ?? 'Unknown';
     }
 
     public function getMemberTypeAttribute()
     {
+        // Use pre-loaded relationships to avoid N+1 queries
+        if ($this->relationLoaded('student') && $this->student) {
+            return 'student';
+        }
+        
+        if ($this->relationLoaded('teacher') && $this->teacher) {
+            return 'teacher';
+        }
+        
+        // Fallback to lazy loading if relationships not loaded
         return $this->student ? 'student' : 'teacher';
     }
 

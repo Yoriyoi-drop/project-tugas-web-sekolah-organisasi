@@ -150,6 +150,10 @@ class SecurityService
     public static function detectSuspiciousActivity(Request $request): bool
     {
         $user = Auth::user();
+        if (!$user) {
+            return false; // Tidak bisa memeriksa aktivitas mencurigakan jika tidak ada pengguna yang diautentikasi
+        }
+        
         $currentIp = $request->ip();
 
         // Periksa perubahan IP

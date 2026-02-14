@@ -1,7 +1,18 @@
 <?php
 namespace App\Http\Middleware;
 
-class PreventRequestsDuringMaintenance
+use Illuminate\Foundation\Http\Middleware\PreventRequestsDuringMaintenance as Middleware;
+
+class PreventRequestsDuringMaintenance extends Middleware
 {
-    // placeholder
+    /**
+     * The URIs that should be reachable while maintenance mode is enabled.
+     *
+     * @var array<int, string>
+     */
+    protected $except = [
+        // Add URIs that should be accessible during maintenance
+        'admin/*', // Allow admin panel access during maintenance
+        'api/*',   // Allow API access during maintenance if needed
+    ];
 }
