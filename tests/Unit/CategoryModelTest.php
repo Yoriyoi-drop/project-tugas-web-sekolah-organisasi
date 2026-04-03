@@ -12,7 +12,7 @@ class CategoryModelTest extends TestCase
 
     public function test_category_has_fillable_attributes()
     {
-        $fillable = ['name'];
+        $fillable = ['name', 'slug', 'description', 'is_active'];
         $this->assertEquals($fillable, (new Category())->getFillable());
     }
 
