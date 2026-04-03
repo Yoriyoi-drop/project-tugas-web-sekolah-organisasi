@@ -1,0 +1,85 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Docker
+docker/
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+*~
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Dependencies
+vendor/
+node_modules/
+
+# Build artifacts
+public/build/
+public/hot
+public/storage
+
+# Storage
+storage/*.key
+storage/logs/*
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+!storage/framework/cache/.gitignore
+!storage/framework/sessions/.gitignore
+!storage/framework/views/.gitignore
+!storage/logs/.gitignore
+
+# Database
+database/database.sqlite
+database/*.sqlite
+
+# Testing
+.phpunit.result.cache
+coverage/
+.phpunit.cache/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Debug
+debug.log
+phpunit.xml
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+
+# Documentation
+docs/
+README.md
+CHANGELOG.md
+LICENSE
+
+# Composer
+composer.lock
+
+# NPM
+package-lock.json
+
+# Misc
+*.md
+!.env.example

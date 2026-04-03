@@ -36,7 +36,6 @@ class CollaborationSeeder extends Seeder
             $this->command->warn('Admin user tidak ditemukan. Pastikan AdminUserSeeder telah dijalankan terlebih dahulu.');
         }
     }
-    }
 
     private function createSampleDiscussions($organization, $adminUser)
     {

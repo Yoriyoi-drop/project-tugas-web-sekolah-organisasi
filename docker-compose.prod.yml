@@ -1,0 +1,122 @@
+services:
+    # ============================================
+    # Production App (Optimized)
+    # ============================================
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+            target: production
+            args:
+                - APP_ENV=production
+                - APP_DEBUG=false
+        container_name: sekolah-app-prod
+        restart: always
+        deploy:
+            resources:
+                limits:
+                    cpus: '2.0'
+                    memory: 1G
+                reservations:
+                    cpus: '0.5'
+                    memory: 256M
+        environment:
+            APP_ENV: production
+            APP_DEBUG: false
+            APP_NAME: '${APP_NAME:-"Madrasah Aliyah Nusantara"}'
+            APP_URL: '${APP_URL:-https://sekolah.example.com}'
+            DB_CONNECTION: '${DB_CONNECTION:-sqlite}'
+            DB_DATABASE: '${DB_DATABASE:-database/database.sqlite}'
+            REDIS_HOST: redis
+            REDIS_PORT: 6379
+            REDIS_PASSWORD: '${REDIS_PASSWORD:-}'
+            CACHE_DRIVER: redis
+            SESSION_DRIVER: redis
+            QUEUE_CONNECTION: redis
+            LOG_CHANNEL: stack
+            LOG_LEVEL: warning
+        volumes:
+            - app-storage:/var/www/html/storage
+            - app-bootstrap-cache:/var/www/html/bootstrap/cache
+        depends_on:
+            mysql:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+        networks:
+            - sekolah-network
+        labels:
+            - "com.docker.compose.service=app"
+            - "com.docker.compose.environment=production"
+
+    # ============================================
+    # MySQL 8.4 (Production)
+    # ============================================
+    mysql:
+        image: 'mysql:8.4'
+        container_name: sekolah-db-prod
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: '${DB_ROOT_PASSWORD:-ChangeMe!}'
+            MYSQL_ROOT_HOST: '%'
+            MYSQL_DATABASE: '${DB_DATABASE:-sekolah}'
+            MYSQL_USER: '${DB_USERNAME:-sekolah}'
+            MYSQL_PASSWORD: '${DB_PASSWORD:-ChangeMe!}'
+            MYSQL_ALLOW_EMPTY_PASSWORD: 0
+        volumes:
+            - mysql-data:/var/lib/mysql
+        networks:
+            - sekolah-network
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping", "-p${DB_PASSWORD:-ChangeMe!}"]
+            interval: 10s
+            retries: 5
+            timeout: 5s
+            start_period: 30s
+        deploy:
+            resources:
+                limits:
+                    cpus: '1.0'
+                    memory: 512M
+                reservations:
+                    cpus: '0.25'
+                    memory: 128M
+
+    # ============================================
+    # Redis (Production)
+    # ============================================
+    redis:
+        image: 'redis:7.4-alpine'
+        container_name: sekolah-redis-prod
+        restart: always
+        command: redis-server --appendonly yes --requirepass '${REDIS_PASSWORD:-ChangeMe!}' --maxmemory 256mb --maxmemory-policy allkeys-lru
+        volumes:
+            - redis-data:/data
+        networks:
+            - sekolah-network
+        healthcheck:
+            test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-ChangeMe!}", "ping"]
+            interval: 10s
+            retries: 5
+            timeout: 5s
+            start_period: 10s
+        deploy:
+            resources:
+                limits:
+                    cpus: '0.5'
+                    memory: 256M
+
+networks:
+    sekolah-network:
+        driver: bridge
+        internal: true
+
+volumes:
+    mysql-data:
+        driver: local
+    redis-data:
+        driver: local
+    app-storage:
+        driver: local
+    app-bootstrap-cache:
+        driver: local

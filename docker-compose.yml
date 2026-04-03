@@ -1,11 +1,64 @@
 services:
-    laravel.test:
+    # ============================================
+    # Application (Production Build)
+    # ============================================
+    app:
         build:
-            context: './vendor/laravel/sail/runtimes/8.4'
+            context: .
             dockerfile: Dockerfile
+            target: production
+        container_name: sekolah-app
+        restart: unless-stopped
+        ports:
+            - '${APP_PORT:-8000}:8000'
+        environment:
+            APP_ENV: '${APP_ENV:-production}'
+            APP_DEBUG: '${APP_DEBUG:-false}'
+            APP_URL: '${APP_URL:-http://localhost:8000}'
+            DB_CONNECTION: '${DB_CONNECTION:-sqlite}'
+            DB_DATABASE: '${DB_DATABASE:-database/database.sqlite}'
+            DB_HOST: '${DB_HOST:-}'
+            DB_PORT: '${DB_PORT:-}'
+            DB_DATABASE_MYSQL: '${DB_DATABASE:-}'
+            DB_USERNAME: '${DB_USERNAME:-}'
+            DB_PASSWORD: '${DB_PASSWORD:-}'
+            REDIS_HOST: '${REDIS_HOST:-redis}'
+            REDIS_PORT: '${REDIS_PORT:-6379}'
+            REDIS_PASSWORD: '${REDIS_PASSWORD:-}'
+            CACHE_DRIVER: '${CACHE_DRIVER:-redis}'
+            SESSION_DRIVER: '${SESSION_DRIVER:-redis}'
+            QUEUE_CONNECTION: '${QUEUE_CONNECTION:-redis}'
+            MAIL_MAILER: '${MAIL_MAILER:-smtp}'
+            MAIL_HOST: '${MAIL_HOST:-mailpit}'
+            MAIL_PORT: '${MAIL_PORT:-1025}'
+            MAIL_ENCRYPTION: '${MAIL_ENCRYPTION:-null}'
+            MAIL_FROM_ADDRESS: '${MAIL_FROM_ADDRESS:-hello@example.com}'
+            MAIL_FROM_NAME: '${MAIL_FROM_NAME:-"${APP_NAME}"}'
+        volumes:
+            - app-storage:/var/www/html/storage
+            - app-bootstrap-cache:/var/www/html/bootstrap/cache
+        depends_on:
+            mysql:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+        networks:
+            - sekolah-network
+
+    # ============================================
+    # Application (Development - with hot reload)
+    # ============================================
+    app-dev:
+        build:
+            context: .
+            dockerfile: Dockerfile.dev
             args:
                 WWWGROUP: '${WWWGROUP}'
-        image: 'sail-8.4/app'
+                NODE_VERSION: '22'
+        image: 'sekolah-app-dev'
+        container_name: sekolah-app-dev
+        profiles:
+            - dev
         extra_hosts:
             - 'host.docker.internal:host-gateway'
         ports:
@@ -20,37 +73,119 @@ services:
         volumes:
             - '.:/var/www/html'
         networks:
-            - sail
+            - sekolah-network
         depends_on:
-            - mysql
+            mysql:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+
+    # ============================================
+    # MySQL 8.4 Database
+    # ============================================
     mysql:
-        image: 'mysql/mysql-server:8.0'
+        image: 'mysql:8.4'
+        container_name: sekolah-db
+        restart: unless-stopped
         ports:
             - '${FORWARD_DB_PORT:-3306}:3306'
         environment:
-            MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+            MYSQL_ROOT_PASSWORD: '${DB_PASSWORD:-secret}'
             MYSQL_ROOT_HOST: '%'
-            MYSQL_DATABASE: '${DB_DATABASE}'
-            MYSQL_USER: '${DB_USERNAME}'
-            MYSQL_PASSWORD: '${DB_PASSWORD}'
-            MYSQL_ALLOW_EMPTY_PASSWORD: 1
-            MYSQL_EXTRA_OPTIONS: '${MYSQL_EXTRA_OPTIONS}'
+            MYSQL_DATABASE: '${DB_DATABASE:-sekolah}'
+            MYSQL_USER: '${DB_USERNAME:-sekolah}'
+            MYSQL_PASSWORD: '${DB_PASSWORD:-secret}'
+            MYSQL_ALLOW_EMPTY_PASSWORD: 0
         volumes:
-            - 'sail-mysql:/var/lib/mysql'
+            - mysql-data:/var/lib/mysql
             - './vendor/laravel/sail/database/mysql/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh'
         networks:
-            - sail
+            - sekolah-network
         healthcheck:
             test:
                 - CMD
                 - mysqladmin
                 - ping
-                - '-p${DB_PASSWORD}'
-            retries: 3
+                - '-p${DB_PASSWORD:-secret}'
+            interval: 10s
+            retries: 5
             timeout: 5s
+            start_period: 30s
+
+    # ============================================
+    # Redis (Cache & Queue)
+    # ============================================
+    redis:
+        image: 'redis:7.4-alpine'
+        container_name: sekolah-redis
+        restart: unless-stopped
+        ports:
+            - '${FORWARD_REDIS_PORT:-6379}:6379'
+        command: redis-server --appendonly yes --requirepass '${REDIS_PASSWORD:-}'
+        volumes:
+            - redis-data:/data
+        networks:
+            - sekolah-network
+        healthcheck:
+            test:
+                - CMD
+                - redis-cli
+                - '-a'
+                - '${REDIS_PASSWORD:-}'
+                - ping
+            interval: 10s
+            retries: 5
+            timeout: 5s
+            start_period: 10s
+
+    # ============================================
+    # Mailpit (Email Testing)
+    # ============================================
+    mailpit:
+        image: 'axllent/mailpit:latest'
+        container_name: sekolah-mailpit
+        restart: unless-stopped
+        profiles:
+            - dev
+        ports:
+            - '${FORWARD_MAILPIT_PORT:-1025}:1025'
+            - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
+        networks:
+            - sekolah-network
+
+    # ============================================
+    # phpMyAdmin (Database Management)
+    # ============================================
+    phpmyadmin:
+        image: 'phpmyadmin:latest'
+        container_name: sekolah-phpmyadmin
+        restart: unless-stopped
+        profiles:
+            - dev
+        ports:
+            - '${FORWARD_PHPMYADMIN_PORT:-8080}:80'
+        environment:
+            PMA_HOST: mysql
+            PMA_PORT: 3306
+            PMA_USER: '${DB_USERNAME:-sekolah}'
+            PMA_PASSWORD: '${DB_PASSWORD:-secret}'
+            UPLOAD_LIMIT: 20M
+        depends_on:
+            mysql:
+                condition: service_healthy
+        networks:
+            - sekolah-network
+
 networks:
-    sail:
+    sekolah-network:
         driver: bridge
+
 volumes:
-    sail-mysql:
+    mysql-data:
+        driver: local
+    redis-data:
+        driver: local
+    app-storage:
+        driver: local
+    app-bootstrap-cache:
         driver: local

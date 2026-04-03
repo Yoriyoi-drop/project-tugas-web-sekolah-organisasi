@@ -29,8 +29,119 @@ Modern responsive website built with Laravel & Bootstrap 5
 
 - PHP >= 8.2
 - Composer
-- Node.js (optional, for asset compilation)
+- Node.js >= 20 (for asset compilation)
 - Database (SQLite, MySQL, PostgreSQL)
+- Docker & Docker Compose (optional, for containerized deployment)
+
+### 🐳 Docker Installation (Recommended)
+
+The project includes a complete Docker setup with production-ready multi-stage builds.
+
+#### Quick Start
+
+```bash
+# Clone repository
+git clone https://github.com/Yoriyoi-drop/project-tugas-web-sekolah-organisasi.git
+cd project-tugas-web-sekolah-organisasi
+
+# Development (with hot reload)
+make build-dev && make dev
+
+# Production
+make build && make up
+```
+
+#### Docker Services
+
+| Service | Image | Port | Description |
+|---------|-------|------|-------------|
+| **app** | Custom PHP 8.4 Alpine | 8000 | Laravel app with Nginx + PHP-FPM |
+| **mysql** | MySQL 8.4 | 3306 | Database server |
+| **redis** | Redis 7.4 Alpine | 6379 | Cache & queue driver |
+| **mailpit** | Axllent Mailpit | 1025/8025 | Email testing (dev only) |
+| **phpmyadmin** | phpMyAdmin | 8080 | Database management (dev only) |
+
+#### Makefile Commands
+
+```bash
+make help              # Show all available commands
+make build-dev         # Build development containers
+make dev               # Start development environment
+make stop-dev          # Stop development environment
+make build             # Build production containers
+make up                # Start production environment
+make down              # Stop production environment
+make restart           # Restart production environment
+make logs              # View production logs
+make logs-dev          # View development logs
+make shell             # Open shell in production app
+make shell-dev         # Open shell in development app
+make migrate           # Run database migrations
+make seed              # Run database seeders
+make fresh             # Fresh migration with seeding
+make test              # Run tests
+make clean             # Remove all containers and volumes
+```
+
+#### Docker Architecture
+
+```
+┌─────────────────────────────────────────────────┐
+│                 Docker Network                   │
+│                                                  │
+│  ┌──────────┐    ┌──────────┐    ┌──────────┐   │
+│  │  Nginx   │───▶│ PHP-FPM  │───▶│  MySQL   │   │
+│  │  :8000   │    │  :9000   │    │  :3306   │   │
+│  └──────────┘    └──────────┘    └──────────┘   │
+│                      │                           │
+│                      ▼                           │
+│                ┌──────────┐                      │
+│                │  Redis   │                      │
+│                │  :6379   │                      │
+│                └──────────┘                      │
+└─────────────────────────────────────────────────┘
+```
+
+#### Production Build Features
+
+- **Multi-stage build** — Composer → Node.js → PHP 8.4 Alpine (minimal image size)
+- **Supervisor** — Manages Nginx, PHP-FPM, and queue workers in one container
+- **Auto-migration** — Optional `AUTO_MIGRATE=true` env variable
+- **Health checks** — Built-in health check endpoint (`/up`)
+- **Security headers** — X-Frame-Options, X-Content-Type-Options, XSS Protection
+- **Gzip compression** — Optimized static asset delivery
+- **Resource limits** — CPU and memory limits defined in `docker-compose.prod.yml`
+
+#### Environment Variables for Docker
+
+```env
+# App
+APP_PORT=8000
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=http://localhost:8000
+
+# Database
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=sekolah
+DB_USERNAME=sekolah
+DB_PASSWORD=secret
+
+# Redis
+REDIS_HOST=redis
+REDIS_PORT=6379
+REDIS_PASSWORD=
+
+# Cache & Queue
+CACHE_DRIVER=redis
+SESSION_DRIVER=redis
+QUEUE_CONNECTION=redis
+
+# Auto Migration
+AUTO_MIGRATE=true
+```
 
 ### Development Quality Tools
 
@@ -41,12 +152,14 @@ The project includes several quality assurance tools:
 - **PHP-CS-Fixer** - Automatically fixes coding standards issues
 - **CI Workflow** - Automated testing and code quality checks
 
-### Linux Installation
+### Manual Installation (Without Docker)
+
+#### Linux Installation
 
 ```bash
 # Clone repository
-git clone https://github.com/Yoriyoi-drop/organisasi-sekolah-web-2.0.git
-cd organisasi-sekolah-web-2.0
+git clone https://github.com/Yoriyoi-drop/project-tugas-web-sekolah-organisasi.git
+cd project-tugas-web-sekolah-organisasi
 
 # Install dependencies
 composer install
@@ -68,12 +181,12 @@ npm install && npm run dev
 php artisan serve
 ```
 
-### Windows Installation
+#### Windows Installation
 
 ```cmd
 # Clone repository
-git clone https://github.com/Yoriyoi-drop/organisasi-sekolah-web-2.0.git
-cd organisasi-sekolah-web-2.0
+git clone https://github.com/Yoriyoi-drop/project-tugas-web-sekolah-organisasi.git
+cd project-tugas-web-sekolah-organisasi
 
 # Install dependencies
 composer install
@@ -95,12 +208,12 @@ npm install && npm run dev
 php artisan serve
 ```
 
-### macOS Installation
+#### macOS Installation
 
 ```bash
 # Clone repository
-git clone https://github.com/Yoriyoi-drop/organisasi-sekolah-web-2.0.git
-cd organisasi-sekolah-web-2.0
+git clone https://github.com/Yoriyoi-drop/project-tugas-web-sekolah-organisasi.git
+cd project-tugas-web-sekolah-organisasi
 
 # Install dependencies
 composer install
@@ -134,8 +247,12 @@ php artisan serve
 - **Frontend**: Bootstrap 5, Font Awesome, Vite
 - **CSS Assets**: Google Fonts, Bootstrap Icons (from npm), Font Awesome (all stored locally for offline capability)
 - **Database**: SQLite/MySQL/PostgreSQL
+- **Cache & Queue**: Redis 7.4
 - **Role Management**: Spatie Laravel Permission
-- **Deployment**: Vercel/Netlify ready
+- **Containerization**: Docker & Docker Compose
+- **Web Server**: Nginx + PHP-FPM 8.4
+- **Process Manager**: Supervisor
+- **Deployment**: Docker (production-ready), Vercel/Netlify ready
 
 ## 🎓 Student Registration System
 
@@ -263,16 +380,36 @@ student_registrations:
 
 ## 🚀 Deployment
 
+### Docker (Recommended)
+
+```bash
+# Development
+make build-dev && make dev
+
+# Production
+make build && make up
+
+# Production with resource limits
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+```
+
 ### Local Development
 ```bash
 php artisan serve
 ```
 
-### Production Deployment
+### Production Deployment (Manual)
 1. Set environment variables appropriately
 2. Run migrations: `php artisan migrate --force`
 3. Build assets: `npm run build`
 4. Configure web server to point to `/public` directory
+5. Start queue worker: `php artisan queue:work --daemon`
+
+### Production Deployment (Docker)
+1. Copy `.env.example` to `.env` and configure production values
+2. Build image: `docker compose build app`
+3. Start services: `docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d`
+4. Run migrations: `make fresh` or set `AUTO_MIGRATE=true`
 
 ## 🤝 Contributing
 
