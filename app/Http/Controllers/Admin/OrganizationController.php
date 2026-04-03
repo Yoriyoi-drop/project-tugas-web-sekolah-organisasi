@@ -12,7 +12,7 @@ class OrganizationController extends Controller
 {
     public function index()
     {
-        $organizations = Organization::select('id', 'name', 'type', 'tagline', 'icon', 'color', 'tags', 'is_active', 'order', 'created_at')
+        $organizations = Organization::select('id', 'name', 'slug', 'type', 'tagline', 'icon', 'color', 'tags', 'is_active', 'order', 'created_at')
                                    ->orderBy('order')
                                    ->orderBy('name')
                                    ->paginate(15);

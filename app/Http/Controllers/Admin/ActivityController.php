@@ -13,7 +13,7 @@ class ActivityController extends Controller
 {
     public function index()
     {
-        $activities = Activity::select('id', 'title', 'date', 'location', 'category', 'created_at')
+        $activities = Activity::select('id', 'title', 'slug', 'date', 'location', 'category', 'created_at')
                              ->latest()->paginate(10);
         return view('admin.activities.index', compact('activities'));
     }
