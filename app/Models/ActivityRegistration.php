@@ -5,6 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property-read \App\Models\OrganizationActivity $activity
+ * @property string|null $attended_at
+ */
 class ActivityRegistration extends Model
 {
     use HasFactory;
@@ -91,17 +95,17 @@ class ActivityRegistration extends Model
             'cancelled' => 'Dibatalkan'
         ];
 
-        return $statuses[$this->status] ?? 'Unknown';
+        return $statuses[$this->status];
     }
 
     public function getMemberNameAttribute()
     {
-        return $this->member?->full_name ?? 'Unknown';
+        return $this->member->full_name ?? 'Unknown';
     }
 
     public function getMemberTypeAttribute()
     {
-        return $this->member?->member_type ?? 'unknown';
+        return $this->member->member_type ?? 'unknown';
     }
 
     public function getHasCheckedInAttribute()
@@ -117,9 +121,9 @@ class ActivityRegistration extends Model
     public function getAttendanceDurationAttribute()
     {
         if ($this->checked_in_at && $this->checked_out_at) {
-            return $this->checked_in_at->diffForHumans($this->checked_out_at, true);
+            return $this->checked_in_at->diffForHumans($this->checked_out_at);
         }
-        
+
         return null;
     }
 

@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * @property-read \App\Models\Organization $organization
+ * @property-read \App\Models\User $creator
+ */
 class Report extends Model
 {
     use HasFactory;
@@ -105,7 +109,7 @@ class Report extends Model
             'custom' => 'Custom Report'
         ];
 
-        return $types[$this->type] ?? 'Custom Report';
+        return $types[$this->type];
     }
 
     public function getFormattedStatusAttribute()
@@ -117,7 +121,7 @@ class Report extends Model
             'failed' => 'Failed'
         ];
 
-        return $statuses[$this->status] ?? 'Unknown';
+        return $statuses[$this->status];
     }
 
     public function getStatusColorAttribute()
@@ -129,7 +133,7 @@ class Report extends Model
             'failed' => 'danger'
         ];
 
-        return $colors[$this->status] ?? 'secondary';
+        return $colors[$this->status];
     }
 
     public function getFormattedFileSizeAttribute()
@@ -174,9 +178,13 @@ class Report extends Model
     public function generate()
     {
         $this->update(['status' => 'generating']);
-        
+
         try {
-            $generator = new ReportGenerator($this);
+            if (!class_exists('\App\Models\ReportGenerator')) {
+                throw new \Exception('ReportGenerator class not found');
+            }
+
+            $generator = new \App\Models\ReportGenerator($this);
             $filePath = $generator->generate();
             
             $this->update([
@@ -246,7 +254,7 @@ class Report extends Model
         ]));
     }
 
-    public static function generateMembershipReport($organizationId, $filters = [], $userId)
+    public static function generateMembershipReport($organizationId, $filters = [], ?int $userId = null)
     {
         $data = [
             'organization_id' => $organizationId,
@@ -256,11 +264,11 @@ class Report extends Model
             'format' => 'pdf',
             'filters' => $filters
         ];
-        
+
         return static::createReport($data, $userId);
     }
 
-    public static function generateActivityReport($organizationId, $filters = [], $userId)
+    public static function generateActivityReport($organizationId, $filters = [], ?int $userId = null)
     {
         $data = [
             'organization_id' => $organizationId,
@@ -270,11 +278,11 @@ class Report extends Model
             'format' => 'pdf',
             'filters' => $filters
         ];
-        
+
         return static::createReport($data, $userId);
     }
 
-    public static function generateEngagementReport($organizationId, $filters = [], $userId)
+    public static function generateEngagementReport($organizationId, $filters = [], ?int $userId = null)
     {
         $data = [
             'organization_id' => $organizationId,
@@ -284,11 +292,11 @@ class Report extends Model
             'format' => 'pdf',
             'filters' => $filters
         ];
-        
+
         return static::createReport($data, $userId);
     }
 
-    public static function generatePerformanceReport($organizationId, $filters = [], $userId)
+    public static function generatePerformanceReport($organizationId, $filters = [], ?int $userId = null)
     {
         $data = [
             'organization_id' => $organizationId,

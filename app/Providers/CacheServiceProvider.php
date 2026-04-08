@@ -28,7 +28,7 @@ class CacheServiceProvider extends ServiceProvider
         if (app()->environment('production')) {
             config([
                 'cache.default' => 'redis',
-                'cache.prefix' => env('CACHE_PREFIX', 'app_cache'),
+                'cache.prefix' => config('cache.prefix', 'app_cache'),
             ]);
         }
     }

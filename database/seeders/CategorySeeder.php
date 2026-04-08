@@ -69,7 +69,7 @@ class CategorySeeder extends Seeder
         }
 
         // Create additional categories from environment if specified
-        if (env('ADD_SAMPLE_CATEGORIES', false)) {
+        if (config('app.env') === 'local' && config('app.add_sample_categories', false)) {
             $sampleCategories = [
                 ['name' => 'Olahraga', 'slug' => 'olahraga', 'description' => 'Berita olahraga sekolah', 'is_active' => true],
                 ['name' => 'Seni', 'slug' => 'seni', 'description' => 'Kegiatan seni dan budaya', 'is_active' => true],

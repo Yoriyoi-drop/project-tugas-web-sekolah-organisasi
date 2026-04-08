@@ -6,6 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property-read \App\Models\Student|null $student
+ * @property-read \App\Models\Teacher|null $teacher
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|Member active()
+ * @method static \Illuminate\Database\Eloquent\Builder|Member byPeriod(string $period)
+ * @method static \Illuminate\Database\Eloquent\Builder|Member byRole(string $role)
+ * @method static \Illuminate\Database\Eloquent\Builder|Member leadership()
+ */
 class Member extends Model
 {
     use HasFactory, SoftDeletes;
@@ -90,13 +99,13 @@ class Member extends Model
         if ($this->relationLoaded('student') && $this->student) {
             return $this->student->name;
         }
-        
+
         if ($this->relationLoaded('teacher') && $this->teacher) {
             return $this->teacher->name;
         }
-        
+
         // Fallback to lazy loading if relationships not loaded
-        return $this->student?->name ?? $this->teacher?->name ?? 'Unknown';
+        return $this->student->name ?? $this->teacher->name ?? 'Unknown';
     }
 
     public function getMemberTypeAttribute()

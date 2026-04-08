@@ -37,7 +37,8 @@ class EmailOtpController extends Controller
             return back()->withErrors(['otp' => 'Terlalu banyak permintaan. Coba lagi dalam ' . $seconds . ' detik.']);
         }
 
-        if (!$user->canResendEmailOtp()) {
+        $emailOtp = \App\Models\EmailOtp::where('user_id', $user->id)->latest()->first();
+        if ($emailOtp && !$emailOtp->canResend()) {
             return back()->withErrors(['otp' => 'Tunggu beberapa saat sebelum mengirim ulang OTP.']);
         }
 
@@ -66,7 +67,8 @@ class EmailOtpController extends Controller
             return back()->withErrors(['otp' => 'Terlalu banyak percobaan. Coba lagi dalam ' . $seconds . ' detik.']);
         }
 
-        if ($user->verifyEmailOtp($request->input('code'))) {
+        $emailOtp = \App\Models\EmailOtp::where('user_id', $user->id)->latest()->first();
+        if ($emailOtp && $emailOtp->verifyCode($request->input('code'))) {
             $request->session()->forget('otp_user_id');
             return redirect()->route('login')->with('status', 'Email berhasil diverifikasi. Silakan login.');
         }

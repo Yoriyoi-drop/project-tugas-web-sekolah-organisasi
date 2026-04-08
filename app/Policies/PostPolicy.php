@@ -28,9 +28,9 @@ class PostPolicy
         if ($user->is_admin || $user->hasRole('editor')) {
             return true;
         }
-        
+
         // Only allow viewing published posts
-        return $post->is_published || $post->user_id === $user->id;
+        return $post->is_published || $post->author === $user->name;
     }
 
     /**
@@ -51,9 +51,9 @@ class PostPolicy
         if ($user->is_admin || $user->hasRole('editor')) {
             return true;
         }
-        
+
         // Authors can update their own posts
-        return $post->user_id === $user->id;
+        return $post->author === $user->name;
     }
 
     /**
@@ -65,9 +65,9 @@ class PostPolicy
         if ($user->is_admin || $user->hasRole('editor')) {
             return true;
         }
-        
+
         // Authors can delete their own posts
-        return $post->user_id === $user->id;
+        return $post->author === $user->name;
     }
 
     /**

@@ -6,6 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property-read \App\Models\Organization $organization
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|OrganizationActivity byOrganization(int $organizationId)
+ * @method static \Illuminate\Database\Eloquent\Builder|OrganizationActivity upcoming()
+ * @method static \Illuminate\Database\Eloquent\Builder|OrganizationActivity past()
+ * @method static \Illuminate\Database\Eloquent\Builder|OrganizationActivity ongoing()
+ * @method static \Illuminate\Database\Eloquent\Builder|OrganizationActivity byType(string $type)
+ * @method static \Illuminate\Database\Eloquent\Builder|OrganizationActivity featured()
+ * @method static \Illuminate\Database\Eloquent\Builder|OrganizationActivity registrationOpen()
+ */
 class OrganizationActivity extends Model
 {
     use HasFactory, SoftDeletes;
@@ -149,7 +160,7 @@ class OrganizationActivity extends Model
             'other' => 'Lainnya'
         ];
 
-        return $types[$this->type] ?? 'Acara';
+        return $types[$this->type];
     }
 
     public function getFormattedStatusAttribute()
@@ -162,12 +173,12 @@ class OrganizationActivity extends Model
             'cancelled' => 'Dibatalkan'
         ];
 
-        return $statuses[$this->status] ?? 'Unknown';
+        return $statuses[$this->status];
     }
 
     public function getDurationAttribute()
     {
-        return $this->start_datetime->diffForHumans($this->end_datetime, true);
+        return $this->start_datetime->diffForHumans($this->end_datetime);
     }
 
     public function getIsRegistrationOpenAttribute()
@@ -281,10 +292,10 @@ class OrganizationActivity extends Model
     private function sendStatusNotifications($status)
     {
         $members = $this->organization->activeMembers()->with(['student.user', 'teacher.user'])->get();
-        
+
         foreach ($members as $member) {
-            $user = $member->student?->user ?? $member->teacher?->user;
-            
+            $user = $member->student->user ?? $member->teacher->user;
+
             if ($user) {
                 $title = $status === 'upcoming' ? "Acara Akan Datang: {$this->title}" : "Acara Dibatalkan: {$this->title}";
                 $message = $status === 'upcoming' 

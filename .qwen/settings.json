@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(php *)"
+      "Bash(php *)",
+      "Bash(mkdir *)",
+      "Bash(composer *)",
+      "Bash(./vendor/bin/phpstan *)",
+      "Bash(rm *)"
     ]
   },
   "$version": 3

@@ -107,21 +107,23 @@ class StudentRegistration extends Model
 
     public function getFormattedStatusAttribute(): string
     {
-        return match($this->status) {
+        $statuses = [
             'pending' => 'Menunggu Persetujuan',
             'approved' => 'Disetujui',
             'rejected' => 'Ditolak',
-            default => $this->status
-        };
+        ];
+
+        return $statuses[$this->status];
     }
 
     public function getStatusColorAttribute(): string
     {
-        return match($this->status) {
+        $colors = [
             'pending' => 'warning',
             'approved' => 'success',
             'rejected' => 'danger',
-            default => 'secondary'
-        };
+        ];
+
+        return $colors[$this->status];
     }
 }

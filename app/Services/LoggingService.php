@@ -26,8 +26,8 @@ class LoggingService
         }
 
         if ($response) {
-            $data['response_status'] = $response->status() ?? null;
-            $data['response_size'] = strlen($response->getContent()) ?? 0;
+            $data['response_status'] = $response->status();
+            $data['response_size'] = strlen($response->getContent() ?? '');
         }
 
         if ($duration) {

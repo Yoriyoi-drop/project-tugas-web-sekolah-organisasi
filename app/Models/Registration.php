@@ -5,6 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property-read \App\Models\Organization $organization
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|Registration withOrganization()
+ */
 class Registration extends Model
 {
     use HasFactory;

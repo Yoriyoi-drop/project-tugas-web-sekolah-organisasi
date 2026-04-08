@@ -191,11 +191,11 @@ class PPDBService
         $year = date('Y');
         $month = date('m');
         $day = date('d');
-        
+
         // Count registrations for today to create sequential number
         $todayCount = PPDB::whereDate('created_at', now())->count() + 1;
-        
-        return "PPDB/{$year}{$month}{$day}/" . str_pad($todayCount, 4, '0', STR_PAD_LEFT);
+
+        return "PPDB/{$year}{$month}{$day}/" . str_pad((string)$todayCount, 4, '0', STR_PAD_LEFT);
     }
 
     public function exportRegistrations($status = null)
@@ -228,11 +228,8 @@ class PPDBService
                 'Telepon Orang Tua' => $reg->parent_phone,
                 'Sekolah Asal' => $reg->previous_school,
                 'Jurusan Tujuan' => $reg->desired_major,
-                'NISN' => $reg->nisn,
                 'NIK' => $reg->nik,
-                'No. Pendaftaran' => $reg->registration_number,
                 'Status' => $reg->status,
-                'Tanggal Daftar' => $reg->registration_date,
                 'Dibuat Pada' => $reg->created_at,
             ];
         }

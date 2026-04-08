@@ -10,7 +10,7 @@ class PostController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $posts = Post::with('category')
+        $posts = Post::query()
                      ->published()
                      ->when($request->category, function($query) use ($request) {
                          $query->where('category', $request->category);
@@ -31,7 +31,7 @@ class PostController extends Controller
 
     public function show($id): JsonResponse
     {
-        $post = Post::with('category')->find($id);
+        $post = Post::find($id);
 
         if (!$post) {
             return response()->json([

@@ -25,8 +25,9 @@ class LoginController extends Controller
         $user = User::where('email', $request->email)->first();
         
         if ($user && $user->isLocked()) {
+            $lockedMinutes = $user->locked_until !== null ? $user->locked_until->diffInMinutes(now()) : 0;
             return back()->withErrors([
-                'email' => 'Akun terkunci. Coba lagi dalam ' . $user->locked_until->diffInMinutes() . ' menit.',
+                'email' => 'Akun terkunci. Coba lagi dalam ' . $lockedMinutes . ' menit.',
             ]);
         }
 

@@ -5,6 +5,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\ResponseCache\Facades\ResponseCache;
 
+/**
+ * @property string|null $image
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|Post published()
+ * @method static \Illuminate\Database\Eloquent\Builder|Post featured()
+ * @method static \Illuminate\Database\Eloquent\Builder|Post latest()
+ * @method static \Illuminate\Database\Eloquent\Builder|Post byCategory(string $category)
+ */
 class Post extends Model
 {
     use HasFactory;

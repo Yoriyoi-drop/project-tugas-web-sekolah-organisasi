@@ -285,6 +285,91 @@ student_registrations:
 - created_at, updated_at
 ```
 
+## 📝 Version 1.17 - Bug Fixes & Synchronization
+
+### 🐛 Critical Bug Fixes
+
+#### 1. **API Routes Not Loading** ⚠️ CRITICAL
+- **Problem**: `routes/api.php` tidak ter-load di `bootstrap/app.php`
+- **Impact**: Semua API endpoints (Students V1/V2, Health, Auth) tidak berfungsi
+- **Fix**: Menambahkan `api: __DIR__.'/../routes/api.php'` ke `withRouting()` di bootstrap/app.php
+- **File**: `bootstrap/app.php`
+
+#### 2. **Missing Controller Methods** 🔴
+- **Admin OrganizationController**: Missing `show()` method tapi route ada di web.php
+  - **Fix**: Menambahkan method `show()` dengan data organization, memberStats, leadershipMembers
+  - **File**: `app/Http/Controllers/Admin/OrganizationController.php`
+
+- **Admin PostController**: Missing `show()` method tapi route ada di web.php
+  - **Fix**: Menambahkan method `show()` yang return view `admin.posts.show`
+  - **File**: `app/Http/Controllers/Admin/PostController.php`
+
+#### 3. **Missing View Files** 🔴
+- **Admin Organization Members** (4 views):
+  - `admin/organizations/members/index.blade.php` - Created ✅
+  - `admin/organizations/members/create.blade.php` - Created ✅
+  - `admin/organizations/members/edit.blade.php` - Created ✅
+  - `admin/organizations/members/show.blade.php` - Created ✅
+
+- **Admin Organization Show**:
+  - `admin/organizations/show.blade.php` - Created ✅
+
+- **Admin Posts Show**:
+  - `admin/posts/show.blade.php` - Created ✅
+
+- **Admin PPDB Create**:
+  - `admin/ppdb/create.blade.php` - Created ✅
+
+### 🔄 Public-Admin Synchronization Fixes
+
+#### 4. **PPDB Gender Value Mismatch** ⚠️ CRITICAL
+- **Problem**: Form public gunakan value `L` dan `P`, tapi validation PPDBRequest harapkan `male`/`female`
+- **Impact**: **FORM PPDB SELALU GAGAL** - Validasi gagal untuk semua submission
+- **Fix**: Ubah value di `pages/ppdb/form.blade.php` dari `L/P` ke `male/female`
+- **Files**: 
+  - `resources/views/pages/ppdb/form.blade.php`
+  - `resources/views/admin/ppdb/create.blade.php`
+
+#### 5. **Missing Field Sanitization: `parent_phone`** 🟡
+- **PPDB Public Controller**: Field `parent_phone` tidak disanitasi
+  - **Fix**: Menambahkan `$validated['parent_phone'] = strip_tags(...)`
+  - **File**: `app/Http/Controllers/PPDBController.php`
+
+- **PPDB Admin Controller**: Field `parent_phone` tidak disanitasi di `store()` dan `update()`
+  - **Fix**: Menambahkan sanitization untuk `parent_phone` di kedua method
+  - **File**: `app/Http/Controllers/Admin/PPDBController.php`
+
+- **StudentRegistration Controller**: Field `parent_phone` tidak disanitasi
+  - **Fix**: Menambahkan sanitization untuk `parent_phone`
+  - **File**: `app/Http/Controllers/StudentRegistrationController.php`
+
+### 📊 Summary of Changes
+
+| Category | Issues Found | Status |
+|----------|--------------|--------|
+| Route Configuration | 1 | ✅ Fixed |
+| Missing Controller Methods | 2 | ✅ Fixed |
+| Missing View Files | 7 | ✅ Fixed |
+| Data Validation Mismatch | 1 (PPDB Gender) | ✅ Fixed |
+| Missing Field Sanitization | 4 (parent_phone) | ✅ Fixed |
+| **Total** | **15 bugs** | **✅ All Fixed** |
+
+### 🛡️ Security Improvements
+
+- **Input Sanitization**: Semua field form sekarang tersanitasi dengan `strip_tags()`
+- **Validation Consistency**: Gender values konsisten (`male/female`) antara public form dan admin validation
+- **CSRF Protection**: Tetap aktif di semua form
+- **XSS Prevention**: Strip tags dengan allowed tags list untuk rich text fields
+
+### 📝 Notes for Future Development
+
+1. **Selalu cek konsistensi** antara public form values dengan validation rules
+2. **Sanitasi semua input fields** di controller, termasuk field yang terlihat "safe" seperti phone numbers
+3. **Test form submission** setelah membuat changes untuk memastikan tidak ada validation mismatch
+4. **Gunakan enum/constants** untuk values seperti gender agar konsisten di seluruh aplikasi
+
+---
+
 ## 📝 Version 1.16 Updates & Fixes
 
 ### 🎓 New Features

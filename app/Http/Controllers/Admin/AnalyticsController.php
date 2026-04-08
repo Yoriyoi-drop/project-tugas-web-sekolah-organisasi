@@ -11,6 +11,7 @@ use App\Models\Activity;
 use App\Models\Member;
 use App\Models\OrganizationDiscussion;
 use App\Models\OrganizationAnnouncement;
+use App\Models\OrganizationActivity;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

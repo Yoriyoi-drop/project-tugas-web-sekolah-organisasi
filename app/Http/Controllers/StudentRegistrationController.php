@@ -36,6 +36,7 @@ class StudentRegistrationController extends Controller
             $validated['birth_place'] = strip_tags($validated['birth_place']);
             $validated['address'] = strip_tags($validated['address']);
             $validated['parent_name'] = strip_tags($validated['parent_name']);
+            $validated['parent_phone'] = strip_tags($validated['parent_phone']);
             $validated['previous_school'] = strip_tags($validated['previous_school']);
             $validated['desired_major'] = strip_tags($validated['desired_major'] ?? '');
 
@@ -244,8 +245,8 @@ class StudentRegistrationController extends Controller
                 $registration->notes ?? '-',
                 $registration->approved_at ? $registration->approved_at->format('Y-m-d H:i:s') : '-',
                 $registration->rejected_at ? $registration->rejected_at->format('Y-m-d H:i:s') : '-',
-                $registration->approvedBy ? $registration->approvedBy->name : '-',
-                $registration->rejectedBy ? $registration->rejectedBy->name : '-',
+                $registration->approvedBy->name ?? '-',
+                $registration->rejectedBy->name ?? '-',
                 $registration->created_at->format('Y-m-d H:i:s'),
                 $registration->updated_at->format('Y-m-d H:i:s'),
             ];

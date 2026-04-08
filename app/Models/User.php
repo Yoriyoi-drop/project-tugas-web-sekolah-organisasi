@@ -313,7 +313,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function isLocked(): bool
     {
-        return $this->locked_until && $this->locked_until->isFuture();
+        return $this->locked_until !== null && $this->locked_until->isFuture();
     }
     
     /**

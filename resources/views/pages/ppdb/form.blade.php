@@ -65,11 +65,11 @@
                                         <div class="col-md-4">
                                             <label class="form-label d-block">Jenis Kelamin <span class="text-danger">*</span></label>
                                             <div class="form-check form-check-inline mt-2">
-                                                <input class="form-check-input" type="radio" name="gender" id="gender_l" value="L" {{ old('gender') == 'L' ? 'checked' : '' }} required>
+                                                <input class="form-check-input" type="radio" name="gender" id="gender_l" value="male" {{ old('gender') == 'male' ? 'checked' : '' }} required>
                                                 <label class="form-check-label" for="gender_l">Laki-laki</label>
                                             </div>
                                             <div class="form-check form-check-inline">
-                                                <input class="form-check-input" type="radio" name="gender" id="gender_p" value="P" {{ old('gender') == 'P' ? 'checked' : '' }}>
+                                                <input class="form-check-input" type="radio" name="gender" id="gender_p" value="female" {{ old('gender') == 'female' ? 'checked' : '' }}>
                                                 <label class="form-check-label" for="gender_p">Perempuan</label>
                                             </div>
                                             @error('gender') <div class="text-danger small">{{ $message }}</div> @enderror

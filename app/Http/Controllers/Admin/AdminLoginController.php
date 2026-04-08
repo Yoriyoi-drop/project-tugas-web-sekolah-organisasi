@@ -59,9 +59,12 @@ class AdminLoginController extends Controller
         }
 
         // Cek apakah akun terkunci
-        if ($user && $user->isLocked()) {
+        if ($user->isLocked()) {
+            $lockedMinutes = $user->locked_until instanceof \Carbon\Carbon 
+                ? $user->locked_until->diffInMinutes() 
+                : 0;
             return back()->withErrors([
-                'email' => 'Akun terkunci. Coba lagi dalam ' . $user->locked_until->diffInMinutes() . ' menit.',
+                'email' => 'Akun terkunci. Coba lagi dalam ' . $lockedMinutes . ' menit.',
             ]);
         }
 
@@ -70,31 +73,27 @@ class AdminLoginController extends Controller
         $credentials['is_admin'] = true; // Hanya izinkan login jika user adalah admin
 
         if (Auth::attempt($credentials, $request->filled('remember'))) {
-            if ($user) {
-                $user->unlockAccount();
-                $user->update(['last_login_at' => now()]);
-                
-                // Regenerasi session untuk mencegah fixation attack
-                $request->session()->regenerate();
-                
-                // Hapus rate limiter untuk IP ini
-                $this->clearLoginAttempts($request);
-                
-                return redirect()->intended(route('admin.dashboard'));
-            }
+            $user->unlockAccount();
+            $user->update(['last_login_at' => now()]);
+
+            // Regenerasi session untuk mencegah fixation attack
+            $request->session()->regenerate();
+
+            // Hapus rate limiter untuk IP ini
+            $this->clearLoginAttempts($request);
+
+            return redirect()->intended(route('admin.dashboard'));
         }
 
         // Jika login gagal
-        if ($user) {
-            $this->incrementLoginAttempts($request);
-            
-            $user->increment('failed_login_attempts');
-            if ($user->failed_login_attempts >= 5) {
-                $user->lockAccount();
-                return back()->withErrors([
-                    'email' => 'Terlalu banyak percobaan login. Akun dikunci selama 30 menit.',
-                ]);
-            }
+        $this->incrementLoginAttempts($request);
+
+        $user->increment('failed_login_attempts');
+        if ($user->failed_login_attempts >= 5) {
+            $user->lockAccount();
+            return back()->withErrors([
+                'email' => 'Terlalu banyak percobaan login. Akun dikunci selama 30 menit.',
+            ]);
         }
 
         return back()->withErrors([

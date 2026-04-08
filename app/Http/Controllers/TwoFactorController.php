@@ -15,6 +15,11 @@ class TwoFactorController extends Controller
         $this->middleware('auth');
     }
 
+    /**
+     * Show 2FA setup page.
+     *
+     * @return \Illuminate\View\View
+     */
     public function show()
     {
         $user = Auth::user();
@@ -38,6 +43,11 @@ class TwoFactorController extends Controller
         return view('profile.2fa', compact('qrCode', 'qrCodeUrl', 'manualEntryKey'));
     }
 
+    /**
+     * Show 2FA verification page.
+     *
+     * @return \Illuminate\View\View
+     */
     public function showVerify()
     {
         return view('profile.2fa-verify');

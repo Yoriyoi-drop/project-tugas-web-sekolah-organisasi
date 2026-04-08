@@ -29,13 +29,13 @@ class Teacher extends Model
         $max = self::where('nip', 'like', $prefix . '%')->max('nip');
 
         if (! $max) {
-            return $prefix . str_pad(1, 4, '0', STR_PAD_LEFT);
+            return $prefix . str_pad('1', 4, '0', STR_PAD_LEFT);
         }
 
         $number = (int) substr($max, strlen($prefix));
         $next = $number + 1;
 
-        return $prefix . str_pad($next, 4, '0', STR_PAD_LEFT);
+        return $prefix . str_pad((string)$next, 4, '0', STR_PAD_LEFT);
     }
 
     /**

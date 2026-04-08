@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Support\Str;
 
 class NewPostPublished extends Notification implements ShouldQueue
 {
@@ -35,7 +36,7 @@ class NewPostPublished extends Notification implements ShouldQueue
             ->subject('Artikel Baru - ' . $this->post->title)
             ->line('Artikel baru telah dipublikasikan:')
             ->line('Judul: ' . $this->post->title)
-            ->line('Deskripsi: ' . str_limit(strip_tags($this->post->content), 100))
+            ->line('Deskripsi: ' . Str::limit(strip_tags($this->post->content), 100))
             ->action('Baca Artikel', url('/blog/' . $this->post->id))
             ->line('Terima kasih telah mengikuti blog kami.');
     }
@@ -55,7 +56,7 @@ class NewPostPublished extends Notification implements ShouldQueue
             'message' => 'Artikel "' . $this->post->title . '" telah dipublikasikan',
             'post_id' => $this->post->id,
             'post_title' => $this->post->title,
-            'post_excerpt' => str_limit(strip_tags($this->post->content), 100),
+            'post_excerpt' => Str::limit(strip_tags($this->post->content), 100),
             'created_at' => now(),
         ];
     }
@@ -94,7 +95,7 @@ class NewPostPublished extends Notification implements ShouldQueue
             'message' => 'Artikel "' . $this->post->title . '" telah dipublikasikan',
             'post_id' => $this->post->id,
             'post_title' => $this->post->title,
-            'post_excerpt' => str_limit(strip_tags($this->post->content), 100),
+            'post_excerpt' => Str::limit(strip_tags($this->post->content), 100),
             'created_at' => now(),
         ];
     }

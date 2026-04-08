@@ -6,6 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property-read \App\Models\Organization $organization
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|OrganizationDiscussion active()
+ * @method static \Illuminate\Database\Eloquent\Builder|OrganizationDiscussion pinned()
+ * @method static \Illuminate\Database\Eloquent\Builder|OrganizationDiscussion byType(string $type)
+ * @method static \Illuminate\Database\Eloquent\Builder|OrganizationDiscussion byOrganization(int $organizationId)
+ * @method static \Illuminate\Database\Eloquent\Builder|OrganizationDiscussion withReplies()
+ */
 class OrganizationDiscussion extends Model
 {
     use HasFactory, SoftDeletes;
@@ -112,7 +121,7 @@ class OrganizationDiscussion extends Model
             'poll' => 'Polling'
         ];
 
-        return $types[$this->type] ?? 'Diskusi';
+        return $types[$this->type];
     }
 
     public function getTimeAgoAttribute()
@@ -206,8 +215,8 @@ class OrganizationDiscussion extends Model
         $members = $organization->activeMembers()->with(['student.user', 'teacher.user'])->get();
 
         foreach ($members as $member) {
-            $user = $member->student?->user ?? $member->teacher?->user;
-            
+            $user = $member->student->user ?? $member->teacher->user;
+
             if ($user && $user->id !== $this->author_id) {
                 OrganizationNotification::create([
                     'organization_id' => $this->organization_id,

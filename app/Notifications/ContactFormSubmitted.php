@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Support\Str;
 
 class ContactFormSubmitted extends Notification implements ShouldQueue
 {
@@ -31,7 +32,7 @@ class ContactFormSubmitted extends Notification implements ShouldQueue
             ->line('Nama: ' . $this->contact->name)
             ->line('Email: ' . $this->contact->email)
             ->line('Subjek: ' . $this->contact->subject)
-            ->line('Pesan: ' . str_limit($this->contact->message, 100))
+            ->line('Pesan: ' . Str::limit($this->contact->message, 100))
             ->action('Lihat Pesan', url('/admin/messages/' . $this->contact->id))
             ->line('Terima kasih telah menggunakan formulir kontak kami.');
     }
@@ -45,7 +46,7 @@ class ContactFormSubmitted extends Notification implements ShouldQueue
             'sender_name' => $this->contact->name,
             'sender_email' => $this->contact->email,
             'subject' => $this->contact->subject,
-            'message_preview' => str_limit($this->contact->message, 100),
+            'message_preview' => Str::limit($this->contact->message, 100),
             'created_at' => now(),
         ];
     }
@@ -72,7 +73,7 @@ class ContactFormSubmitted extends Notification implements ShouldQueue
             'sender_name' => $this->contact->name,
             'sender_email' => $this->contact->email,
             'subject' => $this->contact->subject,
-            'message_preview' => str_limit($this->contact->message, 100),
+            'message_preview' => Str::limit($this->contact->message, 100),
             'created_at' => now(),
         ];
     }

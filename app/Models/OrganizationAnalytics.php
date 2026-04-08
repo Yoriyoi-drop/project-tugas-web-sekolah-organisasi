@@ -100,20 +100,20 @@ class OrganizationAnalytics extends Model
 
     public function getMemberGrowthRateFormattedAttribute()
     {
-        return number_format($this->member_growth_rate, 2) . '%';
+        return number_format((float)$this->member_growth_rate, 2) . '%';
     }
 
     public function getAttendanceRateFormattedAttribute()
     {
-        return number_format($this->attendance_rate, 2) . '%';
+        return number_format((float)$this->attendance_rate, 2) . '%';
     }
 
     public function getScoresFormattedAttribute()
     {
         return [
-            'activity' => number_format($this->activity_score, 1),
-            'engagement' => number_format($this->engagement_score, 1),
-            'overall' => number_format($this->overall_score, 1)
+            'activity' => number_format((float)$this->activity_score, 1),
+            'engagement' => number_format((float)$this->engagement_score, 1),
+            'overall' => number_format((float)$this->overall_score, 1)
         ];
     }
 

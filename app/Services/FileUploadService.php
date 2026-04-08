@@ -329,7 +329,7 @@ class FileUploadService
                     break;
                 case IMAGETYPE_PNG:
                     // PNG compression is 0-9 (reverse scale: 0 = best quality, 9 = smallest size)
-                    $compression = floor((100 - $quality) / 10);
+                    $compression = (int) floor((100 - $quality) / 10);
                     imagepng($resizedImage, $tempResource, $compression);
                     break;
                 case IMAGETYPE_GIF:

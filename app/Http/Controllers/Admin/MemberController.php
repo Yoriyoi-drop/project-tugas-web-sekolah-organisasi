@@ -12,6 +12,11 @@ use Illuminate\Validation\Rule;
 
 class MemberController extends Controller
 {
+    /**
+     * Display a listing of organization members.
+     *
+     * @return \Illuminate\View\View
+     */
     public function index(Organization $organization)
     {
         $members = $organization->members()
@@ -26,6 +31,11 @@ class MemberController extends Controller
         return view('admin.members.index', compact('organization', 'members', 'memberStats', 'leadershipMembers'));
     }
 
+    /**
+     * Show the form for creating a new member.
+     *
+     * @return \Illuminate\View\View
+     */
     public function create(Organization $organization)
     {
         $students = Student::orderBy('name')->get();
@@ -84,13 +94,23 @@ class MemberController extends Controller
             ->with('success', 'Member added successfully!');
     }
 
+    /**
+     * Display the specified member.
+     *
+     * @return \Illuminate\View\View
+     */
     public function show(Organization $organization, Member $member)
     {
         $member->load(['student', 'teacher', 'organization']);
-        
+
         return view('admin.members.show', compact('organization', 'member'));
     }
 
+    /**
+     * Show the form for editing the specified member.
+     *
+     * @return \Illuminate\View\View
+     */
     public function edit(Organization $organization, Member $member)
     {
         $students = Student::orderBy('name')->get();
@@ -162,6 +182,7 @@ class MemberController extends Controller
         ]);
 
         $members = $organization->members()->whereIn('id', $request->members);
+        $message = 'Members updated successfully!';
 
         switch ($request->action) {
             case 'activate':

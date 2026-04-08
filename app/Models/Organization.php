@@ -5,6 +5,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\ResponseCache\Facades\ResponseCache;
 
+/**
+ * @property-read \App\Models\OrganizationPeriod|null $currentPeriod
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|Organization active()
+ * @method static \Illuminate\Database\Eloquent\Builder|Organization ordered()
+ */
 class Organization extends Model
 {
     use HasFactory;

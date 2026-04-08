@@ -30,7 +30,7 @@ class PostController extends Controller
             'title' => $request->title,
             'excerpt' => $request->excerpt,
             // Basic XSS protection: allow only safe tags
-            'content' => strip_tags($request->content, '<p><b><i><u><a><ul><ol><li><h1><h2><h3><h4><h5><h6><br><img><blockquote><div><span>'), 
+            'content' => strip_tags($request->content, '<p><b><i><u><a><ul><ol><li><h1><h2><h3><h4><h5><h6><br><img><blockquote><div><span>'),
             'category' => $request->category,
             'author' => Auth::user()->name ?? 'Admin',
             'is_published' => in_array($request->status, ['published', 'on', 'true', 1]),
@@ -46,6 +46,11 @@ class PostController extends Controller
 
         Post::create($data);
         return redirect()->route('admin.posts.index')->with('success', 'Post created successfully');
+    }
+
+    public function show(Post $post)
+    {
+        return view('admin.posts.show', compact('post'));
     }
 
     public function edit(Post $post)

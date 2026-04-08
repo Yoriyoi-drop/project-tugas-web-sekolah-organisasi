@@ -135,6 +135,8 @@ class OrganizationPeriodSeeder extends Seeder
             ['title' => 'Community Service Champion', 'date' => '2024-08-10']
         ];
 
-        return array_rand(array_flip($achievements), rand(0, 2));
+        $count = rand(0, 2);
+        $keys = array_rand($achievements, max(1, $count));
+        return is_array($keys) ? $keys : [$keys];
     }
 }

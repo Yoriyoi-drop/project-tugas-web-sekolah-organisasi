@@ -8,6 +8,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use App\Services\LoggingService;
 
 class GenerateReportJob implements ShouldQueue
@@ -32,7 +33,7 @@ class GenerateReportJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(string $reportType, array $parameters = [], int $userId = null, string $email = null)
+    public function __construct(string $reportType, array $parameters = [], ?int $userId = null, ?string $email = null)
     {
         $this->reportType = $reportType;
         $this->parameters = $parameters;

@@ -9,6 +9,11 @@ use Illuminate\Http\Request;
 
 class OrganizationPeriodController extends Controller
 {
+    /**
+     * Display a listing of periods.
+     *
+     * @return \Illuminate\View\View
+     */
     public function index(Organization $organization)
     {
         $periods = $organization->periods()
@@ -19,6 +24,11 @@ class OrganizationPeriodController extends Controller
         return view('admin.periods.index', compact('organization', 'periods'));
     }
 
+    /**
+     * Show the form for creating a new period.
+     *
+     * @return \Illuminate\View\View
+     */
     public function create(Organization $organization)
     {
         return view('admin.periods.create', compact('organization'));
@@ -43,10 +53,15 @@ class OrganizationPeriodController extends Controller
             ->with('success', 'Period created successfully!');
     }
 
+    /**
+     * Display the specified period.
+     *
+     * @return \Illuminate\View\View
+     */
     public function show(Organization $organization, OrganizationPeriod $period)
     {
         $period->load(['members.student', 'members.teacher']);
-        
+
         $memberStats = [
             'total' => $period->members()->count(),
             'active' => $period->members()->where('status', 'active')->count(),
@@ -56,6 +71,11 @@ class OrganizationPeriodController extends Controller
         return view('admin.periods.show', compact('organization', 'period', 'memberStats'));
     }
 
+    /**
+     * Show the form for editing the specified period.
+     *
+     * @return \Illuminate\View\View
+     */
     public function edit(Organization $organization, OrganizationPeriod $period)
     {
         return view('admin.periods.edit', compact('organization', 'period'));

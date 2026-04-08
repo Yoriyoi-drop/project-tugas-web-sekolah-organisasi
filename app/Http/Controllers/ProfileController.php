@@ -103,7 +103,7 @@ class ProfileController extends Controller
             }
 
             // Generate verification code
-            $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+            $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
             // Hapus kode lama
             PasswordVerificationCode::where('user_id', $user->id)->where('used', false)->delete();
@@ -348,7 +348,7 @@ class ProfileController extends Controller
 
         try {
             // Generate and store code
-            $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+            $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
             PasswordVerificationCode::where('user_id', $user->id)->where('used', false)->delete();
             PasswordVerificationCode::create([
                 'user_id' => $user->id,
@@ -380,6 +380,10 @@ class ProfileController extends Controller
                     return response()->json(['message' => 'Konfigurasi Twilio belum lengkap.'], 500);
                 }
                 try {
+                    if (!class_exists('\Twilio\Rest\Client')) {
+                        return response()->json(['message' => 'Twilio package is not installed.'], 500);
+                    }
+
                     $client = new \Twilio\Rest\Client($sid, $token);
                     $client->messages->create($userPhone, [
                         'from' => $from,

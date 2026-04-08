@@ -32,6 +32,23 @@ class OrganizationController extends Controller
         return redirect()->route('admin.organizations.index')->with('success', 'Organization created successfully');
     }
 
+    public function show(Organization $organization)
+    {
+        $organization->load([
+            'activeMembers.student',
+            'activeMembers.teacher',
+            'activePeriod',
+            'periods' => function($query) {
+                $query->orderBy('start_date', 'desc')->limit(3);
+            }
+        ]);
+
+        $memberStats = $organization->getMemberCountByStatus();
+        $leadershipMembers = $organization->getLeadershipMembers();
+
+        return view('admin.organizations.show', compact('organization', 'memberStats', 'leadershipMembers'));
+    }
+
     public function edit(Organization $organization)
     {
         return view('admin.organizations.edit', compact('organization'));

@@ -29,9 +29,10 @@ class SendEmailNotification implements ShouldQueue
     public function handle()
     {
         try {
-            // Send email using the provided template and data
+            // Send email using the provided template class
+            $mailable = new $this->template($this->data);
             Mail::to($this->recipient)
-                ->send($this->template, $this->data);
+                ->send($mailable);
 
             // Log successful email delivery
             Log::info("Email notification sent successfully", [

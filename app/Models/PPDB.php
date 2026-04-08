@@ -16,7 +16,7 @@ class PPDB extends Model
     /**
      * Mass assignable attributes.
      *
-     * @var array
+     * @var list<string>
      */
     protected $fillable = [
         'name',

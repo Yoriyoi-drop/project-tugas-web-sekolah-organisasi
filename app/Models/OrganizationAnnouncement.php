@@ -6,6 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property-read \App\Models\Organization $organization
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|OrganizationAnnouncement active()
+ * @method static \Illuminate\Database\Eloquent\Builder|OrganizationAnnouncement published()
+ * @method static \Illuminate\Database\Eloquent\Builder|OrganizationAnnouncement pinned()
+ * @method static \Illuminate\Database\Eloquent\Builder|OrganizationAnnouncement byPriority(string $priority)
+ * @method static \Illuminate\Database\Eloquent\Builder|OrganizationAnnouncement byType(string $type)
+ * @method static \Illuminate\Database\Eloquent\Builder|OrganizationAnnouncement forUser(\App\Models\User $user)
+ */
 class OrganizationAnnouncement extends Model
 {
     use HasFactory, SoftDeletes;
@@ -124,7 +134,7 @@ class OrganizationAnnouncement extends Model
             'reminder' => 'Pengingat'
         ];
 
-        return $types[$this->type] ?? 'Umum';
+        return $types[$this->type];
     }
 
     public function getFormattedPriorityAttribute()
@@ -136,7 +146,7 @@ class OrganizationAnnouncement extends Model
             'urgent' => 'Darurat'
         ];
 
-        return $priorities[$this->priority] ?? 'Normal';
+        return $priorities[$this->priority];
     }
 
     public function getIsExpiredAttribute()
@@ -275,8 +285,8 @@ class OrganizationAnnouncement extends Model
         $members = $organization->activeMembers()->with(['student.user', 'teacher.user'])->get();
 
         foreach ($members as $member) {
-            $user = $member->student?->user ?? $member->teacher?->user;
-            
+            $user = $member->student->user ?? $member->teacher->user;
+
             if ($user && $user->id !== $this->author_id && $this->canBeViewedBy($user)) {
                 OrganizationNotification::create([
                     'organization_id' => $this->organization_id,

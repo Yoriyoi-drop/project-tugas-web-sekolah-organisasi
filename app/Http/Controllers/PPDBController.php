@@ -25,12 +25,13 @@ class PPDBController extends Controller
             DB::beginTransaction();
 
             $validated = $request->validated();
-            
+
             // Basic sanitization
             $validated['name'] = strip_tags($validated['name']);
             $validated['birth_place'] = strip_tags($validated['birth_place']);
             $validated['address'] = strip_tags($validated['address']);
             $validated['parent_name'] = strip_tags($validated['parent_name']);
+            $validated['parent_phone'] = strip_tags($validated['parent_phone']);
             $validated['previous_school'] = strip_tags($validated['previous_school']);
             $validated['desired_major'] = strip_tags($validated['desired_major'] ?? '');
             

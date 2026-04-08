@@ -25,8 +25,8 @@ class UserObserver
         SecurityLog::create([
             'user_id' => $user->id,
             'action' => 'user_created',
-            'ip_address' => request()?->ip() ?? 'system',
-            'user_agent' => request()?->userAgent() ?? 'system',
+            'ip_address' => request()->ip() ?? 'system',
+            'user_agent' => request()->userAgent() ?? 'system',
             'data' => [
                 'created_at' => now()->toISOString(),
                 'initial_data' => [

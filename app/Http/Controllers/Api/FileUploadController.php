@@ -335,7 +335,7 @@ class FileUploadController extends Controller
         $extension = $file->getClientOriginalExtension();
         $basename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         $timestamp = now()->format('YmdHis');
-        $random = str_random(6);
+        $random = \Illuminate\Support\Str::random(6);
 
         return "{$basename}_{$timestamp}_{$random}.{$extension}";
     }

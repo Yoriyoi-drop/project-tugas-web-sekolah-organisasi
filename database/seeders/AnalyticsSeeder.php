@@ -78,8 +78,8 @@ class AnalyticsSeeder extends Seeder
             // Generate realistic performance metrics
             $retentionRate = min(95, 75 + rand(-10, 20));
             $acquisitionRate = min(25, rand(5, 20));
-            $satisfactionScore = rand(3.5, 4.8);
-            
+            $satisfactionScore = rand(35, 48) / 10;
+
             $performance = PerformanceMetric::create([
                 'organization_id' => $organization->id,
                 'date' => $date->toDateString(),
@@ -89,7 +89,7 @@ class AnalyticsSeeder extends Seeder
                 'total_activities_completed' => rand(0, 3),
                 'activity_completion_rate' => min(100, 70 + rand(-20, 30)),
                 'average_participation_rate' => min(90, 60 + rand(-15, 25)),
-                'activity_satisfaction_score' => rand(3.2, 4.6),
+                'activity_satisfaction_score' => rand(32, 46) / 10,
                 'budget_utilization' => min(100, rand(60, 95)),
                 'cost_per_member' => rand(5000, 25000) / 100,
                 'roi_score' => min(100, rand(70, 95)),

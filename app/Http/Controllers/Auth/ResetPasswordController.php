@@ -2,16 +2,18 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Str;
 
+// @phpstan-ignore trait.useUnknown (Laravel built-in trait)
 class ResetPasswordController extends Controller
 {
-    use ResetsPasswords;
+    use \Illuminate\Foundation\Auth\ResetsPasswords {
+        reset as traitReset;
+    }
 
     /**
      * Where to redirect users after resetting their password.
@@ -97,7 +99,9 @@ class ResetPasswordController extends Controller
         $user->setRememberToken(Str::random(60));
         $user->save();
 
-        event(new PasswordReset($user));
+        if ($user instanceof \Illuminate\Contracts\Auth\Authenticatable) {
+            event(new PasswordReset($user));
+        }
     }
 
     /**

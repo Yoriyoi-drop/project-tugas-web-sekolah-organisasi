@@ -5,6 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property-read \App\Models\Organization $organization
+ * @property-read \App\Models\OrganizationPeriod $period
+ */
 class PerformanceMetric extends Model
 {
     use HasFactory;
@@ -150,19 +154,19 @@ class PerformanceMetric extends Model
     public function getFormattedMetricsAttribute()
     {
         return [
-            'member_retention_rate' => number_format($this->member_retention_rate, 2) . '%',
-            'member_acquisition_rate' => number_format($this->member_acquisition_rate, 2) . '%',
-            'member_satisfaction_score' => number_format($this->member_satisfaction_score, 2),
-            'activity_completion_rate' => number_format($this->activity_completion_rate, 2) . '%',
-            'average_participation_rate' => number_format($this->average_participation_rate, 2) . '%',
-            'activity_satisfaction_score' => number_format($this->activity_satisfaction_score, 2),
-            'budget_utilization' => number_format($this->budget_utilization, 2) . '%',
-            'discussion_engagement_rate' => number_format($this->discussion_engagement_rate, 2) . '%',
-            'announcement_read_rate' => number_format($this->announcement_read_rate, 2) . '%',
-            'notification_effectiveness' => number_format($this->notification_effectiveness, 2) . '%',
-            'overall_performance_score' => number_format($this->overall_performance_score, 2),
-            'growth_rate' => number_format($this->growth_rate, 2) . '%',
-            'benchmark_score' => number_format($this->benchmark_score, 2)
+            'member_retention_rate' => number_format((float)$this->member_retention_rate, 2) . '%',
+            'member_acquisition_rate' => number_format((float)$this->member_acquisition_rate, 2) . '%',
+            'member_satisfaction_score' => number_format((float)$this->member_satisfaction_score, 2),
+            'activity_completion_rate' => number_format((float)$this->activity_completion_rate, 2) . '%',
+            'average_participation_rate' => number_format((float)$this->average_participation_rate, 2) . '%',
+            'activity_satisfaction_score' => number_format((float)$this->activity_satisfaction_score, 2),
+            'budget_utilization' => number_format((float)$this->budget_utilization, 2) . '%',
+            'discussion_engagement_rate' => number_format((float)$this->discussion_engagement_rate, 2) . '%',
+            'announcement_read_rate' => number_format((float)$this->announcement_read_rate, 2) . '%',
+            'notification_effectiveness' => number_format((float)$this->notification_effectiveness, 2) . '%',
+            'overall_performance_score' => number_format((float)$this->overall_performance_score, 2),
+            'growth_rate' => number_format((float)$this->growth_rate, 2) . '%',
+            'benchmark_score' => number_format((float)$this->benchmark_score, 2)
         ];
     }
 
@@ -288,10 +292,14 @@ class PerformanceMetric extends Model
 
     public function compareWithBenchmark()
     {
-        $benchmark = BenchmarkData::where('organization_type', $this->organization->type)
+        if (!class_exists('\App\Models\BenchmarkData')) {
+            return null;
+        }
+
+        $benchmark = \App\Models\BenchmarkData::where('organization_type', $this->organization->type)
                                  ->where('benchmark_date', $this->date)
                                  ->first();
-        
+
         if (!$benchmark) return null;
         
         return [

@@ -5,6 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
+/**
+ * @property-read \App\Models\User $user
+ * @property-read \App\Models\Organization $organization
+ */
 class OrganizationNotification extends Model
 {
     use HasFactory;
@@ -122,7 +126,7 @@ class OrganizationNotification extends Model
             'system' => 'Sistem'
         ];
 
-        return $types[$this->type] ?? 'Sistem';
+        return $types[$this->type];
     }
 
     public function getFormattedPriorityAttribute()
@@ -134,7 +138,7 @@ class OrganizationNotification extends Model
             'urgent' => 'Darurat'
         ];
 
-        return $priorities[$this->priority] ?? 'Normal';
+        return $priorities[$this->priority];
     }
 
     public function getTimeAgoAttribute()
@@ -201,7 +205,7 @@ class OrganizationNotification extends Model
 
     public function canBeSent()
     {
-        return !$this->sent && $this->user && $this->user->isActive();
+        return !$this->sent && $this->user && $this->user->is_active;
     }
 
     public function getActionUrlAttribute()

@@ -6,6 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * @property string|null $image_path
+ * @property string|null $thumbnail_path
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|Gallery byOrganization(int $organizationId)
+ * @method static \Illuminate\Database\Eloquent\Builder|Gallery byUploader(int $uploaderId)
+ * @method static \Illuminate\Database\Eloquent\Builder|Gallery public()
+ */
 class Gallery extends Model
 {
     use HasFactory;

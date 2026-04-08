@@ -24,8 +24,8 @@ class LogUserLogin
         SecurityLog::create([
             'user_id' => $user->id,
             'action' => 'login',
-            'ip_address' => request()?->ip() ?? 'unknown',
-            'user_agent' => request()?->userAgent() ?? 'unknown',
+            'ip_address' => request()->ip() ?? 'unknown',
+            'user_agent' => request()->userAgent() ?? 'unknown',
             'data' => [
                 'login_time' => now()->toISOString(),
                 'remember_me' => $event->remember ?? false
@@ -39,7 +39,7 @@ class LogUserLogin
         // Log to application log
         \Log::info("User logged in: {$user->email}", [
             'user_id' => $user->id,
-            'ip_address' => request()?->ip() ?? 'unknown',
+            'ip_address' => request()->ip() ?? 'unknown',
             'timestamp' => now()
         ]);
     }
