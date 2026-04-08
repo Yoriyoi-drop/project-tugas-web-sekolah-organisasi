@@ -213,6 +213,10 @@ Route::middleware(['auth', \App\Http\Middleware\AdminOrRedirect::class])->prefix
     Route::get('users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.users.index');
     Route::get('users/create', [\App\Http\Controllers\Admin\UserController::class, 'create'])->name('admin.users.create')->middleware('verified');
     Route::post('users', [\App\Http\Controllers\Admin\UserController::class, 'store'])->name('admin.users.store')->middleware('verified');
+    Route::get('users/{user}', [\App\Http\Controllers\Admin\UserController::class, 'show'])->name('admin.users.show');
+    Route::get('users/{user}/edit', [\App\Http\Controllers\Admin\UserController::class, 'edit'])->name('admin.users.edit')->middleware('verified');
+    Route::put('users/{user}', [\App\Http\Controllers\Admin\UserController::class, 'update'])->name('admin.users.update')->middleware('verified');
+    Route::delete('users/{user}', [\App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('admin.users.destroy')->middleware('verified');
     
     // PPDB - hanya operasi create, edit, update, destroy yang memerlukan verifikasi
     Route::get('ppdb', [\App\Http\Controllers\Admin\PPDBController::class, 'index'])->name('admin.ppdb.index');

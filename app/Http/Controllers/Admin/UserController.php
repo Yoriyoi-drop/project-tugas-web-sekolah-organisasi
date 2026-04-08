@@ -87,4 +87,84 @@ class UserController extends Controller
         $value = trim($value);
         return preg_replace('/[^A-Za-z0-9]/', '', $value);
     }
+
+    /**
+     * Display the specified user.
+     */
+    public function show(User $user)
+    {
+        return view('admin.users.show', compact('user'));
+    }
+
+    /**
+     * Show the form for editing the specified user.
+     */
+    public function edit(User $user)
+    {
+        return view('admin.users.edit', compact('user'));
+    }
+
+    /**
+     * Update the specified user.
+     */
+    public function update(Request $request, User $user)
+    {
+        $rules = [
+            'name' => 'required|string|max:255',
+            'email' => ['required','string','email','max:255', Rule::unique('users')->ignore($user->id)],
+            'nik' => ['nullable','string', new NikFormat()],
+            'nis' => ['nullable','string', new NisFormat()],
+        ];
+
+        $request->merge([
+            'nik' => self::normalizeId($request->input('nik')),
+            'nis' => self::normalizeId($request->input('nis')),
+        ]);
+
+        $data = $request->validate($rules);
+
+        if (!empty($data['nik'])) {
+            $nikHash = hash('sha256', $data['nik']);
+            if (User::where('nik_hash', $nikHash)->where('id', '!=', $user->id)->exists()) {
+               return back()->withErrors(['nik' => 'NIK sudah terdaftar.'])->withInput();
+            }
+        }
+
+        if (!empty($data['nis'])) {
+             $nisHash = hash('sha256', $data['nis']);
+             if (User::where('nis_hash', $nisHash)->where('id', '!=', $user->id)->exists()) {
+                return back()->withErrors(['nis' => 'NIS sudah terdaftar.'])->withInput();
+             }
+        }
+
+        $payload = [
+            'name' => strip_tags($data['name']),
+            'email' => $data['email'],
+            'nik' => $data['nik'] ?? null,
+            'nis' => $data['nis'] ?? null,
+        ];
+
+        // Update password if provided
+        if ($request->filled('password')) {
+            $payload['password'] = Hash::make($data['password']);
+        }
+
+        $user->update($payload);
+
+        return redirect()->route('admin.users.index')->with('success', 'User berhasil diupdate.');
+    }
+
+    /**
+     * Remove the specified user.
+     */
+    public function destroy(User $user)
+    {
+        // Prevent deleting yourself
+        if ($user->id === auth()->id()) {
+            return back()->withErrors(['error' => 'Anda tidak bisa menghapus akun sendiri.']);
+        }
+
+        $user->delete();
+        return redirect()->route('admin.users.index')->with('success', 'User berhasil dihapus.');
+    }
 }
