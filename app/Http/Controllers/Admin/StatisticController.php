@@ -37,6 +37,11 @@ class StatisticController extends Controller
         return redirect()->route('admin.statistics.index')->with('success', 'Statistic created successfully');
     }
 
+    public function show(Statistic $statistic)
+    {
+        return view('admin.statistics.show', compact('statistic'));
+    }
+
     public function edit(Statistic $statistic)
     {
         return view('admin.statistics.edit', compact('statistic'));

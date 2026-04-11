@@ -250,4 +250,31 @@ Route::middleware(['auth', \App\Http\Middleware\AdminOrRedirect::class])->prefix
     Route::get('analytics/performance', [\App\Http\Controllers\Admin\AnalyticsController::class, 'performance'])->name('admin.analytics.performance');
     Route::get('analytics/compare', [\App\Http\Controllers\Admin\AnalyticsController::class, 'compare'])->name('admin.analytics.compare');
     Route::post('analytics/compare', [\App\Http\Controllers\Admin\AnalyticsController::class, 'compareResults'])->name('admin.analytics.compare.results');
+
+    // Galleries - hanya operasi create, edit, update, destroy yang memerlukan verifikasi
+    Route::get('galleries', [\App\Http\Controllers\Admin\GalleryController::class, 'index'])->name('admin.galleries.index');
+    Route::get('galleries/create', [\App\Http\Controllers\Admin\GalleryController::class, 'create'])->name('admin.galleries.create')->middleware('verified');
+    Route::post('galleries', [\App\Http\Controllers\Admin\GalleryController::class, 'store'])->name('admin.galleries.store')->middleware('verified');
+    Route::get('galleries/{gallery}', [\App\Http\Controllers\Admin\GalleryController::class, 'show'])->name('admin.galleries.show');
+    Route::get('galleries/{gallery}/edit', [\App\Http\Controllers\Admin\GalleryController::class, 'edit'])->name('admin.galleries.edit')->middleware('verified');
+    Route::put('galleries/{gallery}', [\App\Http\Controllers\Admin\GalleryController::class, 'update'])->name('admin.galleries.update')->middleware('verified');
+    Route::delete('galleries/{gallery}', [\App\Http\Controllers\Admin\GalleryController::class, 'destroy'])->name('admin.galleries.destroy')->middleware('verified');
+
+    // Values - hanya operasi create, edit, update, destroy yang memerlukan verifikasi
+    Route::get('values', [\App\Http\Controllers\Admin\ValueController::class, 'index'])->name('admin.values.index');
+    Route::get('values/create', [\App\Http\Controllers\Admin\ValueController::class, 'create'])->name('admin.values.create')->middleware('verified');
+    Route::post('values', [\App\Http\Controllers\Admin\ValueController::class, 'store'])->name('admin.values.store')->middleware('verified');
+    Route::get('values/{value}', [\App\Http\Controllers\Admin\ValueController::class, 'show'])->name('admin.values.show');
+    Route::get('values/{value}/edit', [\App\Http\Controllers\Admin\ValueController::class, 'edit'])->name('admin.values.edit')->middleware('verified');
+    Route::put('values/{value}', [\App\Http\Controllers\Admin\ValueController::class, 'update'])->name('admin.values.update')->middleware('verified');
+    Route::delete('values/{value}', [\App\Http\Controllers\Admin\ValueController::class, 'destroy'])->name('admin.values.destroy')->middleware('verified');
+
+    // Categories - hanya operasi create, edit, update, destroy yang memerlukan verifikasi
+    Route::get('categories', [\App\Http\Controllers\Admin\CategoryController::class, 'index'])->name('admin.categories.index');
+    Route::get('categories/create', [\App\Http\Controllers\Admin\CategoryController::class, 'create'])->name('admin.categories.create')->middleware('verified');
+    Route::post('categories', [\App\Http\Controllers\Admin\CategoryController::class, 'store'])->name('admin.categories.store')->middleware('verified');
+    Route::get('categories/{category}', [\App\Http\Controllers\Admin\CategoryController::class, 'show'])->name('admin.categories.show');
+    Route::get('categories/{category}/edit', [\App\Http\Controllers\Admin\CategoryController::class, 'edit'])->name('admin.categories.edit')->middleware('verified');
+    Route::put('categories/{category}', [\App\Http\Controllers\Admin\CategoryController::class, 'update'])->name('admin.categories.update')->middleware('verified');
+    Route::delete('categories/{category}', [\App\Http\Controllers\Admin\CategoryController::class, 'destroy'])->name('admin.categories.destroy')->middleware('verified');
 });

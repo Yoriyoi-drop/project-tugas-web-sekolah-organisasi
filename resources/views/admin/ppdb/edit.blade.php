@@ -62,8 +62,8 @@
                 <div class="col-md-4">
                     <label for="gender" class="form-label text-muted small">Jenis Kelamin</label>
                     <select class="form-select" name="gender">
-                        <option value="L" {{ old('gender', $ppdb->gender) == 'L' ? 'selected' : '' }}>Laki-laki</option>
-                        <option value="P" {{ old('gender', $ppdb->gender) == 'P' ? 'selected' : '' }}>Perempuan</option>
+                        <option value="male" {{ old('gender', $ppdb->gender) == 'male' ? 'selected' : '' }}>Laki-laki</option>
+                        <option value="female" {{ old('gender', $ppdb->gender) == 'female' ? 'selected' : '' }}>Perempuan</option>
                     </select>
                 </div>
                 <div class="col-12">
